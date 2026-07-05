@@ -59,11 +59,16 @@ export function drawBead(ctx, x, y, r, crystal) {
   ctx.fillStyle = hexA(g.light, 0.24)
   ctx.fill()
 
-  // 穿孔孔口（顶部）
+  // 穿孔：中心圆圈（透过水晶看到的孔道）
   ctx.beginPath()
-  ctx.ellipse(x, y - r * 0.9, r * 0.14, r * 0.06, 0, 0, Math.PI * 2)
-  ctx.fillStyle = 'rgba(20,20,25,0.2)'
+  ctx.arc(x, y + r * 0.02, r * 0.18, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(0,0,0,0.06)'
   ctx.fill()
+  ctx.beginPath()
+  ctx.arc(x, y + r * 0.02, r * 0.19, 0, Math.PI * 2)
+  ctx.strokeStyle = hexA(g.deep, 0.3)
+  ctx.lineWidth = Math.max(0.5, r * 0.045)
+  ctx.stroke()
 
   // 主高光
   ctx.beginPath()

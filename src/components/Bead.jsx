@@ -58,13 +58,10 @@ export function Bead({ crystal, size = 48, className = '', style }) {
       <circle cx="50" cy="50" r="48" fill={`url(#${uid}-glow)`} />
       {/* 底部透光边缘 */}
       <ellipse cx="50" cy="76" rx="30" ry="14" fill={g.light} opacity="0.28" />
-      {/* 穿孔通道（越通透越明显）：细竖线 + 上下孔口 */}
-      <g>
-        <rect x="48.4" y="12" width="3.2" height="76" rx="1.6" fill={g.deep} opacity="0.12" />
-        <ellipse cx="50" cy="13.5" rx="5.5" ry="2.6" fill="#1b1b1f" opacity="0.22" />
-        <ellipse cx="50" cy="12.6" rx="3.4" ry="1.3" fill={g.light} opacity="0.5" />
-        <ellipse cx="50" cy="86.5" rx="5.5" ry="2.6" fill="#1b1b1f" opacity="0.18" />
-      </g>
+      {/* 穿孔：中心圆圈（透过水晶看到的孔道） */}
+      <circle cx="50" cy="51" r="8.5" fill="#000" opacity="0.06" />
+      <circle cx="50" cy="51" r="9" fill="none" stroke={g.deep} strokeOpacity="0.32" strokeWidth="2.1" />
+      <circle cx="50" cy="51" r="9.4" fill="none" stroke="#ffffff" strokeOpacity="0.22" strokeWidth="0.7" />
       {/* 主高光 + 次高光 */}
       <ellipse cx="34" cy="29" rx="15" ry="10" fill="#ffffff" opacity="0.78" transform="rotate(-28 34 29)" />
       <circle cx="65" cy="64" r="4.5" fill="#ffffff" opacity="0.42" />

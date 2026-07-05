@@ -40,7 +40,9 @@ function BeadNode({ p, selected, onSelect }) {
             {p.crystal?.gradient?.sheen && <circle r={r} fill={`url(#sheen-${p.crystalId})`} />}
             <circle r={r} fill={`url(#glow-${p.crystalId})`} />
             <ellipse cx={0} cy={r * 0.5} rx={r * 0.6} ry={r * 0.28} fill={p.crystal?.gradient?.light || '#fff'} opacity="0.26" />
-            <ellipse cx={0} cy={-r * 0.9} rx={r * 0.14} ry={r * 0.06} fill="#1b1b1f" opacity="0.2" />
+            {/* 穿孔：中心圆圈 */}
+            <circle cx={0} cy={r * 0.02} r={r * 0.18} fill="#000" opacity="0.06" />
+            <circle cx={0} cy={r * 0.02} r={r * 0.19} fill="none" stroke={p.crystal?.gradient?.deep || '#999'} strokeOpacity="0.3" strokeWidth={Math.max(0.4, r * 0.045)} />
             <ellipse cx={-r * 0.34} cy={-r * 0.4} rx={r * 0.28} ry={r * 0.2} fill="#ffffff" opacity="0.78" transform="rotate(-28)" />
             <circle cx={r * 0.3} cy={r * 0.28} r={r * 0.09} fill="#ffffff" opacity="0.42" />
             <circle r={r * 0.98} fill="none" stroke={p.crystal?.gradient?.ring || '#999'} strokeOpacity="0.45" strokeWidth={Math.max(0.6, r * 0.05)} />
