@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import { Bead } from './Bead.jsx'
 import { BraceletRing } from './BraceletRing.jsx'
+import { ProductSheet } from './ProductSheet.jsx'
 import { CRYSTALS, CRYSTAL_MAP } from '../data/crystals.js'
 import { PRESETS } from '../data/recommendations.js'
+import { PRODUCTS } from '../data/products.js'
 import { makeBead } from '../utils/bracelet.js'
 import { useLang, localizeCrystal, money, PRESET_I18N } from '../i18n.jsx'
 import {
@@ -25,6 +28,7 @@ function patternToBeads(pattern) {
 
 export function Home({ onStart }) {
   const { t, lang } = useLang()
+  const [product, setProduct] = useState(null)
   return (
     <div className="pb-24 lg:pb-12">
       <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
@@ -107,6 +111,45 @@ export function Home({ onStart }) {
           </div>
         </section>
 
+        {/* Featured real-photo products */}
+        <section className="mt-7">
+          <div className="mb-3 flex items-center justify-between px-1">
+            <div>
+              <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{t('home.featured')}</h2>
+              <p className="text-[12px] text-neutral-400">{t('home.featured.sub')}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {PRODUCTS.map((pr) => {
+              const c = localizeCrystal(CRYSTAL_MAP[pr.crystalId], lang)
+              const name = lang === 'zh' ? pr.name : pr.name_en
+              const badge = lang === 'zh' ? pr.badge : pr.badge_en
+              const min = Math.min(...pr.sizes.map((s) => s.price))
+              return (
+                <button
+                  key={pr.id}
+                  onClick={() => setProduct(pr)}
+                  className="group flex flex-col overflow-hidden rounded-3xl border border-black/5 bg-white text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-[0.99] dark:border-white/5 dark:bg-neutral-800"
+                >
+                  <div className="relative aspect-square bg-gradient-to-br from-neutral-50 to-neutral-100 p-2 dark:from-neutral-700/50 dark:to-neutral-900">
+                    <img src={pr.image} alt={name} className="h-full w-full object-contain drop-shadow-md transition group-hover:scale-105" />
+                    {badge && (
+                      <span className="absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur">
+                        {badge}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-3">
+                    <div className="text-[14px] font-semibold text-neutral-900 dark:text-white">{name}</div>
+                    <div className="truncate text-[11px] text-neutral-400">{c?.keywords.join(' · ')}</div>
+                    <div className="mt-1 text-[14px] font-bold text-brand-600 dark:text-brand-300">{t('product.from', money(min))}</div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
         {/* AI banner */}
         <section className="mt-6">
           <button
@@ -168,6 +211,8 @@ export function Home({ onStart }) {
           </div>
         </section>
       </div>
+
+      <ProductSheet open={!!product} onClose={() => setProduct(null)} product={product} />
     </div>
   )
 }
