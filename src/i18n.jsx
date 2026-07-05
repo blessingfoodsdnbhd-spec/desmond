@@ -306,6 +306,11 @@ export const CRYSTAL_I18N = {
   aquamarine: { keywords: ['Communicate', 'Truth'], energy: 'Stone of communication, calm as the sea. Opens the throat chakra for sincere, easy expression and eases inner tension.' },
   garnet: { keywords: ['Vitality', 'Energy'], energy: 'Stone of vitality, deep pomegranate red. Replenishes energy and circulation, enhancing charm and regeneration.' },
   lapis: { keywords: ['Wisdom', 'Truth'], energy: 'Stone of wisdom, royal blue flecked with gold. Opens spiritual vision and insight, guarding you and revealing truth.' },
+  rutilated: { keywords: ['Wealth', 'Power'], energy: 'King of quartz, threaded with golden rutile. Powerful energy that gathers wealth, strengthens your career aura and draws helpful mentors.' },
+  'red-agate': { keywords: ['Vitality', 'Calm'], energy: 'Stone of calm with a warm red glow. Nourishes blood and energy, steadies emotions, boosts courage and wards off negativity.' },
+  aventurine: { keywords: ['Luck', 'Career'], energy: 'Stone of luck and gentle opportunity. Attracts fortune and good relations, eases stress and balances the heart with fresh optimism.' },
+  smoky: { keywords: ['Grounding', 'Calm'], energy: 'Grounding stone in calm smoky brown. Anchors the root chakra, clears stress and clutter, wards off negativity and steadies the mind.' },
+  'red-tiger-eye': { keywords: ['Vitality', 'Courage'], energy: 'Stone of passion with a red tiger sheen. Ignites vitality and drive, sparks confidence and resolve to take on any challenge.' },
   spacer: { keywords: ['Accent'], energy: '925 silver spacer, set between crystals to add depth and shine.' },
 }
 
@@ -339,6 +344,7 @@ export const COLOR_I18N = {
   purple: { name: 'Wisdom Purple', meaning: 'Spirit · Mentors' },
   pink: { name: 'Peach Pink', meaning: 'Love · Charm' },
   gold: { name: 'Fortune Gold', meaning: 'Wealth · Success' },
+  red: { name: 'Lucky Red', meaning: 'Vitality · Passion' },
   white: { name: 'Pure White', meaning: 'Balance · Clarity' },
   black: { name: 'Guard Black', meaning: 'Ward · Stability' },
 }

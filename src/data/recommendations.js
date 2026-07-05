@@ -20,10 +20,10 @@ export const ZODIACS = [
 // 五行搭配推荐
 export const FIVE_ELEMENTS = [
   { key: 'metal', name: '金', color: '#c9a94e', desc: '主收敛、决断', crystals: ['clear', 'moonstone'] },
-  { key: 'wood', name: '木', color: '#4fb37e', desc: '主生发、成长', crystals: ['green-phantom'] },
+  { key: 'wood', name: '木', color: '#4fb37e', desc: '主生发、成长', crystals: ['green-phantom', 'aventurine'] },
   { key: 'water', name: '水', color: '#3b82c4', desc: '主流通、智慧', crystals: ['obsidian', 'aquamarine', 'lapis'] },
-  { key: 'fire', name: '火', color: '#d1495b', desc: '主热情、活力', crystals: ['garnet', 'strawberry', 'amethyst', 'rose'] },
-  { key: 'earth', name: '土', color: '#b98b4e', desc: '主稳固、财富', crystals: ['citrine', 'tiger-eye'] },
+  { key: 'fire', name: '火', color: '#d1495b', desc: '主热情、活力', crystals: ['garnet', 'strawberry', 'red-agate', 'red-tiger-eye'] },
+  { key: 'earth', name: '土', color: '#b98b4e', desc: '主稳固、财富', crystals: ['citrine', 'tiger-eye', 'rutilated', 'smoky'] },
 ]
 
 // 幸运颜色 → 对应水晶
@@ -31,7 +31,8 @@ export const LUCKY_COLORS = [
   { key: 'green', name: '幸运绿', hex: '#4fb37e', meaning: '生机 · 财运', crystals: ['green-phantom', 'aquamarine'] },
   { key: 'purple', name: '智慧紫', hex: '#9a6fd6', meaning: '灵性 · 贵人', crystals: ['amethyst', 'lapis'] },
   { key: 'pink', name: '桃花粉', hex: '#f3aec4', meaning: '爱情 · 人缘', crystals: ['rose', 'strawberry'] },
-  { key: 'gold', name: '招财金', hex: '#f4cd66', meaning: '财富 · 成功', crystals: ['citrine', 'tiger-eye'] },
+  { key: 'gold', name: '招财金', hex: '#f4cd66', meaning: '财富 · 成功', crystals: ['citrine', 'tiger-eye', 'rutilated'] },
+  { key: 'red', name: '旺运红', hex: '#c0392b', meaning: '活力 · 热情', crystals: ['red-agate', 'red-tiger-eye', 'garnet'] },
   { key: 'white', name: '净化白', hex: '#eef1f4', meaning: '平衡 · 清明', crystals: ['clear', 'moonstone'] },
   { key: 'black', name: '守护黑', hex: '#26262b', meaning: '辟邪 · 稳定', crystals: ['obsidian'] },
 ]

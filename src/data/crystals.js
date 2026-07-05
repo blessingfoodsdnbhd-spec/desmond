@@ -192,6 +192,71 @@ export const CRYSTALS = [
       '智慧之石，帝王之蓝缀金斑。开启灵性视野、增强洞察，护佑平安，助你看清真相与方向。',
     gradient: { light: '#7fa8e6', base: '#274b9c', deep: '#152a63', ring: '#0e1c45', sheen: '#e7c65a' },
   },
+  {
+    id: 'rutilated',
+    name: '金发晶',
+    pinyin: 'Golden Rutilated Quartz',
+    category: ['wealth', 'popular'],
+    element: 'earth',
+    basePrice: 28,
+    density: 2.66,
+    keywords: ['招财', '强运'],
+    energy:
+      '晶王之石，内蕴金色发丝。能量强大，聚正偏财、旺事业气场，助你决断果敢、贵人运旺。',
+    gradient: { light: '#fff6d8', base: '#e6c778', deep: '#b58f34', ring: '#8f6c22', sheen: '#ffe9a3' },
+  },
+  {
+    id: 'red-agate',
+    name: '红玛瑙',
+    pinyin: 'Red Agate',
+    category: ['health', 'guard'],
+    element: 'fire',
+    basePrice: 14,
+    density: 2.6,
+    keywords: ['活力', '安神'],
+    energy:
+      '安神之石，温润红光。补气活血、安定情绪，增强行动力与勇气，护佑平安、驱散负能量。',
+    gradient: { light: '#f6b9a2', base: '#b5442f', deep: '#75211a', ring: '#551410' },
+  },
+  {
+    id: 'aventurine',
+    name: '东陵玉',
+    pinyin: 'Green Aventurine',
+    category: ['wealth', 'health'],
+    element: 'wood',
+    basePrice: 14,
+    density: 2.64,
+    keywords: ['好运', '事业'],
+    energy:
+      '好运之石，温和的机遇能量。招偏财、旺事业人缘，舒缓压力、平衡心轮，带来乐观与新契机。',
+    gradient: { light: '#d8ecd0', base: '#5fa06a', deep: '#356e3f', ring: '#264f2d', sheen: '#cfeecb' },
+  },
+  {
+    id: 'smoky',
+    name: '茶晶',
+    pinyin: 'Smoky Quartz',
+    category: ['guard', 'health'],
+    element: 'earth',
+    basePrice: 15,
+    density: 2.65,
+    keywords: ['稳定', '安神'],
+    energy:
+      '接地之石，沉稳茶褐。稳固海底轮、化解杂念与压力，辟邪安神，让心神踏实、脚步坚定。',
+    gradient: { light: '#c8b6a2', base: '#6b5442', deep: '#3a2c22', ring: '#261c15' },
+  },
+  {
+    id: 'red-tiger-eye',
+    name: '红虎眼',
+    pinyin: 'Red Tiger Eye',
+    category: ['wealth', 'health', 'guard'],
+    element: 'fire',
+    basePrice: 20,
+    density: 2.68,
+    keywords: ['活力', '勇气'],
+    energy:
+      '热情之石，红润虎眼光泽。点燃活力与行动力，激发自信与斗志，助你在挑战中主动出击。',
+    gradient: { light: '#eaa07a', base: '#9c3b22', deep: '#5c2012', ring: '#41160c', sheen: '#ffcf8a' },
+  },
 ]
 
 // 金属隔珠（点缀）
