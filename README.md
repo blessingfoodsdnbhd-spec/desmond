@@ -31,10 +31,11 @@
 ## 🚀 快速开始
 
 ```bash
-npm install      # 安装依赖
-npm run dev      # 本地开发（http://localhost:5173）
-npm run build    # 生产构建，输出到 dist/
-npm run preview  # 预览生产构建
+npm install       # 安装依赖
+npm run dev       # 本地开发（http://localhost:5173）
+npm run build     # 生产构建，输出到 dist/
+npm run preview   # 预览生产构建
+npm run build:single  # 打包为单一自包含 HTML（dist-single/index.html），可直接分享/离线打开
 ```
 
 ## 🧱 项目结构
