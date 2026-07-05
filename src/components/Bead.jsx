@@ -5,6 +5,23 @@ export function Bead({ crystal, size = 48, className = '', style }) {
   const g = crystal?.gradient || { light: '#fff', base: '#ccc', deep: '#999', ring: '#888' }
   const uid = `bead-${crystal?.id || 'x'}-${size}`
   const r = size / 2
+
+  // 自定义珠子：用上传的照片，裁成圆形
+  if (crystal?.photo) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 100 100" className={className} style={style} aria-label={crystal?.name}>
+        <defs>
+          <clipPath id={`${uid}-clip`}>
+            <circle cx="50" cy="50" r="48" />
+          </clipPath>
+        </defs>
+        <image href={crystal.photo} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" clipPath={`url(#${uid}-clip)`} />
+        <ellipse cx="34" cy="30" rx="13" ry="8" fill="#ffffff" opacity="0.35" transform="rotate(-28 34 30)" />
+        <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(0,0,0,0.18)" strokeWidth="2" />
+      </svg>
+    )
+  }
+
   return (
     <svg
       width={size}

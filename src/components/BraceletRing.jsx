@@ -24,11 +24,25 @@ function BeadNode({ p, selected, onSelect }) {
     >
       <g className="animate-pop">
         {selected && <circle r={r + 4} fill="none" stroke="#2f9c66" strokeWidth="2.5" />}
-        <circle r={r} fill={`url(#grad-${p.crystalId})`} filter="url(#beadShadow)" />
-        {p.crystal?.gradient?.sheen && <circle r={r} fill={`url(#sheen-${p.crystalId})`} />}
-        <ellipse cx={-r * 0.34} cy={-r * 0.4} rx={r * 0.28} ry={r * 0.2} fill="#ffffff" opacity="0.72" transform="rotate(-28)" />
-        <circle cx={r * 0.3} cy={r * 0.28} r={r * 0.09} fill="#ffffff" opacity="0.4" />
-        <circle r={r * 0.98} fill="none" stroke={p.crystal?.gradient?.ring || '#999'} strokeOpacity="0.5" strokeWidth={Math.max(0.6, r * 0.05)} />
+        {p.crystal?.photo ? (
+          <>
+            <clipPath id={`ringclip-${p.uid}`}>
+              <circle r={r} />
+            </clipPath>
+            <circle r={r} fill="#e5e7eb" filter="url(#beadShadow)" />
+            <image href={p.crystal.photo} x={-r} y={-r} width={r * 2} height={r * 2} preserveAspectRatio="xMidYMid slice" clipPath={`url(#ringclip-${p.uid})`} />
+            <ellipse cx={-r * 0.34} cy={-r * 0.4} rx={r * 0.24} ry={r * 0.15} fill="#ffffff" opacity="0.35" transform="rotate(-28)" />
+            <circle r={r * 0.98} fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth={Math.max(0.6, r * 0.05)} />
+          </>
+        ) : (
+          <>
+            <circle r={r} fill={`url(#grad-${p.crystalId})`} filter="url(#beadShadow)" />
+            {p.crystal?.gradient?.sheen && <circle r={r} fill={`url(#sheen-${p.crystalId})`} />}
+            <ellipse cx={-r * 0.34} cy={-r * 0.4} rx={r * 0.28} ry={r * 0.2} fill="#ffffff" opacity="0.72" transform="rotate(-28)" />
+            <circle cx={r * 0.3} cy={r * 0.28} r={r * 0.09} fill="#ffffff" opacity="0.4" />
+            <circle r={r * 0.98} fill="none" stroke={p.crystal?.gradient?.ring || '#999'} strokeOpacity="0.5" strokeWidth={Math.max(0.6, r * 0.05)} />
+          </>
+        )}
       </g>
     </g>
   )

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Home } from './components/Home.jsx'
 import { Designer } from './components/Designer.jsx'
+import { Admin } from './components/Admin.jsx'
 import { Bead } from './components/Bead.jsx'
 import { CRYSTALS, CATEGORIES, ELEMENTS } from './data/crystals.js'
 import { makeBead } from './utils/bracelet.js'
@@ -16,6 +17,7 @@ import {
   ArrowLeft,
   CheckIcon,
   SparkleIcon,
+  ChevronRight,
 } from './components/icons.jsx'
 
 const TAB_KEYS = [
@@ -46,6 +48,7 @@ export default function App() {
   const [dark, setDark] = useDarkMode()
   const [initialBeads, setInitialBeads] = useState([])
   const [designKey, setDesignKey] = useState(0)
+  const [showAdmin, setShowAdmin] = useState(false)
 
   const start = (pattern) => {
     if (Array.isArray(pattern)) {
@@ -103,8 +106,10 @@ export default function App() {
         {tab === 'design' && <Designer key={designKey} dark={dark} initialBeads={initialBeads} />}
         {tab === 'discover' && <Discover onStart={start} />}
         {tab === 'order' && <Orders onStart={start} />}
-        {tab === 'me' && <Profile dark={dark} setDark={setDark} />}
+        {tab === 'me' && <Profile dark={dark} setDark={setDark} onOpenAdmin={() => setShowAdmin(true)} />}
       </main>
+
+      <Admin open={showAdmin} onClose={() => setShowAdmin(false)} />
 
       {/* Bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-black/5 bg-white/85 glass dark:border-white/5 dark:bg-neutral-950/85" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -196,7 +201,7 @@ function Orders({ onStart }) {
 }
 
 /* ---------- Profile ---------- */
-function Profile({ dark, setDark }) {
+function Profile({ dark, setDark, onOpenAdmin }) {
   const { t } = useLang()
   const rows = [
     { label: t('me.row.designs'), value: t('me.row.designs.v') },
@@ -213,6 +218,19 @@ function Profile({ dark, setDark }) {
           <div className="text-[13px] text-white/80">{t('me.member.sub')}</div>
         </div>
       </div>
+
+      {/* Merchant admin entry */}
+      <button
+        onClick={onOpenAdmin}
+        className="mt-4 flex w-full items-center gap-3 rounded-3xl border border-black/5 bg-white p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-[0.99] dark:border-white/5 dark:bg-neutral-800"
+      >
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-50 text-xl dark:bg-brand-900/30">🛍️</span>
+        <div className="flex-1">
+          <div className="text-[15px] font-medium text-neutral-900 dark:text-white">{t('admin.entry')}</div>
+          <div className="text-[12px] text-neutral-400">{t('admin.entry.sub')}</div>
+        </div>
+        <ChevronRight size={18} className="text-neutral-300" />
+      </button>
 
       <div className="mt-4 flex items-center justify-between rounded-3xl border border-black/5 bg-white p-4 shadow-card dark:border-white/5 dark:bg-neutral-800">
         <div className="flex items-center gap-3">

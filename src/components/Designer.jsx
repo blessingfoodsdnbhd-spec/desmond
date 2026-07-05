@@ -15,6 +15,7 @@ import {
 } from '../data/crystals.js'
 import { makeBead, summarize, recommendCount, beadsToFill } from '../utils/bracelet.js'
 import { randomPattern } from '../data/recommendations.js'
+import { useStore } from '../data/store.js'
 import {
   useLang,
   localizeCrystal,
@@ -39,6 +40,7 @@ import {
 
 export function Designer({ dark, initialBeads }) {
   const { t, lang } = useLang()
+  const { beads: customBeads } = useStore()
   const [beads, setBeads] = useState(initialBeads || [])
   const [past, setPast] = useState([])
   const [future, setFuture] = useState([])
@@ -120,7 +122,7 @@ export function Designer({ dark, initialBeads }) {
   const rec = useMemo(() => beadsToFill(beads, wrist, size), [beads, wrist, size])
 
   const filtered = useMemo(() => {
-    let list = CRYSTALS
+    let list = [...CRYSTALS, ...customBeads]
     if (cat !== 'all') list = list.filter((c) => c.category.includes(cat))
     const q = query.trim().toLowerCase()
     if (q)
@@ -128,13 +130,13 @@ export function Designer({ dark, initialBeads }) {
         const en = CRYSTAL_I18N[c.id]
         return (
           c.name.includes(query) ||
-          c.pinyin.toLowerCase().includes(q) ||
+          (c.pinyin || '').toLowerCase().includes(q) ||
           c.keywords.some((k) => k.includes(query)) ||
           en?.keywords.some((k) => k.toLowerCase().includes(q))
         )
       })
     return list
-  }, [cat, query])
+  }, [cat, query, customBeads])
 
   const selectedCrystal = localizeCrystal(CRYSTAL_MAP[beads.find((b) => b.uid === selectedUid)?.crystalId], lang)
 

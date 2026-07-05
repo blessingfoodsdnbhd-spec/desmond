@@ -5,6 +5,7 @@ import { ProductSheet } from './ProductSheet.jsx'
 import { CRYSTALS, CRYSTAL_MAP } from '../data/crystals.js'
 import { PRESETS } from '../data/recommendations.js'
 import { PRODUCTS } from '../data/products.js'
+import { useStore } from '../data/store.js'
 import { makeBead } from '../utils/bracelet.js'
 import { useLang, localizeCrystal, money, PRESET_I18N } from '../i18n.jsx'
 import {
@@ -28,7 +29,9 @@ function patternToBeads(pattern) {
 
 export function Home({ onStart }) {
   const { t, lang } = useLang()
+  const { products: customProducts } = useStore()
   const [product, setProduct] = useState(null)
+  const featured = [...PRODUCTS, ...customProducts]
   return (
     <div className="pb-24 lg:pb-12">
       <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
@@ -120,11 +123,12 @@ export function Home({ onStart }) {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {PRODUCTS.map((pr) => {
+            {featured.map((pr) => {
               const c = localizeCrystal(CRYSTAL_MAP[pr.crystalId], lang)
               const name = lang === 'zh' ? pr.name : pr.name_en
               const badge = lang === 'zh' ? pr.badge : pr.badge_en
-              const min = Math.min(...pr.sizes.map((s) => s.price))
+              const kws = c?.keywords || pr.keywords || []
+              const min = pr.sizes?.length ? Math.min(...pr.sizes.map((s) => s.price)) : 0
               return (
                 <button
                   key={pr.id}
@@ -141,8 +145,8 @@ export function Home({ onStart }) {
                   </div>
                   <div className="p-3">
                     <div className="text-[14px] font-semibold text-neutral-900 dark:text-white">{name}</div>
-                    <div className="truncate text-[11px] text-neutral-400">{c?.keywords.join(' · ')}</div>
-                    <div className="mt-1 text-[14px] font-bold text-brand-600 dark:text-brand-300">{t('product.from', money(min))}</div>
+                    <div className="truncate text-[11px] text-neutral-400">{kws.join(' · ')}</div>
+                    <div className="mt-1 text-[14px] font-bold text-brand-600 dark:text-brand-300">{min ? t('product.from', money(min)) : ''}</div>
                   </div>
                 </button>
               )
