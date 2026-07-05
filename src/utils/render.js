@@ -43,6 +43,28 @@ export function drawBead(ctx, x, y, r, crystal) {
     ctx.fill()
   }
 
+  // 光线透射内发光（通透感）
+  const glow = ctx.createRadialGradient(x + r * 0.24, y + r * 0.4, r * 0.02, x + r * 0.24, y + r * 0.4, r * 1.04)
+  glow.addColorStop(0, hexA(g.light, 0.5))
+  glow.addColorStop(0.55, hexA(g.light, 0.1))
+  glow.addColorStop(1, hexA(g.light, 0))
+  ctx.beginPath()
+  ctx.arc(x, y, r, 0, Math.PI * 2)
+  ctx.fillStyle = glow
+  ctx.fill()
+
+  // 底部透光边缘
+  ctx.beginPath()
+  ctx.ellipse(x, y + r * 0.5, r * 0.6, r * 0.28, 0, 0, Math.PI * 2)
+  ctx.fillStyle = hexA(g.light, 0.24)
+  ctx.fill()
+
+  // 穿孔孔口（顶部）
+  ctx.beginPath()
+  ctx.ellipse(x, y - r * 0.9, r * 0.14, r * 0.06, 0, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(20,20,25,0.2)'
+  ctx.fill()
+
   // 主高光
   ctx.beginPath()
   ctx.ellipse(x - r * 0.34, y - r * 0.4, r * 0.28, r * 0.2, -0.5, 0, Math.PI * 2)
