@@ -16,6 +16,14 @@ import {
 import { makeBead, summarize, recommendCount, beadsToFill } from '../utils/bracelet.js'
 import { randomPattern } from '../data/recommendations.js'
 import {
+  useLang,
+  localizeCrystal,
+  money,
+  CATEGORY_I18N,
+  ELEMENT_I18N,
+  CRYSTAL_I18N,
+} from '../i18n.jsx'
+import {
   TrashIcon,
   UndoIcon,
   RedoIcon,
@@ -24,15 +32,13 @@ import {
   SparkleIcon,
   WandIcon,
   ChevronRight,
-  ArrowLeft,
   CheckIcon,
   PlusIcon,
   EnergyIcon,
 } from './icons.jsx'
 
-const STEPS = ['选择水晶', '设计搭配', '完成设计']
-
 export function Designer({ dark, initialBeads }) {
+  const { t, lang } = useLang()
   const [beads, setBeads] = useState(initialBeads || [])
   const [past, setPast] = useState([])
   const [future, setFuture] = useState([])
@@ -42,11 +48,13 @@ export function Designer({ dark, initialBeads }) {
   const [query, setQuery] = useState('')
   const [selectedUid, setSelectedUid] = useState(null)
   const [step, setStep] = useState(0)
-  const [detail, setDetail] = useState(null) // crystal for detail modal
+  const [detail, setDetail] = useState(null) // localized crystal for detail modal
   const [showSmart, setShowSmart] = useState(false)
   const [showExport, setShowExport] = useState(false)
   const [toast, setToast] = useState('')
   const toastTimer = useRef(null)
+
+  const STEPS = [t('step.choose'), t('step.arrange'), t('step.finish')]
 
   const commit = (next) => {
     setPast((p) => [...p.slice(-40), beads])
@@ -74,40 +82,38 @@ export function Designer({ dark, initialBeads }) {
 
   const addBead = (crystal) => {
     commit([...beads, makeBead(crystal.id, size)])
-    notify(`已添加 ${crystal.name} · ${size}mm`)
+    notify(t('design.added', localizeCrystal(CRYSTAL_MAP[crystal.id], lang)?.name, size))
   }
   const removeSelected = () => {
     if (!selectedUid) return
     commit(beads.filter((b) => b.uid !== selectedUid))
     setSelectedUid(null)
   }
-  const removeBead = (uid) => commit(beads.filter((b) => b.uid !== uid))
   const clearAll = () => {
     if (!beads.length) return
     commit([])
     setSelectedUid(null)
   }
-  const reorder = (next) => setBeads(next) // 拖拽过程中即时更新，不逐帧写历史
+  const reorder = (next) => setBeads(next) // 拖拽即时更新，不逐帧写历史
 
   const applyPattern = (ids, label) => {
-    const next = ids.map((id) => makeBead(id, size))
-    commit(next)
+    commit(ids.map((id) => makeBead(id, size)))
     if (label) notify(label)
   }
   const randomize = () => {
     const n = beads.length || recommendCount(wrist, size)
-    applyPattern(randomPattern(n), '随机搭配 ✨')
+    applyPattern(randomPattern(n), t('design.randomToast'))
   }
   const autoFill = () => {
     const { needed } = beadsToFill(beads, wrist, size)
     if (needed <= 0) {
-      notify('已达到推荐颗数')
+      notify(t('design.reached'))
       return
     }
     const base = beads.length ? beads.map((b) => b.crystalId) : ['clear']
     const add = Array.from({ length: needed }, (_, i) => makeBead(base[i % base.length], size))
     commit([...beads, ...add])
-    notify(`已自动补齐 ${needed} 颗`)
+    notify(t('design.filled', needed))
   }
 
   const stats = useMemo(() => summarize(beads), [beads])
@@ -116,10 +122,21 @@ export function Designer({ dark, initialBeads }) {
   const filtered = useMemo(() => {
     let list = CRYSTALS
     if (cat !== 'all') list = list.filter((c) => c.category.includes(cat))
-    const q = query.trim()
-    if (q) list = list.filter((c) => c.name.includes(q) || c.pinyin.toLowerCase().includes(q.toLowerCase()) || c.keywords.some((k) => k.includes(q)))
+    const q = query.trim().toLowerCase()
+    if (q)
+      list = list.filter((c) => {
+        const en = CRYSTAL_I18N[c.id]
+        return (
+          c.name.includes(query) ||
+          c.pinyin.toLowerCase().includes(q) ||
+          c.keywords.some((k) => k.includes(query)) ||
+          en?.keywords.some((k) => k.toLowerCase().includes(q))
+        )
+      })
     return list
   }, [cat, query])
+
+  const selectedCrystal = localizeCrystal(CRYSTAL_MAP[beads.find((b) => b.uid === selectedUid)?.crystalId], lang)
 
   return (
     <div className="pb-32 lg:pb-10">
@@ -143,7 +160,7 @@ export function Designer({ dark, initialBeads }) {
       </div>
 
       <div className="mx-auto mt-4 flex max-w-6xl flex-col-reverse gap-5 px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_400px]">
-        {/* ==== 左：水晶珠选择 ==== */}
+        {/* ==== Left: crystal palette ==== */}
         <section className="rounded-3xl border border-black/5 bg-white/70 p-4 shadow-card glass dark:border-white/5 dark:bg-neutral-900/60 sm:p-5">
           {/* Size selector */}
           <div className="mb-3 flex items-center justify-between gap-3">
@@ -160,7 +177,7 @@ export function Designer({ dark, initialBeads }) {
                 </button>
               ))}
             </div>
-            <span className="text-[12px] text-neutral-400">选择珠径</span>
+            <span className="text-[12px] text-neutral-400">{t('design.size')}</span>
           </div>
 
           {/* Search */}
@@ -169,7 +186,7 @@ export function Designer({ dark, initialBeads }) {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="搜索水晶 · 名称或功效"
+              placeholder={t('design.search')}
               className="w-full rounded-2xl border border-black/8 bg-white py-2.5 pl-10 pr-4 text-[14px] outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-100 dark:border-white/10 dark:bg-neutral-800 dark:text-white dark:focus:ring-brand-900/50"
             />
           </div>
@@ -184,57 +201,56 @@ export function Designer({ dark, initialBeads }) {
                   cat === c.key ? 'bg-brand-500 text-white shadow-sm' : 'bg-black/5 text-neutral-500 dark:bg-white/8 dark:text-neutral-300'
                 }`}
               >
-                {c.label}
+                {lang === 'zh' ? c.label : CATEGORY_I18N[c.key]}
               </button>
             ))}
           </div>
 
           {/* Bead grid */}
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-            {filtered.map((c) => (
-              <div
-                key={c.id}
-                className="group relative flex flex-col items-center rounded-2xl border border-black/5 bg-white p-3 text-center shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg dark:border-white/5 dark:bg-neutral-800"
-              >
-                <button
-                  onClick={() => setDetail(c)}
-                  className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-black/5 text-neutral-400 transition hover:bg-black/10 hover:text-brand-500 dark:bg-white/10"
-                  aria-label="能量解读"
+            {filtered.map((raw) => {
+              const c = localizeCrystal(raw, lang)
+              return (
+                <div
+                  key={c.id}
+                  className="group relative flex flex-col items-center rounded-2xl border border-black/5 bg-white p-3 text-center shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg dark:border-white/5 dark:bg-neutral-800"
                 >
-                  <EnergyIcon size={13} />
-                </button>
-                <button onClick={() => addBead(c)} className="flex flex-col items-center active:scale-95">
-                  <div className="relative">
-                    <Bead crystal={c} size={64} className="drop-shadow-md transition group-hover:scale-105" />
-                    <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-brand-500 text-white opacity-0 shadow-md transition group-hover:opacity-100">
-                      <PlusIcon size={14} />
-                    </span>
-                  </div>
-                  <div className="mt-2 text-[14px] font-medium text-neutral-900 dark:text-white">{c.name}</div>
-                  <div className="text-[11px] text-neutral-400">{c.keywords.join(' · ')}</div>
-                  <div className="mt-1 flex items-center gap-1.5">
-                    <span className="text-[13px] font-semibold text-brand-600 dark:text-brand-300">¥{beadPrice(c, size)}</span>
-                    <span
-                      className="rounded px-1 py-0.5 text-[10px] font-medium text-white"
-                      style={{ background: ELEMENTS[c.element]?.color }}
-                    >
-                      {ELEMENTS[c.element]?.label}
-                    </span>
-                  </div>
-                </button>
-              </div>
-            ))}
+                  <button
+                    onClick={() => setDetail(c)}
+                    className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-black/5 text-neutral-400 transition hover:bg-black/10 hover:text-brand-500 dark:bg-white/10"
+                    aria-label={t('design.energyRead')}
+                  >
+                    <EnergyIcon size={13} />
+                  </button>
+                  <button onClick={() => addBead(c)} className="flex flex-col items-center active:scale-95">
+                    <div className="relative">
+                      <Bead crystal={c} size={64} className="drop-shadow-md transition group-hover:scale-105" />
+                      <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-brand-500 text-white opacity-0 shadow-md transition group-hover:opacity-100">
+                        <PlusIcon size={14} />
+                      </span>
+                    </div>
+                    <div className="mt-2 text-[14px] font-medium text-neutral-900 dark:text-white">{c.name}</div>
+                    <div className="text-[11px] text-neutral-400">{c.keywords.join(' · ')}</div>
+                    <div className="mt-1 flex items-center gap-1.5">
+                      <span className="text-[13px] font-semibold text-brand-600 dark:text-brand-300">{money(beadPrice(c, size))}</span>
+                      <span className="rounded px-1 py-0.5 text-[10px] font-medium text-white" style={{ background: ELEMENTS[c.element]?.color }}>
+                        {lang === 'zh' ? ELEMENTS[c.element]?.label : ELEMENT_I18N[c.element]}
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              )
+            })}
             {filtered.length === 0 && (
-              <div className="col-span-full py-10 text-center text-[13px] text-neutral-400">没有找到匹配的水晶</div>
+              <div className="col-span-full py-10 text-center text-[13px] text-neutral-400">{t('design.noResult')}</div>
             )}
           </div>
         </section>
 
-        {/* ==== 右：手链预览 ==== */}
+        {/* ==== Right: bracelet preview ==== */}
         <section className="lg:sticky lg:top-20 lg:self-start">
           <div className="rounded-3xl border border-black/5 bg-white/70 p-4 shadow-card glass dark:border-white/5 dark:bg-neutral-900/60 sm:p-5">
             <div className="flex gap-3">
-              {/* Ring */}
               <div className="relative flex-1">
                 <div className="mx-auto aspect-square w-full max-w-[300px] rounded-full bg-gradient-to-br from-white to-neutral-100 shadow-inner dark:from-neutral-800 dark:to-neutral-900">
                   <BraceletRing
@@ -245,26 +261,25 @@ export function Designer({ dark, initialBeads }) {
                   />
                 </div>
               </div>
-              {/* Action rail */}
               <div className="flex flex-col justify-center gap-2">
-                <RailBtn onClick={clearAll} icon={<TrashIcon size={18} />} label="清空" disabled={!beads.length} />
-                <RailBtn onClick={undo} icon={<UndoIcon size={18} />} label="撤销" disabled={!past.length} />
-                <RailBtn onClick={redo} icon={<RedoIcon size={18} />} label="重做" disabled={!future.length} />
-                <RailBtn onClick={randomize} icon={<ShuffleIcon size={18} />} label="随机" />
+                <RailBtn onClick={clearAll} icon={<TrashIcon size={18} />} label={t('rail.clear')} disabled={!beads.length} />
+                <RailBtn onClick={undo} icon={<UndoIcon size={18} />} label={t('rail.undo')} disabled={!past.length} />
+                <RailBtn onClick={redo} icon={<RedoIcon size={18} />} label={t('rail.redo')} disabled={!future.length} />
+                <RailBtn onClick={randomize} icon={<ShuffleIcon size={18} />} label={t('rail.random')} />
               </div>
             </div>
 
             {/* Selected bead action */}
-            {selectedUid && (
+            {selectedUid && selectedCrystal && (
               <div className="mt-3 flex items-center justify-between rounded-2xl bg-brand-50 px-3.5 py-2.5 dark:bg-brand-900/30 animate-fade-in">
                 <div className="flex items-center gap-2">
-                  <Bead crystal={CRYSTAL_MAP[beads.find((b) => b.uid === selectedUid)?.crystalId]} size={26} />
+                  <Bead crystal={selectedCrystal} size={26} />
                   <span className="text-[13px] font-medium text-neutral-700 dark:text-neutral-200">
-                    已选中 · {CRYSTAL_MAP[beads.find((b) => b.uid === selectedUid)?.crystalId]?.name}
+                    {t('design.selected')} · {selectedCrystal.name}
                   </span>
                 </div>
                 <button onClick={removeSelected} className="flex items-center gap-1 rounded-full bg-red-500/90 px-3 py-1.5 text-[12px] font-medium text-white transition active:scale-95">
-                  <TrashIcon size={14} /> 删除
+                  <TrashIcon size={14} /> {t('design.delete')}
                 </button>
               </div>
             )}
@@ -272,30 +287,30 @@ export function Designer({ dark, initialBeads }) {
             {/* Title + count */}
             <div className="mt-3 flex items-end justify-between">
               <div>
-                <div className="text-[15px] font-semibold text-neutral-900 dark:text-white">手链预览</div>
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">已选择 {stats.count} 颗水晶</div>
+                <div className="text-[15px] font-semibold text-neutral-900 dark:text-white">{t('design.preview')}</div>
+                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">{t('design.selectedN', stats.count)}</div>
               </div>
               <div className="text-right">
-                <div className="text-xl font-bold text-neutral-900 dark:text-white">¥{stats.price}</div>
+                <div className="text-xl font-bold text-neutral-900 dark:text-white">{money(stats.price)}</div>
               </div>
             </div>
 
             {/* Reorder strip */}
             <div className="mt-3 rounded-2xl bg-black/[0.03] p-2 dark:bg-white/5">
-              <SortableBeadStrip beads={beads} onReorder={reorder} onSelect={setSelectedUid} selectedUid={selectedUid} />
+              <SortableBeadStrip beads={beads} onReorder={reorder} onSelect={setSelectedUid} selectedUid={selectedUid} emptyHint={t('design.strip')} />
             </div>
 
             {/* Stats grid */}
             <div className="mt-3 grid grid-cols-3 gap-2">
-              <Stat label="周长" value={`${stats.circumferenceCm.toFixed(1)}`} unit="cm" />
-              <Stat label="重量" value={`${stats.weightG.toFixed(1)}`} unit="g" />
-              <Stat label="颗数" value={`${stats.count}`} unit="颗" />
+              <Stat label={t('stat.length')} value={`${stats.circumferenceCm.toFixed(1)}`} unit={t('unit.cm')} />
+              <Stat label={t('stat.weight')} value={`${stats.weightG.toFixed(1)}`} unit={t('unit.g')} />
+              <Stat label={t('stat.count')} value={`${stats.count}`} unit={t('unit.pcs')} />
             </div>
 
             {/* Wrist size */}
             <div className="mt-4">
               <div className="mb-1 flex items-center justify-between text-[13px]">
-                <span className="font-medium text-neutral-700 dark:text-neutral-200">手围</span>
+                <span className="font-medium text-neutral-700 dark:text-neutral-200">{t('design.wrist')}</span>
                 <span className="text-neutral-500 dark:text-neutral-400">{wrist.toFixed(1)} cm</span>
               </div>
               <input
@@ -312,12 +327,12 @@ export function Designer({ dark, initialBeads }) {
                 <div className="flex items-center gap-2 text-[12px] text-neutral-600 dark:text-neutral-300">
                   <WandIcon size={16} className="text-brand-500" />
                   <span>
-                    AI 推荐 <b className="text-brand-600 dark:text-brand-300">{rec.target}</b> 颗（{size}mm）
-                    {rec.needed > 0 && <span className="text-neutral-400">，还差 {rec.needed} 颗</span>}
+                    {t('design.aiRec', rec.target, size)}
+                    {rec.needed > 0 && <span className="text-neutral-400">{t('design.stillNeed', rec.needed)}</span>}
                   </span>
                 </div>
                 <button onClick={autoFill} className="shrink-0 rounded-full bg-brand-500 px-3 py-1.5 text-[12px] font-medium text-white transition active:scale-95 disabled:opacity-40" disabled={rec.needed <= 0}>
-                  自动补齐
+                  {t('design.autoFill')}
                 </button>
               </div>
             </div>
@@ -328,13 +343,13 @@ export function Designer({ dark, initialBeads }) {
                 onClick={() => setShowSmart(true)}
                 className="flex items-center justify-center gap-1.5 rounded-2xl border border-brand-200 bg-white py-3 text-[14px] font-medium text-brand-600 transition hover:bg-brand-50 active:scale-[0.99] dark:border-brand-800 dark:bg-neutral-800 dark:text-brand-300"
               >
-                <SparkleIcon size={17} /> 智能搭配
+                <SparkleIcon size={17} /> {t('design.smart')}
               </button>
               <button
-                onClick={() => (beads.length ? setShowExport(true) : notify('先添加水晶吧'))}
+                onClick={() => (beads.length ? setShowExport(true) : notify(t('design.addFirst')))}
                 className="flex items-center justify-center gap-1.5 rounded-2xl bg-brand-500 py-3 text-[14px] font-medium text-white shadow-glow transition hover:bg-brand-600 active:scale-[0.99]"
               >
-                完成设计 <ChevronRight size={16} />
+                {t('design.finish')} <ChevronRight size={16} />
               </button>
             </div>
           </div>
@@ -350,17 +365,17 @@ export function Designer({ dark, initialBeads }) {
                 <Bead crystal={CRYSTAL_MAP[b.crystalId]} size={24} />
               </div>
             ))}
-            {beads.length === 0 && <span className="text-[13px] text-neutral-400">未添加水晶</span>}
+            {beads.length === 0 && <span className="text-[13px] text-neutral-400">{t('design.noBeads')}</span>}
           </div>
           <div className="ml-auto text-right">
-            <div className="text-[11px] text-neutral-400">已选 {stats.count} 颗</div>
-            <div className="text-[15px] font-bold text-neutral-900 dark:text-white">¥{stats.price}</div>
+            <div className="text-[11px] text-neutral-400">{t('design.selN', stats.count)}</div>
+            <div className="text-[15px] font-bold text-neutral-900 dark:text-white">{money(stats.price)}</div>
           </div>
           <button
-            onClick={() => (beads.length ? setShowExport(true) : notify('先添加水晶吧'))}
+            onClick={() => (beads.length ? setShowExport(true) : notify(t('design.addFirst')))}
             className="rounded-full bg-brand-500 px-4 py-2 text-[13px] font-medium text-white active:scale-95"
           >
-            完成
+            {t('design.done')}
           </button>
         </div>
       </div>
@@ -377,18 +392,18 @@ export function Designer({ dark, initialBeads }) {
         {detail && (
           <div className="text-center">
             <Bead crystal={detail} size={120} className="mx-auto animate-float drop-shadow-xl" />
-            <div className="mt-3 flex justify-center gap-2">
+            <div className="mt-3 flex flex-wrap justify-center gap-2">
               {detail.keywords.map((k) => (
                 <span key={k} className="rounded-full bg-brand-50 px-3 py-1 text-[12px] font-medium text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">{k}</span>
               ))}
               <span className="rounded-full px-3 py-1 text-[12px] font-medium text-white" style={{ background: ELEMENTS[detail.element]?.color }}>
-                五行 · {ELEMENTS[detail.element]?.label}
+                {t('design.element')} · {lang === 'zh' ? ELEMENTS[detail.element]?.label : ELEMENT_I18N[detail.element]}
               </span>
             </div>
             <p className="mt-4 text-left text-[14px] leading-relaxed text-neutral-600 dark:text-neutral-300">{detail.energy}</p>
             <div className="mt-4 flex items-center justify-between rounded-2xl bg-black/[0.03] px-4 py-3 dark:bg-white/5">
-              <span className="text-[13px] text-neutral-500">当前 {size}mm 单价</span>
-              <span className="text-lg font-bold text-brand-600 dark:text-brand-300">¥{beadPrice(detail, size)}</span>
+              <span className="text-[13px] text-neutral-500">{t('design.unitPrice', size)}</span>
+              <span className="text-lg font-bold text-brand-600 dark:text-brand-300">{money(beadPrice(detail, size))}</span>
             </div>
             <button
               onClick={() => {
@@ -397,18 +412,13 @@ export function Designer({ dark, initialBeads }) {
               }}
               className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-2xl bg-brand-500 py-3.5 font-medium text-white shadow-glow transition hover:bg-brand-600 active:scale-[0.99]"
             >
-              <PlusIcon size={18} /> 加入手链
+              <PlusIcon size={18} /> {t('design.addToBracelet')}
             </button>
           </div>
         )}
       </Modal>
 
-      <SmartRecommend
-        open={showSmart}
-        onClose={() => setShowSmart(false)}
-        count={beads.length || rec.target}
-        onApply={applyPattern}
-      />
+      <SmartRecommend open={showSmart} onClose={() => setShowSmart(false)} count={beads.length || rec.target} onApply={applyPattern} />
       <ExportSheet open={showExport} onClose={() => setShowExport(false)} beads={beads} dark={dark} wristCm={wrist} />
     </div>
   )

@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react'
 import { Bead } from './Bead.jsx'
 import { CRYSTAL_MAP } from '../data/crystals.js'
+import { useLang, localizeCrystal } from '../i18n.jsx'
 
 // 可拖拽排序的珠子横条（支持触摸，实时换位）
-export function SortableBeadStrip({ beads, onReorder, onSelect, selectedUid }) {
+export function SortableBeadStrip({ beads, onReorder, onSelect, selectedUid, emptyHint }) {
+  const { lang } = useLang()
   const wrapRef = useRef(null)
   const dragUidRef = useRef(null)
   const [draggingUid, setDraggingUid] = useState(null)
@@ -43,8 +45,8 @@ export function SortableBeadStrip({ beads, onReorder, onSelect, selectedUid }) {
 
   if (beads.length === 0) {
     return (
-      <div className="flex h-14 items-center justify-center rounded-2xl border border-dashed border-black/10 text-[13px] text-neutral-400 dark:border-white/10">
-        点击左侧水晶加入手链，长按拖拽可调整顺序
+      <div className="flex h-14 items-center justify-center rounded-2xl border border-dashed border-black/10 px-3 text-center text-[13px] text-neutral-400 dark:border-white/10">
+        {emptyHint || '点击左侧水晶加入手链，长按拖拽可调整顺序'}
       </div>
     )
   }
@@ -58,7 +60,7 @@ export function SortableBeadStrip({ beads, onReorder, onSelect, selectedUid }) {
       onPointerCancel={onPointerUp}
     >
       {beads.map((b) => {
-        const c = CRYSTAL_MAP[b.crystalId]
+        const c = localizeCrystal(CRYSTAL_MAP[b.crystalId], lang)
         const active = b.uid === selectedUid
         const dragging = b.uid === draggingUid
         return (

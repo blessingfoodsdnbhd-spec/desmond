@@ -73,6 +73,19 @@ function hexA(hex, a) {
 }
 
 // 渲染整条手链的产品图 / 分享图到一个 canvas 并返回 dataURL
+const DEFAULT_I18N = {
+  brand: '灵感石 · Stone Lab',
+  tagline: '专属定制 · 水晶能量手链',
+  money: (n) => `¥${n}`,
+  unitPcs: '颗',
+  lengthLabel: '周长',
+  weightLabel: '约',
+  wristLabel: '手围',
+  emptyText: '空手链 · 去添加水晶吧',
+  qrText: '长按识别 · 定制你的专属能量手链',
+  crystalName: (id) => CRYSTAL_MAP[id]?.name,
+}
+
 export function renderProductImage(beads, opts = {}) {
   const {
     width = 1080,
@@ -81,6 +94,7 @@ export function renderProductImage(beads, opts = {}) {
     share = false,
     wristCm = null,
   } = opts
+  const L = { ...DEFAULT_I18N, ...(opts.i18n || {}) }
   const dpr = 2
   const canvas = document.createElement('canvas')
   canvas.width = width * dpr
@@ -105,10 +119,10 @@ export function renderProductImage(beads, opts = {}) {
   ctx.textAlign = 'center'
   ctx.fillStyle = dark ? '#e8f5ee' : '#1f7d50'
   ctx.font = '600 40px -apple-system, "PingFang SC", sans-serif'
-  ctx.fillText('灵感石 · Stone Lab', width / 2, 96)
+  ctx.fillText(L.brand, width / 2, 96)
   ctx.fillStyle = dark ? '#8b8b90' : '#98a29b'
   ctx.font = '400 24px -apple-system, "PingFang SC", sans-serif'
-  ctx.fillText('专属定制 · 水晶能量手链', width / 2, 138)
+  ctx.fillText(L.tagline, width / 2, 138)
 
   // 圆盘背景
   const plateCx = width / 2
@@ -145,7 +159,7 @@ export function renderProductImage(beads, opts = {}) {
   if (beads.length === 0) {
     ctx.fillStyle = dark ? '#6b6b70' : '#b9c2ba'
     ctx.font = '400 30px -apple-system, "PingFang SC", sans-serif'
-    ctx.fillText('空手链 · 去添加水晶吧', plateCx, plateCy)
+    ctx.fillText(L.emptyText, plateCx, plateCy)
   }
 
   // 统计信息卡
@@ -153,21 +167,21 @@ export function renderProductImage(beads, opts = {}) {
   const cardY = height * 0.76
   ctx.fillStyle = dark ? '#e8e8ea' : '#1c1c1e'
   ctx.font = '600 52px -apple-system, "PingFang SC", sans-serif'
-  ctx.fillText(`¥${s.price}`, width / 2, cardY)
+  ctx.fillText(L.money(s.price), width / 2, cardY)
 
   const stats = [
-    `${s.count} 颗`,
-    `周长 ${s.circumferenceCm.toFixed(1)}cm`,
-    `约 ${s.weightG.toFixed(1)}g`,
+    `${s.count} ${L.unitPcs}`,
+    `${L.lengthLabel} ${s.circumferenceCm.toFixed(1)}cm`,
+    `${L.weightLabel} ${s.weightG.toFixed(1)}g`,
   ]
-  if (wristCm) stats.push(`手围 ${wristCm}cm`)
+  if (wristCm) stats.push(`${L.wristLabel} ${wristCm}cm`)
   ctx.fillStyle = dark ? '#9a9aa0' : '#7c857e'
   ctx.font = '400 28px -apple-system, "PingFang SC", sans-serif'
   ctx.fillText(stats.join('   ·   '), width / 2, cardY + 48)
 
   // 成分
   const kinds = [...new Set(beads.map((b) => b.crystalId))]
-    .map((id) => CRYSTAL_MAP[id]?.name)
+    .map((id) => L.crystalName(id))
     .filter(Boolean)
   if (kinds.length) {
     ctx.fillStyle = dark ? '#c9c9cf' : '#4a544c'
@@ -179,7 +193,7 @@ export function renderProductImage(beads, opts = {}) {
     // 分享图底部二维码占位与标语
     ctx.fillStyle = dark ? '#6b6b70' : '#aeb6ae'
     ctx.font = '400 22px -apple-system, "PingFang SC", sans-serif'
-    ctx.fillText('长按识别 · 定制你的专属能量手链', width / 2, height - 60)
+    ctx.fillText(L.qrText, width / 2, height - 60)
   }
 
   return canvas.toDataURL('image/png')
