@@ -75,10 +75,10 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
 
       {/* 中心水印 */}
       <text x={CX} y={CY - 6} textAnchor="middle" className="fill-neutral-300 dark:fill-neutral-600" style={{ fontSize: 18, fontWeight: 600, letterSpacing: 1 }}>
-        灵感石
+        阿发水晶阁
       </text>
-      <text x={CX} y={CY + 14} textAnchor="middle" className="fill-neutral-300 dark:fill-neutral-600" style={{ fontSize: 11, letterSpacing: 2 }}>
-        Stone Lab
+      <text x={CX} y={CY + 14} textAnchor="middle" className="fill-neutral-300 dark:fill-neutral-600" style={{ fontSize: 9, letterSpacing: 1 }}>
+        AH HUAT CRYSTAL
       </text>
 
       {positions.map((p) => (

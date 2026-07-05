@@ -9,10 +9,10 @@ export function money(n) {
 // ---- UI 文案字典 ----
 const DICT = {
   zh: {
-    'brand.name': '灵感石',
-    'brand.full': '灵感石 · Stone Lab',
+    'brand.name': '阿发水晶阁',
+    'brand.full': '阿发水晶阁 · AH HUAT CRYSTAL PAVILION',
     'brand.tagline': '专属定制 · 水晶能量手链',
-    'brand.footer': '灵感石 · Stone Lab · 用心传递每一份能量',
+    'brand.footer': '阿发水晶阁 · 用心传递每一份能量',
 
     'nav.home': '首页',
     'nav.design': '设计',
@@ -20,8 +20,8 @@ const DICT = {
     'nav.order': '订单',
     'nav.me': '我的',
 
-    'header.home.title': '水晶手链 DIY',
-    'header.home.sub': '灵感石 · Stone Lab',
+    'header.home.title': '阿发水晶阁',
+    'header.home.sub': '水晶手链 DIY · Crystal Bracelet DIY',
     'header.design.title': '自由设计',
     'header.design.sub': '选择水晶 · 设计搭配',
     'header.discover.title': '发现',
@@ -29,7 +29,7 @@ const DICT = {
     'header.order.title': '订单',
     'header.order.sub': '我的定制记录',
     'header.me.title': '我的',
-    'header.me.sub': 'Stone Lab 会员',
+    'header.me.sub': '阿发水晶阁 会员',
     'header.save': '保存设计',
 
     'home.heroTitle1': '设计专属你的',
@@ -136,7 +136,7 @@ const DICT = {
     'order.empty.title': '还没有订单',
     'order.empty.desc': '设计一条专属你的水晶能量手链，开启定制之旅。',
     'order.empty.btn': '立即设计',
-    'me.member': '灵感石会员',
+    'me.member': '阿发水晶阁会员',
     'me.member.sub': '定制你的专属能量',
     'me.dark': '深色模式',
     'me.dark.sub': '跟随心情自由切换',
@@ -146,14 +146,14 @@ const DICT = {
     'me.row.fav.v': '8 种',
     'me.row.profile': '能量档案',
     'me.row.profile.v': '已完善',
-    'me.row.about': '关于灵感石',
+    'me.row.about': '关于阿发水晶阁',
     'me.row.about.v': 'v1.0.0',
   },
   en: {
-    'brand.name': 'Stone Lab',
-    'brand.full': 'Stone Lab',
+    'brand.name': 'AH HUAT CRYSTAL PAVILION',
+    'brand.full': 'AH HUAT CRYSTAL PAVILION',
     'brand.tagline': 'Custom Made · Crystal Energy Bracelet',
-    'brand.footer': 'Stone Lab · crafted energy in every bead',
+    'brand.footer': 'AH HUAT CRYSTAL PAVILION · crafted energy in every bead',
 
     'nav.home': 'Home',
     'nav.design': 'Design',
@@ -161,8 +161,8 @@ const DICT = {
     'nav.order': 'Orders',
     'nav.me': 'Me',
 
-    'header.home.title': 'Crystal Bracelet DIY',
-    'header.home.sub': 'Stone Lab',
+    'header.home.title': 'AH HUAT CRYSTAL PAVILION',
+    'header.home.sub': 'Crystal Bracelet DIY',
     'header.design.title': 'Free Design',
     'header.design.sub': 'Pick crystals · Arrange',
     'header.discover.title': 'Discover',
@@ -170,7 +170,7 @@ const DICT = {
     'header.order.title': 'Orders',
     'header.order.sub': 'My custom records',
     'header.me.title': 'Me',
-    'header.me.sub': 'Stone Lab Member',
+    'header.me.sub': 'AH HUAT Member',
     'header.save': 'Save',
 
     'home.heroTitle1': 'Design your own',
@@ -277,7 +277,7 @@ const DICT = {
     'order.empty.title': 'No orders yet',
     'order.empty.desc': 'Design a crystal energy bracelet made just for you.',
     'order.empty.btn': 'Design now',
-    'me.member': 'Stone Lab Member',
+    'me.member': 'AH HUAT Member',
     'me.member.sub': 'Customise your own energy',
     'me.dark': 'Dark Mode',
     'me.dark.sub': 'Switch freely with your mood',

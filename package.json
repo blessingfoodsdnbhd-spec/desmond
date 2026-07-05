@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "灵感石 · 水晶手链 DIY — An Apple-style crystal bracelet designer built with React + Tailwind CSS",
+  "description": "阿发水晶阁 AH HUAT CRYSTAL PAVILION — An Apple-style crystal bracelet designer built with React + Tailwind CSS",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

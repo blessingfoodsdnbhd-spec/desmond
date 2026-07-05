@@ -74,7 +74,7 @@ function hexA(hex, a) {
 
 // 渲染整条手链的产品图 / 分享图到一个 canvas 并返回 dataURL
 const DEFAULT_I18N = {
-  brand: '灵感石 · Stone Lab',
+  brand: '阿发水晶阁 · AH HUAT CRYSTAL PAVILION',
   tagline: '专属定制 · 水晶能量手链',
   money: (n) => `¥${n}`,
   unitPcs: '颗',

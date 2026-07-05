@@ -1,4 +1,4 @@
-# 灵感石 · 水晶手链 DIY (Stone Lab)
+# 阿发水晶阁 · AH HUAT CRYSTAL PAVILION
 
 一个 Apple 风格的高品质**水晶能量手链 DIY** 网页应用，使用 **React + Tailwind CSS** 构建。
 纯前端、使用假数据，无需后端即可运行。
@@ -68,4 +68,4 @@ src/
   无需任何外部图片资源，导出的产品图与页面预览效果完全一致。
 - 数据均为**演示用假数据**，能量、五行、星座等描述仅供趣味参考。
 
-> 灵感石 · Stone Lab — 用心传递每一份能量。
+> 阿发水晶阁 · AH HUAT CRYSTAL PAVILION — 用心传递每一份能量。
