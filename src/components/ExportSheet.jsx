@@ -3,16 +3,19 @@ import { Modal } from './Modal.jsx'
 import { renderProductImage, downloadDataUrl, exportPdf } from '../utils/render.js'
 import { useLang, localizeCrystal, money } from '../i18n.jsx'
 import { CRYSTAL_MAP } from '../data/crystals.js'
-import { DownloadIcon, ShareIcon, PdfIcon } from './icons.jsx'
+import { summarize } from '../utils/bracelet.js'
+import { waLink } from '../data/store.js'
+import { DownloadIcon, ShareIcon, PdfIcon, WhatsAppIcon } from './icons.jsx'
 
 export function ExportSheet({ open, onClose, beads, dark, wristCm }) {
   const { t, lang } = useLang()
   const [preview, setPreview] = useState(null)
-  const [mode, setMode] = useState('product') // product | share
   const [busy, setBusy] = useState('')
   const [toast, setToast] = useState('')
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [address, setAddress] = useState('')
 
-  // 传给 Canvas 渲染器的本地化文案
   const imgI18n = useMemo(
     () => ({
       brand: t('brand.full'),
@@ -31,97 +34,156 @@ export function ExportSheet({ open, onClose, beads, dark, wristCm }) {
 
   useEffect(() => {
     if (!open) return
-    setPreview(renderProductImage(beads, { dark, share: mode === 'share', wristCm, i18n: imgI18n }))
-  }, [open, beads, dark, mode, wristCm, imgI18n])
+    setPreview(renderProductImage(beads, { dark, share: false, wristCm, i18n: imgI18n }))
+  }, [open, beads, dark, wristCm, imgI18n])
 
   const notify = (msg) => {
     setToast(msg)
-    setTimeout(() => setToast(''), 1800)
+    setTimeout(() => setToast(''), 2200)
   }
+
+  const stats = useMemo(() => summarize(beads), [beads])
+
+  // 手链成分明细
+  const composition = useMemo(() => {
+    const tally = {}
+    beads.forEach((b) => {
+      const key = `${b.crystalId}|${b.size}`
+      tally[key] = (tally[key] || 0) + 1
+    })
+    return Object.entries(tally).map(([k, n]) => {
+      const [id, size] = k.split('|')
+      const nm = localizeCrystal(CRYSTAL_MAP[id], lang)?.name || id
+      return `${nm} ${size}mm ×${n}`
+    })
+  }, [beads, lang])
 
   const savePng = () => {
-    const url = renderProductImage(beads, { dark, share: mode === 'share', wristCm, i18n: imgI18n })
-    downloadDataUrl(url, `crystal-bracelet-${mode}.png`)
-    notify(t('export.savedPng'))
+    downloadDataUrl(renderProductImage(beads, { dark, wristCm, i18n: imgI18n }), 'my-bracelet.png')
+    notify(t('order.saved'))
   }
 
-  const share = async () => {
+  const shareImg = async () => {
     const url = renderProductImage(beads, { dark, share: true, wristCm, i18n: imgI18n })
     try {
       const blob = await (await fetch(url)).blob()
-      const file = new File([blob], 'crystal-bracelet.png', { type: 'image/png' })
+      const file = new File([blob], 'my-bracelet.png', { type: 'image/png' })
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({ files: [file], title: t('export.shareTitle'), text: t('export.shareText') })
         return
       }
     } catch (_) {}
-    downloadDataUrl(url, 'crystal-bracelet-share.png')
-    notify(t('export.savedShare'))
+    downloadDataUrl(url, 'my-bracelet-share.png')
+    notify(t('order.saved'))
   }
 
   const pdf = async () => {
     setBusy('pdf')
     try {
       await exportPdf(beads, { dark, wristCm, i18n: imgI18n })
-      notify(t('export.savedPdf'))
-    } catch (e) {
-      notify(t('export.failed'))
     } finally {
       setBusy('')
     }
   }
 
-  return (
-    <Modal open={open} onClose={onClose} title={t('export.title')} subtitle={t('export.sub')} maxWidth="max-w-md">
-      <div className="mb-4 flex gap-1 rounded-2xl bg-black/5 p-1 dark:bg-white/5">
-        {[
-          { k: 'product', l: t('export.tab.product') },
-          { k: 'share', l: t('export.tab.share') },
-        ].map((m) => (
-          <button
-            key={m.k}
-            onClick={() => setMode(m.k)}
-            className={`flex-1 rounded-xl py-2 text-[13px] font-medium transition ${
-              mode === m.k ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'
-            }`}
-          >
-            {m.l}
-          </button>
-        ))}
-      </div>
+  const sendOrder = () => {
+    if (!name.trim() || !address.trim()) return notify(t('order.needinfo'))
+    // 先保存设计图，方便顾客在 WhatsApp 里附上
+    downloadDataUrl(renderProductImage(beads, { dark, wristCm, i18n: imgI18n }), 'my-bracelet.png')
 
-      <div className="overflow-hidden rounded-2xl border border-black/5 shadow-card dark:border-white/10">
+    const lines =
+      lang === 'zh'
+        ? [
+            `【${t('brand.name')} · 手链定制订单】`,
+            `姓名：${name}`,
+            phone ? `电话：${phone}` : null,
+            `地址：${address}`,
+            '——',
+            `设计：${stats.count} 颗 · 周长 ${stats.circumferenceCm.toFixed(1)}cm · 约 ${stats.weightG.toFixed(1)}g`,
+            `成分：${composition.join('、')}`,
+            `合计：${money(stats.price)}`,
+            '——',
+            '（我已保存设计图，稍后在对话里发送图片给你 🙏）',
+          ]
+        : [
+            `[${t('brand.name')} · Custom Bracelet Order]`,
+            `Name: ${name}`,
+            phone ? `Phone: ${phone}` : null,
+            `Address: ${address}`,
+            '--',
+            `Design: ${stats.count} pcs · ${stats.circumferenceCm.toFixed(1)}cm · ~${stats.weightG.toFixed(1)}g`,
+            `Beads: ${composition.join(', ')}`,
+            `Total: ${money(stats.price)}`,
+            '--',
+            '(I have saved the design image and will send it in this chat 🙏)',
+          ]
+    window.open(waLink(lines.filter(Boolean).join('\n')), '_blank')
+  }
+
+  return (
+    <Modal open={open} onClose={onClose} title={t('order.title')} subtitle={t('order.sub')} maxWidth="max-w-md">
+      {/* 完整手链图 —— 限制高度，object-contain 保证整条可见 */}
+      <div className="overflow-hidden rounded-2xl border border-black/5 bg-gradient-to-br from-neutral-50 to-neutral-100 shadow-card dark:border-white/10 dark:from-neutral-800 dark:to-neutral-900">
         {preview ? (
-          <img src={preview} alt="preview" className="w-full" />
+          <img src={preview} alt={t('order.preview')} className="mx-auto max-h-[40vh] w-auto object-contain" />
         ) : (
-          <div className="grid aspect-[4/5] place-items-center text-neutral-400">{t('export.generating')}</div>
+          <div className="grid h-40 place-items-center text-neutral-400">{t('export.generating')}</div>
         )}
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2.5">
-        <ExportBtn onClick={savePng} icon={<DownloadIcon size={20} />} label={t('export.png')} />
-        <ExportBtn onClick={share} icon={<ShareIcon size={20} />} label={t('export.share')} />
-        <ExportBtn onClick={pdf} icon={<PdfIcon size={20} />} label={busy === 'pdf' ? t('export.pdf.busy') : t('export.pdf')} disabled={busy === 'pdf'} />
+      {/* 汇总 */}
+      <div className="mt-3 flex items-center justify-between rounded-2xl bg-black/[0.03] px-4 py-2.5 dark:bg-white/5">
+        <span className="text-[12px] text-neutral-500 dark:text-neutral-400">
+          {stats.count} {t('unit.pcs')} · {stats.circumferenceCm.toFixed(1)}cm
+        </span>
+        <span className="text-lg font-bold text-brand-600 dark:text-brand-300">{money(stats.price)}</span>
       </div>
 
+      {/* 保存 / 分享 / PDF */}
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <MiniBtn onClick={savePng} icon={<DownloadIcon size={18} />} label={t('export.png')} />
+        <MiniBtn onClick={shareImg} icon={<ShareIcon size={18} />} label={t('export.share')} />
+        <MiniBtn onClick={pdf} icon={<PdfIcon size={18} />} label={busy === 'pdf' ? t('export.pdf.busy') : t('export.pdf')} disabled={busy === 'pdf'} />
+      </div>
+
+      {/* 收货信息 */}
+      <div className="mt-4 space-y-2.5">
+        <div className="grid grid-cols-2 gap-2.5">
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('order.name.ph')} className={inputCls} />
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t('order.phone.ph')} className={inputCls} />
+        </div>
+        <textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={2} placeholder={t('order.address.ph')} className={inputCls} />
+      </div>
+
+      <button
+        onClick={sendOrder}
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-3.5 font-semibold text-white shadow-glow transition hover:brightness-105 active:scale-[0.99]"
+      >
+        <WhatsAppIcon size={20} /> {t('order.send')}
+      </button>
+      <p className="mt-2 px-1 text-[11px] leading-relaxed text-neutral-400">{t('order.note')}</p>
+
       {toast && (
-        <div className="pointer-events-none fixed inset-x-0 bottom-24 z-[60] flex justify-center">
-          <div className="rounded-full bg-neutral-900/90 px-4 py-2 text-[13px] text-white shadow-card-lg animate-scale-in dark:bg-white/90 dark:text-neutral-900">{toast}</div>
+        <div className="pointer-events-none fixed inset-x-0 bottom-24 z-[70] flex justify-center px-6">
+          <div className="rounded-full bg-neutral-900/90 px-4 py-2 text-center text-[13px] text-white shadow-card-lg animate-scale-in dark:bg-white/90 dark:text-neutral-900">{toast}</div>
         </div>
       )}
     </Modal>
   )
 }
 
-function ExportBtn({ onClick, icon, label, disabled }) {
+const inputCls =
+  'w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-[14px] outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100 dark:border-white/10 dark:bg-neutral-800 dark:text-white'
+
+function MiniBtn({ onClick, icon, label, disabled }) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className="flex flex-col items-center gap-1.5 rounded-2xl border border-black/5 bg-white py-3.5 text-neutral-700 shadow-card transition hover:-translate-y-0.5 hover:text-brand-600 hover:shadow-card-lg active:scale-95 disabled:opacity-50 dark:border-white/5 dark:bg-neutral-800 dark:text-neutral-200"
+      className="flex flex-col items-center gap-1 rounded-2xl border border-black/5 bg-white py-2.5 text-neutral-700 shadow-card transition hover:text-brand-600 active:scale-95 disabled:opacity-50 dark:border-white/5 dark:bg-neutral-800 dark:text-neutral-200"
     >
       {icon}
-      <span className="text-[12px] font-medium">{label}</span>
+      <span className="text-[11px] font-medium">{label}</span>
     </button>
   )
 }

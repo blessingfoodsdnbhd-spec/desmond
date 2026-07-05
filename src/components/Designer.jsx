@@ -15,7 +15,7 @@ import {
 } from '../data/crystals.js'
 import { makeBead, summarize, recommendCount, beadsToFill } from '../utils/bracelet.js'
 import { randomPattern } from '../data/recommendations.js'
-import { useStore } from '../data/store.js'
+import { useStore, effectiveDefaultBeads } from '../data/store.js'
 import {
   useLang,
   localizeCrystal,
@@ -40,7 +40,8 @@ import {
 
 export function Designer({ dark, initialBeads }) {
   const { t, lang } = useLang()
-  const { beads: customBeads } = useStore()
+  const store = useStore()
+  const customBeads = store.beads
   const [beads, setBeads] = useState(initialBeads || [])
   const [past, setPast] = useState([])
   const [future, setFuture] = useState([])
@@ -122,7 +123,7 @@ export function Designer({ dark, initialBeads }) {
   const rec = useMemo(() => beadsToFill(beads, wrist, size), [beads, wrist, size])
 
   const filtered = useMemo(() => {
-    let list = [...CRYSTALS, ...customBeads]
+    let list = [...effectiveDefaultBeads(store), ...customBeads]
     if (cat !== 'all') list = list.filter((c) => c.category.includes(cat))
     const q = query.trim().toLowerCase()
     if (q)
@@ -136,7 +137,7 @@ export function Designer({ dark, initialBeads }) {
         )
       })
     return list
-  }, [cat, query, customBeads])
+  }, [cat, query, store])
 
   const selectedCrystal = localizeCrystal(CRYSTAL_MAP[beads.find((b) => b.uid === selectedUid)?.crystalId], lang)
 

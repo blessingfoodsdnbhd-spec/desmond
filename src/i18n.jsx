@@ -183,6 +183,20 @@ const DICT = {
     'export.img.wrist': '手围',
     'export.img.empty': '空手链 · 去添加水晶吧',
     'export.img.qr': '长按识别 · 定制你的专属能量手链',
+    'order.title': '完成设计 · 下单',
+    'order.sub': '填写收货信息，一键发送到 WhatsApp',
+    'order.preview': '你的手链',
+    'order.name': '姓名',
+    'order.phone': '电话',
+    'order.address': '收货地址',
+    'order.name.ph': '请输入姓名',
+    'order.phone.ph': '手机号码',
+    'order.address.ph': '街道、城市、邮编',
+    'order.send': '发送订单到 WhatsApp',
+    'order.savefirst': '先保存设计图',
+    'order.needinfo': '请填写姓名和地址',
+    'order.saved': '设计图已保存，请在 WhatsApp 里附上',
+    'order.note': '点「发送订单」后，设计图会自动保存到你的相册，请在 WhatsApp 对话里发送给我们；确认后我们会发 TNG 给你付款。',
 
     'discover.cta': '去设计我的手链',
     'discover.element': '五行',
@@ -377,6 +391,20 @@ const DICT = {
     'export.img.wrist': 'Wrist',
     'export.img.empty': 'Empty · add some crystals',
     'export.img.qr': 'Scan to customise your own energy bracelet',
+    'order.title': 'Finish · Order',
+    'order.sub': 'Fill in your details and send to WhatsApp',
+    'order.preview': 'Your bracelet',
+    'order.name': 'Name',
+    'order.phone': 'Phone',
+    'order.address': 'Delivery address',
+    'order.name.ph': 'Your name',
+    'order.phone.ph': 'Mobile number',
+    'order.address.ph': 'Street, city, postcode',
+    'order.send': 'Send order to WhatsApp',
+    'order.savefirst': 'Save design image',
+    'order.needinfo': 'Please enter name and address',
+    'order.saved': 'Design image saved — attach it in WhatsApp',
+    'order.note': 'After tapping “Send order”, the design image is saved to your gallery — please send it to us in WhatsApp. Once confirmed we will send you a TNG request for payment.',
 
     'discover.cta': 'Design my bracelet',
     'discover.element': 'Element',
@@ -516,6 +544,11 @@ export function localizeCrystal(crystal, lang) {
     }
   }
   const en = CRYSTAL_I18N[crystal.id]
-  if (!en) return crystal
-  return { ...crystal, name: crystal.pinyin || crystal.name, keywords: en.keywords, energy: en.energy }
+  // 默认珠子（可能被编辑过：优先用编辑填入的英文字段）
+  return {
+    ...crystal,
+    name: crystal.name_en || crystal.pinyin || crystal.name,
+    keywords: en?.keywords || crystal.keywords || [],
+    energy: crystal.energy_en || en?.energy || crystal.energy || '',
+  }
 }

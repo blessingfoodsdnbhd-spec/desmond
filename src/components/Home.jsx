@@ -4,8 +4,7 @@ import { BraceletRing } from './BraceletRing.jsx'
 import { ProductSheet } from './ProductSheet.jsx'
 import { CRYSTALS, CRYSTAL_MAP } from '../data/crystals.js'
 import { PRESETS } from '../data/recommendations.js'
-import { PRODUCTS } from '../data/products.js'
-import { useStore } from '../data/store.js'
+import { useStore, effectiveDefaultProducts } from '../data/store.js'
 import { makeBead } from '../utils/bracelet.js'
 import { useLang, localizeCrystal, money, PRESET_I18N } from '../i18n.jsx'
 import {
@@ -29,9 +28,9 @@ function patternToBeads(pattern) {
 
 export function Home({ onStart }) {
   const { t, lang } = useLang()
-  const { products: customProducts } = useStore()
+  const store = useStore()
   const [product, setProduct] = useState(null)
-  const featured = [...PRODUCTS, ...customProducts]
+  const featured = [...effectiveDefaultProducts(store), ...store.products]
   return (
     <div className="pb-24 lg:pb-12">
       <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">

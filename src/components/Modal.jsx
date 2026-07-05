@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { CloseIcon } from './icons.jsx'
 
 // Apple 风格底部弹出面板 / 居中卡片
@@ -15,7 +16,7 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
   }, [open, onClose])
 
   if (!open) return null
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
@@ -44,6 +45,7 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

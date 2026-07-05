@@ -2,6 +2,10 @@
 // 说明：纯前端存储，数据保存在本机浏览器。提供导出/导入备份。
 import { useSyncExternalStore } from 'react'
 import { CRYSTAL_MAP, CRYSTALS } from './crystals.js'
+import { PRODUCTS } from './products.js'
+
+// 默认项目的原始副本（用于叠加编辑）
+const ORIG_BEAD = Object.fromEntries(CRYSTALS.map((c) => [c.id, c]))
 
 const K = {
   beads: 'ah_beads_v1',
@@ -9,6 +13,10 @@ const K = {
   pass: 'ah_pass_v1',
   authed: 'ah_authed_v1',
   wa: 'ah_wa_v1',
+  beadEdits: 'ah_bead_edits_v1',
+  beadHidden: 'ah_bead_hidden_v1',
+  productEdits: 'ah_product_edits_v1',
+  productHidden: 'ah_product_hidden_v1',
 }
 const DEFAULT_PASS = 'ahhuat888'
 const DEFAULT_WA = '60127718812' // 马来西亚 WhatsApp（不含 +）
@@ -34,9 +42,49 @@ let state = {
   beads: read(K.beads, []),
   products: read(K.products, []),
   authed: read(K.authed, false),
+  beadEdits: read(K.beadEdits, {}),
+  beadHidden: read(K.beadHidden, []),
+  productEdits: read(K.productEdits, {}),
+  productHidden: read(K.productHidden, []),
 }
+// 把默认珠子的编辑叠加进 CRYSTAL_MAP
+function applyBeadEdit(id) {
+  if (ORIG_BEAD[id]) CRYSTAL_MAP[id] = { ...ORIG_BEAD[id], ...(state.beadEdits[id] || {}) }
+}
+Object.keys(ORIG_BEAD).forEach(applyBeadEdit)
 // 启动时注册已保存的自定义珠子
 state.beads.forEach(registerBead)
+
+// 生效后的默认项目（应用编辑 + 过滤隐藏）
+export function effectiveDefaultBeads(s) {
+  return CRYSTALS.map((c) => ({ ...c, ...(s.beadEdits[c.id] || {}) })).filter((c) => !s.beadHidden.includes(c.id))
+}
+export function effectiveDefaultProducts(s) {
+  return PRODUCTS.map((p) => ({ ...p, ...(s.productEdits[p.id] || {}) })).filter((p) => !s.productHidden.includes(p.id))
+}
+
+// 编辑默认珠子 / 隐藏 / 恢复
+export function setBeadEdit(id, patch) {
+  state.beadEdits = { ...state.beadEdits, [id]: { ...(state.beadEdits[id] || {}), ...patch } }
+  write(K.beadEdits, state.beadEdits)
+  applyBeadEdit(id)
+  emit()
+}
+export function toggleHideBead(id) {
+  state.beadHidden = state.beadHidden.includes(id) ? state.beadHidden.filter((x) => x !== id) : [...state.beadHidden, id]
+  write(K.beadHidden, state.beadHidden)
+  emit()
+}
+export function setProductEdit(id, patch) {
+  state.productEdits = { ...state.productEdits, [id]: { ...(state.productEdits[id] || {}), ...patch } }
+  write(K.productEdits, state.productEdits)
+  emit()
+}
+export function toggleHideProduct(id) {
+  state.productHidden = state.productHidden.includes(id) ? state.productHidden.filter((x) => x !== id) : [...state.productHidden, id]
+  write(K.productHidden, state.productHidden)
+  emit()
+}
 
 const listeners = new Set()
 function emit() {
@@ -118,6 +166,18 @@ export function addBead(bead) {
   emit()
   return b
 }
+export function updateBead(id, patch) {
+  state.beads = state.beads.map((b) => {
+    if (b.id !== id) return b
+    const merged = { ...b, ...patch }
+    if (patch.keywords) merged.keywords = patch.keywords
+    merged.basePrice = Number(merged.basePrice) || b.basePrice
+    registerBead(merged)
+    return merged
+  })
+  write(K.beads, state.beads)
+  emit()
+}
 export function deleteBead(id) {
   state.beads = state.beads.filter((b) => b.id !== id)
   delete CRYSTAL_MAP[id]
@@ -146,6 +206,11 @@ export function addProduct(p) {
   emit()
   return prod
 }
+export function updateProduct(id, patch) {
+  state.products = state.products.map((p) => (p.id === id ? { ...p, ...patch } : p))
+  write(K.products, state.products)
+  emit()
+}
 export function deleteProduct(id) {
   state.products = state.products.filter((p) => p.id !== id)
   write(K.products, state.products)
@@ -154,7 +219,19 @@ export function deleteProduct(id) {
 
 // ---------- 备份 导出 / 导入 ----------
 export function exportData() {
-  return JSON.stringify({ beads: state.beads, products: state.products, v: 1 }, null, 2)
+  return JSON.stringify(
+    {
+      beads: state.beads,
+      products: state.products,
+      beadEdits: state.beadEdits,
+      beadHidden: state.beadHidden,
+      productEdits: state.productEdits,
+      productHidden: state.productHidden,
+      v: 2,
+    },
+    null,
+    2,
+  )
 }
 export function importData(json) {
   const data = typeof json === 'string' ? JSON.parse(json) : json
@@ -166,6 +243,23 @@ export function importData(json) {
   if (Array.isArray(data.products)) {
     state.products = data.products
     write(K.products, state.products)
+  }
+  if (data.beadEdits) {
+    state.beadEdits = data.beadEdits
+    write(K.beadEdits, state.beadEdits)
+    Object.keys(ORIG_BEAD).forEach(applyBeadEdit)
+  }
+  if (Array.isArray(data.beadHidden)) {
+    state.beadHidden = data.beadHidden
+    write(K.beadHidden, state.beadHidden)
+  }
+  if (data.productEdits) {
+    state.productEdits = data.productEdits
+    write(K.productEdits, state.productEdits)
+  }
+  if (Array.isArray(data.productHidden)) {
+    state.productHidden = data.productHidden
+    write(K.productHidden, state.productHidden)
   }
   emit()
 }

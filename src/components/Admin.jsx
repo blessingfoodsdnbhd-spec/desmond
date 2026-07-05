@@ -1,15 +1,24 @@
 import { useRef, useState } from 'react'
 import { Bead } from './Bead.jsx'
-import { CATEGORIES, ELEMENTS } from '../data/crystals.js'
+import { CATEGORIES, ELEMENTS, CRYSTALS } from '../data/crystals.js'
+import { PRODUCTS } from '../data/products.js'
 import { useLang, money, CATEGORY_I18N, ELEMENT_I18N } from '../i18n.jsx'
 import {
   useStore,
   login,
   logout,
   addBead,
+  updateBead,
   deleteBead,
+  setBeadEdit,
+  toggleHideBead,
   addProduct,
+  updateProduct,
   deleteProduct,
+  setProductEdit,
+  toggleHideProduct,
+  effectiveDefaultBeads,
+  effectiveDefaultProducts,
   compressImage,
   getWa,
   setWa,
@@ -17,7 +26,7 @@ import {
   exportData,
   importData,
 } from '../data/store.js'
-import { CloseIcon, PlusIcon, TrashIcon, CheckIcon, DownloadIcon, WhatsAppIcon } from './icons.jsx'
+import { CloseIcon, PlusIcon, TrashIcon, CheckIcon, DownloadIcon, WhatsAppIcon, EyeIcon, EyeOffIcon, EditIcon } from './icons.jsx'
 
 const ELEMENT_KEYS = Object.keys(ELEMENTS)
 const CATS = CATEGORIES.filter((c) => c.key !== 'all')
@@ -171,23 +180,60 @@ function BeadAdmin({ store, onMsg }) {
   const { t, lang } = useLang()
   const empty = { photo: null, name: '', name_en: '', element: 'wood', category: ['popular'], keywords: '', basePrice: '20', energy: '', energy_en: '' }
   const [f, setF] = useState(empty)
+  const [editing, setEditing] = useState(null) // {id, isDefault}
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }))
   const toggleCat = (k) => set('category', f.category.includes(k) ? f.category.filter((c) => c !== k) : [...f.category, k])
+  const reset = () => { setF(empty); setEditing(null) }
+
+  const loadEdit = (item, isDefault) => {
+    setF({
+      photo: item.photo || null,
+      name: item.name || '',
+      name_en: item.name_en || item.pinyin || '',
+      element: item.element || 'wood',
+      category: item.category || ['popular'],
+      keywords: (item.keywords || []).join('、'),
+      basePrice: String(item.basePrice ?? 20),
+      energy: item.energy || '',
+      energy_en: item.energy_en || '',
+    })
+    setEditing({ id: item.id, isDefault })
+  }
 
   const save = () => {
     if (!f.name.trim()) return onMsg(t('admin.needName'))
-    if (!f.photo) return onMsg(t('admin.needPhoto'))
-    addBead({
-      ...f,
-      keywords: f.keywords.split(/[,，]/).map((s) => s.trim()).filter(Boolean),
-    })
-    setF(empty)
+    if (!editing && !f.photo) return onMsg(t('admin.needPhoto'))
+    const patch = {
+      name: f.name,
+      name_en: f.name_en,
+      element: f.element,
+      category: f.category,
+      keywords: f.keywords.split(/[,，、]/).map((s) => s.trim()).filter(Boolean),
+      basePrice: Number(f.basePrice) || 20,
+      energy: f.energy,
+      energy_en: f.energy_en,
+    }
+    if (f.photo) patch.photo = f.photo
+    if (!editing) addBead({ ...patch, photo: f.photo })
+    else if (editing.isDefault) setBeadEdit(editing.id, patch)
+    else updateBead(editing.id, patch)
+    reset()
     onMsg(t('admin.bead.saved'))
   }
+
+  const defaultList = CRYSTALS.map((c) => ({ ...c, ...(store.beadEdits[c.id] || {}), _default: true, _hidden: store.beadHidden.includes(c.id) }))
+  const customList = store.beads.map((b) => ({ ...b, _default: false }))
+  const list = [...defaultList, ...customList]
 
   return (
     <div className="space-y-5">
       <div className="rounded-3xl border border-black/5 bg-white p-4 shadow-card dark:border-white/5 dark:bg-neutral-900">
+        {editing && (
+          <div className="mb-3 flex items-center justify-between rounded-xl bg-brand-50 px-3 py-2 text-[12px] text-brand-700 dark:bg-brand-900/30 dark:text-brand-200">
+            <span>{editing.isDefault ? '编辑默认珠子' : '编辑自定义珠子'} · {f.name}</span>
+            <button onClick={reset} className="font-medium underline">{t('admin.cancel')}</button>
+          </div>
+        )}
         <div className="grid grid-cols-[100px_1fr] gap-3">
           <div className="w-[100px]"><PhotoPicker value={f.photo} onChange={(d) => set('photo', d)} round /></div>
           <div className="grid grid-cols-2 gap-2">
@@ -218,32 +264,46 @@ function BeadAdmin({ store, onMsg }) {
           </div>
         </div>
         <div className="mt-3 grid gap-2">
-          <Field label={t('admin.keywords')}><input className={inputCls} value={f.keywords} onChange={(e) => set('keywords', e.target.value)} placeholder="招财, 事业" /></Field>
+          <Field label={t('admin.keywords')}><input className={inputCls} value={f.keywords} onChange={(e) => set('keywords', e.target.value)} placeholder="招财、事业" /></Field>
           <Field label={t('admin.energy') + '（中）'}><textarea className={inputCls} rows={2} value={f.energy} onChange={(e) => set('energy', e.target.value)} /></Field>
           <Field label={t('admin.energy') + '（EN）'}><textarea className={inputCls} rows={2} value={f.energy_en} onChange={(e) => set('energy_en', e.target.value)} /></Field>
         </div>
         <button onClick={save} className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-2xl bg-brand-500 py-3 font-medium text-white shadow-glow transition hover:bg-brand-600 active:scale-[0.99]">
-          <PlusIcon size={18} /> {t('admin.add')}
+          {editing ? <CheckIcon size={18} /> : <PlusIcon size={18} />} {editing ? t('admin.save') : t('admin.add')}
         </button>
       </div>
 
-      {/* list */}
-      {store.beads.length === 0 ? (
-        <p className="py-6 text-center text-[13px] text-neutral-400">{t('admin.bead.none')}</p>
-      ) : (
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-          {store.beads.map((b) => (
-            <div key={b.id} className="relative flex flex-col items-center rounded-2xl border border-black/5 bg-white p-3 text-center shadow-card dark:border-white/5 dark:bg-neutral-800">
-              <button onClick={() => deleteBead(b.id)} className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-red-500 text-white" aria-label="delete">
-                <TrashIcon size={13} />
-              </button>
-              <Bead crystal={b} size={56} />
-              <div className="mt-1.5 text-[13px] font-medium text-neutral-900 dark:text-white">{lang === 'zh' ? b.name : b.name_en}</div>
-              <div className="text-[12px] font-semibold text-brand-600 dark:text-brand-300">{money(b.basePrice)}</div>
+      {/* list: default + custom, tap to edit */}
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+        {list.map((b) => (
+          <div
+            key={b.id}
+            onClick={() => loadEdit(b, b._default)}
+            className={`relative flex cursor-pointer flex-col items-center rounded-2xl border p-3 text-center shadow-card transition hover:-translate-y-0.5 ${editing?.id === b.id ? 'border-brand-500 ring-2 ring-brand-200 dark:ring-brand-900' : 'border-black/5 dark:border-white/5'} ${b._hidden ? 'opacity-40' : ''} bg-white dark:bg-neutral-800`}
+          >
+            <div className="absolute left-2 top-2 flex gap-1">
+              {b._default && <span className="rounded bg-black/10 px-1.5 py-0.5 text-[9px] text-neutral-500 dark:bg-white/15 dark:text-neutral-300">默认</span>}
             </div>
-          ))}
-        </div>
-      )}
+            <div className="absolute right-2 top-2 flex gap-1">
+              <button onClick={(e) => { e.stopPropagation(); loadEdit(b, b._default) }} className="grid h-6 w-6 place-items-center rounded-full bg-black/5 text-neutral-500 dark:bg-white/15 dark:text-neutral-300" aria-label="edit">
+                <EditIcon size={13} />
+              </button>
+              {b._default ? (
+                <button onClick={(e) => { e.stopPropagation(); toggleHideBead(b.id) }} className="grid h-6 w-6 place-items-center rounded-full bg-black/5 text-neutral-500 dark:bg-white/15 dark:text-neutral-300" aria-label="hide">
+                  {b._hidden ? <EyeOffIcon size={13} /> : <EyeIcon size={13} />}
+                </button>
+              ) : (
+                <button onClick={(e) => { e.stopPropagation(); deleteBead(b.id) }} className="grid h-6 w-6 place-items-center rounded-full bg-red-500 text-white" aria-label="delete">
+                  <TrashIcon size={13} />
+                </button>
+              )}
+            </div>
+            <Bead crystal={b} size={52} />
+            <div className="mt-1.5 text-[13px] font-medium text-neutral-900 dark:text-white">{lang === 'zh' ? b.name : b.name_en || b.pinyin}</div>
+            <div className="text-[12px] font-semibold text-brand-600 dark:text-brand-300">{money(b.basePrice)}</div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -253,26 +313,61 @@ function ProductAdmin({ store, onMsg }) {
   const { t, lang } = useLang()
   const empty = { image: null, name: '', name_en: '', element: 'wood', badge: '天然实拍', keywords: '', energy: '', energy_en: '', sizes: [{ size: '8', price: '' }] }
   const [f, setF] = useState(empty)
+  const [editing, setEditing] = useState(null)
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }))
   const setSize = (i, k, v) => set('sizes', f.sizes.map((s, idx) => (idx === i ? { ...s, [k]: v } : s)))
   const addSizeRow = () => set('sizes', [...f.sizes, { size: '', price: '' }])
   const rmSize = (i) => set('sizes', f.sizes.filter((_, idx) => idx !== i))
+  const reset = () => { setF(empty); setEditing(null) }
+
+  const loadEdit = (item, isDefault) => {
+    setF({
+      image: item.image || null,
+      name: item.name || '',
+      name_en: item.name_en || '',
+      element: item.element || 'wood',
+      badge: item.badge || '天然实拍',
+      keywords: (item.keywords || []).join('、'),
+      energy: item.energy || '',
+      energy_en: item.energy_en || '',
+      sizes: (item.sizes && item.sizes.length ? item.sizes : [{ size: '', price: '' }]).map((s) => ({ size: String(s.size), price: String(s.price) })),
+    })
+    setEditing({ id: item.id, isDefault })
+  }
 
   const save = () => {
     if (!f.name.trim()) return onMsg(t('admin.needName'))
-    if (!f.image) return onMsg(t('admin.needPhoto'))
-    addProduct({
-      ...f,
-      keywords: f.keywords.split(/[,，]/).map((s) => s.trim()).filter(Boolean),
-      sizes: f.sizes.filter((s) => s.size && s.price),
-    })
-    setF(empty)
+    if (!editing && !f.image) return onMsg(t('admin.needPhoto'))
+    const patch = {
+      name: f.name,
+      name_en: f.name_en,
+      element: f.element,
+      badge: f.badge,
+      keywords: f.keywords.split(/[,，、]/).map((s) => s.trim()).filter(Boolean),
+      energy: f.energy,
+      energy_en: f.energy_en,
+      sizes: f.sizes.filter((s) => s.size && s.price).map((s) => ({ size: Number(s.size), price: Number(s.price) })),
+    }
+    if (f.image) patch.image = f.image
+    if (!editing) addProduct({ ...patch, image: f.image })
+    else if (editing.isDefault) setProductEdit(editing.id, patch)
+    else updateProduct(editing.id, patch)
+    reset()
     onMsg(t('admin.product.saved'))
   }
+
+  const defaultList = PRODUCTS.map((p) => ({ ...p, ...(store.productEdits[p.id] || {}), _default: true, _hidden: store.productHidden.includes(p.id) }))
+  const list = [...defaultList, ...store.products.map((p) => ({ ...p, _default: false }))]
 
   return (
     <div className="space-y-5">
       <div className="rounded-3xl border border-black/5 bg-white p-4 shadow-card dark:border-white/5 dark:bg-neutral-900">
+        {editing && (
+          <div className="mb-3 flex items-center justify-between rounded-xl bg-brand-50 px-3 py-2 text-[12px] text-brand-700 dark:bg-brand-900/30 dark:text-brand-200">
+            <span>{editing.isDefault ? '编辑默认成品' : '编辑自定义成品'} · {f.name}</span>
+            <button onClick={reset} className="font-medium underline">{t('admin.cancel')}</button>
+          </div>
+        )}
         <div className="grid grid-cols-[110px_1fr] gap-3">
           <div className="w-[110px]"><PhotoPicker value={f.image} onChange={(d) => set('image', d)} /></div>
           <div className="grid grid-cols-2 gap-2">
@@ -313,26 +408,38 @@ function ProductAdmin({ store, onMsg }) {
           <Field label={t('admin.energy') + '（EN）'}><textarea className={inputCls} rows={2} value={f.energy_en} onChange={(e) => set('energy_en', e.target.value)} /></Field>
         </div>
         <button onClick={save} className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-2xl bg-brand-500 py-3 font-medium text-white shadow-glow transition hover:bg-brand-600 active:scale-[0.99]">
-          <PlusIcon size={18} /> {t('admin.add')}
+          {editing ? <CheckIcon size={18} /> : <PlusIcon size={18} />} {editing ? t('admin.save') : t('admin.add')}
         </button>
       </div>
 
-      {store.products.length === 0 ? (
-        <p className="py-6 text-center text-[13px] text-neutral-400">{t('admin.product.none')}</p>
-      ) : (
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-          {store.products.map((p) => (
-            <div key={p.id} className="relative flex flex-col rounded-2xl border border-black/5 bg-white p-2 text-center shadow-card dark:border-white/5 dark:bg-neutral-800">
-              <button onClick={() => deleteProduct(p.id)} className="absolute right-2 top-2 z-10 grid h-6 w-6 place-items-center rounded-full bg-red-500 text-white" aria-label="delete">
-                <TrashIcon size={13} />
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+        {list.map((p) => (
+          <div
+            key={p.id}
+            onClick={() => loadEdit(p, p._default)}
+            className={`relative flex cursor-pointer flex-col rounded-2xl border p-2 text-center shadow-card transition hover:-translate-y-0.5 ${editing?.id === p.id ? 'border-brand-500 ring-2 ring-brand-200 dark:ring-brand-900' : 'border-black/5 dark:border-white/5'} ${p._hidden ? 'opacity-40' : ''} bg-white dark:bg-neutral-800`}
+          >
+            {p._default && <span className="absolute left-2 top-2 z-10 rounded bg-black/10 px-1.5 py-0.5 text-[9px] text-neutral-500 dark:bg-white/15 dark:text-neutral-300">默认</span>}
+            <div className="absolute right-2 top-2 z-10 flex gap-1">
+              <button onClick={(e) => { e.stopPropagation(); loadEdit(p, p._default) }} className="grid h-6 w-6 place-items-center rounded-full bg-black/5 text-neutral-500 dark:bg-white/15 dark:text-neutral-300" aria-label="edit">
+                <EditIcon size={13} />
               </button>
-              {p.image && <img src={p.image} alt="" className="mx-auto h-24 w-24 object-contain" />}
-              <div className="mt-1 text-[13px] font-medium text-neutral-900 dark:text-white">{lang === 'zh' ? p.name : p.name_en}</div>
-              <div className="text-[12px] font-semibold text-brand-600 dark:text-brand-300">{p.sizes?.length ? money(Math.min(...p.sizes.map((s) => s.price))) : ''}</div>
+              {p._default ? (
+                <button onClick={(e) => { e.stopPropagation(); toggleHideProduct(p.id) }} className="grid h-6 w-6 place-items-center rounded-full bg-black/5 text-neutral-500 dark:bg-white/15 dark:text-neutral-300" aria-label="hide">
+                  {p._hidden ? <EyeOffIcon size={13} /> : <EyeIcon size={13} />}
+                </button>
+              ) : (
+                <button onClick={(e) => { e.stopPropagation(); deleteProduct(p.id) }} className="grid h-6 w-6 place-items-center rounded-full bg-red-500 text-white" aria-label="delete">
+                  <TrashIcon size={13} />
+                </button>
+              )}
             </div>
-          ))}
-        </div>
-      )}
+            {p.image && <img src={p.image} alt="" className="mx-auto h-24 w-24 object-contain" />}
+            <div className="mt-1 text-[13px] font-medium text-neutral-900 dark:text-white">{lang === 'zh' ? p.name : p.name_en}</div>
+            <div className="text-[12px] font-semibold text-brand-600 dark:text-brand-300">{p.sizes?.length ? money(Math.min(...p.sizes.map((s) => s.price))) : ''}</div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
