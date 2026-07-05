@@ -13,10 +13,10 @@
 //   keywords  关键词
 //   gradient  渲染参数：{ light 高光, base 主色, deep 暗部, ring 边缘, sheen 冷光可选 }
 
-export const SIZES = [6, 8, 10, 12] // mm
+export const SIZES = [8, 10, 12] // mm
 
 // 尺寸对价格的系数（珠子越大越贵）
-export const SIZE_PRICE_FACTOR = { 6: 0.6, 8: 1, 10: 1.5, 12: 2.2 }
+export const SIZE_PRICE_FACTOR = { 8: 1, 10: 1.5, 12: 2.2 }
 
 export const CATEGORIES = [
   { key: 'all', label: '全部' },
