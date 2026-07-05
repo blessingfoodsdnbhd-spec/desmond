@@ -44,9 +44,9 @@ export function drawBead(ctx, x, y, r, crystal) {
   }
 
   // 光线透射内发光（通透感）
-  const glow = ctx.createRadialGradient(x + r * 0.24, y + r * 0.4, r * 0.02, x + r * 0.24, y + r * 0.4, r * 1.04)
-  glow.addColorStop(0, hexA(g.light, 0.5))
-  glow.addColorStop(0.55, hexA(g.light, 0.1))
+  const glow = ctx.createRadialGradient(x + r * 0.2, y + r * 0.32, r * 0.02, x + r * 0.2, y + r * 0.32, r * 1.08)
+  glow.addColorStop(0, hexA(g.light, 0.72))
+  glow.addColorStop(0.48, hexA(g.light, 0.2))
   glow.addColorStop(1, hexA(g.light, 0))
   ctx.beginPath()
   ctx.arc(x, y, r, 0, Math.PI * 2)
@@ -55,31 +55,37 @@ export function drawBead(ctx, x, y, r, crystal) {
 
   // 底部透光边缘
   ctx.beginPath()
-  ctx.ellipse(x, y + r * 0.5, r * 0.6, r * 0.28, 0, 0, Math.PI * 2)
-  ctx.fillStyle = hexA(g.light, 0.24)
+  ctx.ellipse(x, y + r * 0.5, r * 0.62, r * 0.3, 0, 0, Math.PI * 2)
+  ctx.fillStyle = hexA(g.light, 0.3)
   ctx.fill()
 
-  // 穿孔：中心圆圈（透过水晶看到的孔道）
+  // 穿孔：中心柔和圆圈（透过水晶看到的孔道）
   ctx.beginPath()
-  ctx.arc(x, y + r * 0.02, r * 0.18, 0, Math.PI * 2)
-  ctx.fillStyle = 'rgba(0,0,0,0.06)'
+  ctx.arc(x, y + r * 0.02, r * 0.16, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(0,0,0,0.045)'
   ctx.fill()
   ctx.beginPath()
-  ctx.arc(x, y + r * 0.02, r * 0.19, 0, Math.PI * 2)
-  ctx.strokeStyle = hexA(g.deep, 0.3)
-  ctx.lineWidth = Math.max(0.5, r * 0.045)
+  ctx.arc(x, y + r * 0.02, r * 0.17, 0, Math.PI * 2)
+  ctx.strokeStyle = hexA(g.deep, 0.2)
+  ctx.lineWidth = Math.max(0.4, r * 0.035)
   ctx.stroke()
+
+  // 柔和高光光晕
+  ctx.beginPath()
+  ctx.ellipse(x - r * 0.32, y - r * 0.36, r * 0.5, r * 0.34, -0.5, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(255,255,255,0.16)'
+  ctx.fill()
 
   // 主高光
   ctx.beginPath()
-  ctx.ellipse(x - r * 0.34, y - r * 0.4, r * 0.28, r * 0.2, -0.5, 0, Math.PI * 2)
-  ctx.fillStyle = 'rgba(255,255,255,0.72)'
+  ctx.ellipse(x - r * 0.34, y - r * 0.4, r * 0.3, r * 0.21, -0.5, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(255,255,255,0.85)'
   ctx.fill()
 
   // 次高光小点
   ctx.beginPath()
-  ctx.arc(x + r * 0.3, y + r * 0.28, r * 0.09, 0, Math.PI * 2)
-  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.arc(x + r * 0.3, y + r * 0.28, r * 0.1, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'
   ctx.fill()
 
   // 边缘暗环，增强立体感

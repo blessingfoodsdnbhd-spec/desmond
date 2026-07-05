@@ -39,9 +39,9 @@ export function Bead({ crystal, size = 48, className = '', style }) {
           <stop offset="100%" stopColor={g.ring} />
         </radialGradient>
         {/* 光线透射的内发光，营造水晶通透感 */}
-        <radialGradient id={`${uid}-glow`} cx="62%" cy="70%" r="52%">
-          <stop offset="0%" stopColor={g.light} stopOpacity="0.6" />
-          <stop offset="55%" stopColor={g.light} stopOpacity="0.12" />
+        <radialGradient id={`${uid}-glow`} cx="60%" cy="66%" r="56%">
+          <stop offset="0%" stopColor={g.light} stopOpacity="0.78" />
+          <stop offset="48%" stopColor={g.light} stopOpacity="0.22" />
           <stop offset="100%" stopColor={g.light} stopOpacity="0" />
         </radialGradient>
         {g.sheen && (
@@ -57,15 +57,16 @@ export function Bead({ crystal, size = 48, className = '', style }) {
       {/* 透射内发光 */}
       <circle cx="50" cy="50" r="48" fill={`url(#${uid}-glow)`} />
       {/* 底部透光边缘 */}
-      <ellipse cx="50" cy="76" rx="30" ry="14" fill={g.light} opacity="0.28" />
-      {/* 穿孔：中心圆圈（透过水晶看到的孔道） */}
-      <circle cx="50" cy="51" r="8.5" fill="#000" opacity="0.06" />
-      <circle cx="50" cy="51" r="9" fill="none" stroke={g.deep} strokeOpacity="0.32" strokeWidth="2.1" />
-      <circle cx="50" cy="51" r="9.4" fill="none" stroke="#ffffff" strokeOpacity="0.22" strokeWidth="0.7" />
-      {/* 主高光 + 次高光 */}
-      <ellipse cx="34" cy="29" rx="15" ry="10" fill="#ffffff" opacity="0.78" transform="rotate(-28 34 29)" />
-      <circle cx="65" cy="64" r="4.5" fill="#ffffff" opacity="0.42" />
-      <circle cx="50" cy="50" r="47" fill="none" stroke={g.ring} strokeOpacity="0.45" strokeWidth="2" />
+      <ellipse cx="50" cy="76" rx="31" ry="15" fill={g.light} opacity="0.34" />
+      {/* 穿孔：中心柔和圆圈（透过水晶看到的孔道，自然含蓄） */}
+      <circle cx="50" cy="51" r="7" fill="#000" opacity="0.045" />
+      <circle cx="50" cy="51" r="8" fill="none" stroke={g.deep} strokeOpacity="0.2" strokeWidth="1.5" />
+      <circle cx="50" cy="51" r="6.4" fill="none" stroke="#ffffff" strokeOpacity="0.16" strokeWidth="0.7" />
+      {/* 柔和高光光晕 + 主高光 + 次高光 */}
+      <ellipse cx="36" cy="31" rx="25" ry="17" fill="#ffffff" opacity="0.16" transform="rotate(-28 36 31)" />
+      <ellipse cx="34" cy="29" rx="16" ry="10.5" fill="#ffffff" opacity="0.85" transform="rotate(-28 34 29)" />
+      <circle cx="66" cy="65" r="5" fill="#ffffff" opacity="0.5" />
+      <circle cx="50" cy="50" r="47" fill="none" stroke={g.ring} strokeOpacity="0.4" strokeWidth="1.8" />
     </svg>
   )
 }

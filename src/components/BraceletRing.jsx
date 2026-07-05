@@ -39,12 +39,13 @@ function BeadNode({ p, selected, onSelect }) {
             <circle r={r} fill={`url(#grad-${p.crystalId})`} filter="url(#beadShadow)" />
             {p.crystal?.gradient?.sheen && <circle r={r} fill={`url(#sheen-${p.crystalId})`} />}
             <circle r={r} fill={`url(#glow-${p.crystalId})`} />
-            <ellipse cx={0} cy={r * 0.5} rx={r * 0.6} ry={r * 0.28} fill={p.crystal?.gradient?.light || '#fff'} opacity="0.26" />
-            {/* 穿孔：中心圆圈 */}
-            <circle cx={0} cy={r * 0.02} r={r * 0.18} fill="#000" opacity="0.06" />
-            <circle cx={0} cy={r * 0.02} r={r * 0.19} fill="none" stroke={p.crystal?.gradient?.deep || '#999'} strokeOpacity="0.3" strokeWidth={Math.max(0.4, r * 0.045)} />
-            <ellipse cx={-r * 0.34} cy={-r * 0.4} rx={r * 0.28} ry={r * 0.2} fill="#ffffff" opacity="0.78" transform="rotate(-28)" />
-            <circle cx={r * 0.3} cy={r * 0.28} r={r * 0.09} fill="#ffffff" opacity="0.42" />
+            <ellipse cx={0} cy={r * 0.5} rx={r * 0.62} ry={r * 0.3} fill={p.crystal?.gradient?.light || '#fff'} opacity="0.32" />
+            {/* 穿孔：中心柔和圆圈 */}
+            <circle cx={0} cy={r * 0.02} r={r * 0.16} fill="#000" opacity="0.045" />
+            <circle cx={0} cy={r * 0.02} r={r * 0.17} fill="none" stroke={p.crystal?.gradient?.deep || '#999'} strokeOpacity="0.2" strokeWidth={Math.max(0.35, r * 0.035)} />
+            <ellipse cx={-r * 0.32} cy={-r * 0.36} rx={r * 0.5} ry={r * 0.34} fill="#ffffff" opacity="0.16" transform="rotate(-28)" />
+            <ellipse cx={-r * 0.34} cy={-r * 0.4} rx={r * 0.3} ry={r * 0.21} fill="#ffffff" opacity="0.85" transform="rotate(-28)" />
+            <circle cx={r * 0.3} cy={r * 0.28} r={r * 0.1} fill="#ffffff" opacity="0.5" />
             <circle r={r * 0.98} fill="none" stroke={p.crystal?.gradient?.ring || '#999'} strokeOpacity="0.45" strokeWidth={Math.max(0.6, r * 0.05)} />
           </>
         )}
@@ -74,9 +75,9 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
           </radialGradient>
         ))}
         {[...CRYSTALS, SPACER].map((c) => (
-          <radialGradient key={c.id} id={`glow-${c.id}`} cx="62%" cy="70%" r="52%">
-            <stop offset="0%" stopColor={c.gradient.light} stopOpacity="0.55" />
-            <stop offset="55%" stopColor={c.gradient.light} stopOpacity="0.1" />
+          <radialGradient key={c.id} id={`glow-${c.id}`} cx="60%" cy="66%" r="56%">
+            <stop offset="0%" stopColor={c.gradient.light} stopOpacity="0.72" />
+            <stop offset="48%" stopColor={c.gradient.light} stopOpacity="0.2" />
             <stop offset="100%" stopColor={c.gradient.light} stopOpacity="0" />
           </radialGradient>
         ))}
