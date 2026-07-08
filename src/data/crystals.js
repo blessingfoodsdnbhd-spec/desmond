@@ -12,6 +12,20 @@
 //   energy    能量介绍
 //   keywords  关键词
 //   gradient  渲染参数：{ light 高光, base 主色, deep 暗部, ring 边缘, sheen 冷光可选 }
+//   photo     真实水晶照片（有则优先用照片渲染珠子）
+
+// 真实水晶照片（从实拍美图裁切）
+import pClear from '../assets/beads/clear.webp'
+import pAmethyst from '../assets/beads/amethyst.webp'
+import pRose from '../assets/beads/rose.webp'
+import pCitrine from '../assets/beads/citrine.webp'
+import pGreenPhantom from '../assets/beads/green-phantom.webp'
+import pTigerEye from '../assets/beads/tiger-eye.webp'
+import pObsidian from '../assets/beads/obsidian.webp'
+import pMoonstone from '../assets/beads/moonstone.webp'
+import pStrawberry from '../assets/beads/strawberry.webp'
+import pAquamarine from '../assets/beads/aquamarine.webp'
+import pLapis from '../assets/beads/lapis.webp'
 
 export const SIZES = [8, 10, 12] // mm
 
@@ -38,6 +52,7 @@ export const ELEMENTS = {
 export const CRYSTALS = [
   {
     id: 'clear',
+    photo: pClear,
     name: '白水晶',
     pinyin: 'Clear Quartz',
     category: ['popular', 'health', 'guard'],
@@ -51,6 +66,7 @@ export const CRYSTALS = [
   },
   {
     id: 'amethyst',
+    photo: pAmethyst,
     name: '紫水晶',
     pinyin: 'Amethyst',
     category: ['popular', 'health', 'guard'],
@@ -64,6 +80,7 @@ export const CRYSTALS = [
   },
   {
     id: 'rose',
+    photo: pRose,
     name: '粉水晶',
     pinyin: 'Rose Quartz',
     category: ['popular', 'love'],
@@ -77,6 +94,7 @@ export const CRYSTALS = [
   },
   {
     id: 'citrine',
+    photo: pCitrine,
     name: '黄水晶',
     pinyin: 'Citrine',
     category: ['popular', 'wealth'],
@@ -90,6 +108,7 @@ export const CRYSTALS = [
   },
   {
     id: 'green-phantom',
+    photo: pGreenPhantom,
     name: '绿幽灵',
     pinyin: 'Green Phantom',
     category: ['popular', 'wealth'],
@@ -103,6 +122,7 @@ export const CRYSTALS = [
   },
   {
     id: 'tiger-eye',
+    photo: pTigerEye,
     name: '虎眼石',
     pinyin: 'Tiger Eye',
     category: ['wealth', 'guard'],
@@ -116,6 +136,7 @@ export const CRYSTALS = [
   },
   {
     id: 'obsidian',
+    photo: pObsidian,
     name: '黑曜石',
     pinyin: 'Obsidian',
     category: ['guard', 'health'],
@@ -129,6 +150,7 @@ export const CRYSTALS = [
   },
   {
     id: 'moonstone',
+    photo: pMoonstone,
     name: '月光石',
     pinyin: 'Moonstone',
     category: ['love', 'health'],
@@ -142,6 +164,7 @@ export const CRYSTALS = [
   },
   {
     id: 'strawberry',
+    photo: pStrawberry,
     name: '草莓晶',
     pinyin: 'Strawberry Quartz',
     category: ['love', 'popular'],
@@ -155,6 +178,7 @@ export const CRYSTALS = [
   },
   {
     id: 'aquamarine',
+    photo: pAquamarine,
     name: '海蓝宝',
     pinyin: 'Aquamarine',
     category: ['health', 'popular'],
@@ -181,6 +205,7 @@ export const CRYSTALS = [
   },
   {
     id: 'lapis',
+    photo: pLapis,
     name: '青金石',
     pinyin: 'Lapis Lazuli',
     category: ['guard', 'health'],
