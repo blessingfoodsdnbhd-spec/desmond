@@ -49,12 +49,15 @@ export default function App() {
   const [dark, setDark] = useDarkMode()
   const [initialBeads, setInitialBeads] = useState([])
   const [designKey, setDesignKey] = useState(0)
+  const [smartSignal, setSmartSignal] = useState(0)
   const [showAdmin, setShowAdmin] = useState(false)
 
   const start = (pattern) => {
     if (Array.isArray(pattern)) {
       setInitialBeads(pattern.map((id) => makeBead(id, 8)))
       setDesignKey((k) => k + 1)
+    } else if (pattern === 'smart') {
+      setSmartSignal((s) => s + 1) // 通知设计页直接弹出智能搭配面板
     }
     setTab('design')
   }
@@ -105,7 +108,7 @@ export default function App() {
       {/* Pages */}
       <main className="animate-fade-in" key={tab}>
         {tab === 'home' && <Home onStart={start} />}
-        {tab === 'design' && <Designer key={designKey} dark={dark} initialBeads={initialBeads} />}
+        {tab === 'design' && <Designer key={designKey} dark={dark} initialBeads={initialBeads} smartSignal={smartSignal} />}
         {tab === 'discover' && <Discover onStart={start} />}
         {tab === 'order' && <Orders onStart={start} />}
         {tab === 'me' && <Profile dark={dark} setDark={setDark} onOpenAdmin={() => setShowAdmin(true)} />}

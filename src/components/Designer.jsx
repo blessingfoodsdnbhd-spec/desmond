@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Bead } from './Bead.jsx'
 import { BraceletRing } from './BraceletRing.jsx'
 import { SortableBeadStrip } from './SortableBeadStrip.jsx'
@@ -38,7 +38,7 @@ import {
   EnergyIcon,
 } from './icons.jsx'
 
-export function Designer({ dark, initialBeads }) {
+export function Designer({ dark, initialBeads, smartSignal }) {
   const { t, lang } = useLang()
   const store = useStore()
   const customBeads = store.beads
@@ -58,6 +58,11 @@ export function Designer({ dark, initialBeads }) {
   const toastTimer = useRef(null)
 
   const STEPS = [t('step.choose'), t('step.arrange'), t('step.finish')]
+
+  // 从首页「开始智能推荐」进入时，直接弹出智能搭配面板
+  useEffect(() => {
+    if (smartSignal) setShowSmart(true)
+  }, [smartSignal])
 
   const commit = (next) => {
     setPast((p) => [...p.slice(-40), beads])

@@ -71,7 +71,7 @@ export function Home({ onStart }) {
           {FEATURE_KEYS.map((f) => (
             <button
               key={f.t}
-              onClick={() => onStart()}
+              onClick={() => onStart(f.t === 'feat.ai' ? 'smart' : undefined)}
               className="flex flex-col items-center gap-2 rounded-3xl border border-black/5 bg-white/70 p-3 text-center shadow-card glass transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-95 dark:border-white/5 dark:bg-neutral-900/60 sm:p-5"
             >
               <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-500 dark:bg-brand-900/40 dark:text-brand-300 sm:h-14 sm:w-14">
@@ -163,7 +163,7 @@ export function Home({ onStart }) {
         {/* AI banner */}
         <section className="mt-6">
           <button
-            onClick={() => onStart()}
+            onClick={() => onStart('smart')}
             className="relative flex w-full items-center gap-4 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 to-emerald-600 p-5 text-left text-white shadow-card-lg transition hover:shadow-glow active:scale-[0.99]"
           >
             <div className="relative z-10 flex-1">
