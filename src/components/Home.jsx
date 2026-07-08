@@ -35,11 +35,12 @@ export function Home({ onStart }) {
   return (
     <div className="pb-24 lg:pb-12">
       <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
-        {/* Hero · 水晶洞 */}
-        <section className="relative overflow-hidden rounded-4xl border border-white/50 bg-gradient-to-br from-violet-100/85 via-white/55 to-emerald-100/70 p-6 shadow-card glass dark:border-white/10 dark:from-violet-950/60 dark:via-neutral-900/70 dark:to-emerald-950/40 sm:p-9">
-          <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-violet-300/45 blur-3xl dark:bg-violet-700/30" />
-          <div className="absolute -left-16 top-8 h-48 w-48 rounded-full bg-emerald-200/40 blur-3xl dark:bg-emerald-800/25" />
-          <GeodeCluster className="pointer-events-none absolute inset-x-0 bottom-0 h-20 opacity-70" />
+        {/* Hero · 冰晶洞 */}
+        <section className="relative overflow-hidden rounded-4xl border border-white/50 bg-gradient-to-br from-cyan-100/85 via-sky-50/55 to-blue-100/70 p-6 shadow-card glass dark:border-white/10 dark:from-[#0a2740]/70 dark:via-[#0b2033]/70 dark:to-[#08182a]/60 sm:p-9">
+          <div className="absolute left-1/2 -top-16 h-52 w-72 -translate-x-1/2 rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at center, rgba(236,250,255,0.75), transparent 70%)' }} />
+          <div className="absolute -right-10 top-6 h-48 w-48 rounded-full bg-cyan-300/45 blur-3xl dark:bg-cyan-600/30" />
+          <div className="absolute -left-16 top-10 h-44 w-44 rounded-full bg-sky-300/40 blur-3xl dark:bg-sky-700/25" />
+          <GeodeCluster className="pointer-events-none absolute inset-x-0 bottom-0 h-20 opacity-75" />
           <div className="relative flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
             <div className="text-center sm:text-left">
               <p className="text-[13px] font-medium tracking-wide text-brand-600 dark:text-brand-300">{t('brand.full')}</p>

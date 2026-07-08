@@ -65,7 +65,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-violet-50 via-neutral-50 to-emerald-50/60 font-sans text-neutral-900 transition-colors duration-300 dark:from-[#170f28] dark:via-[#0b0a12] dark:to-[#0a1410] dark:text-neutral-100">
+    <div className="min-h-full bg-gradient-to-b from-sky-50 via-cyan-50/50 to-blue-50 font-sans text-neutral-900 transition-colors duration-300 dark:from-[#08141f] dark:via-[#0a1c2b] dark:to-[#06101a] dark:text-neutral-100">
       <CrystalBackground />
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 glass dark:border-white/5 dark:bg-neutral-950/80">
