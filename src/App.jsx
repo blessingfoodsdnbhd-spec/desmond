@@ -72,38 +72,38 @@ export default function App() {
       <CrystalBackground />
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 glass dark:border-white/5 dark:bg-neutral-950/80">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
+        <div
+          onClick={() => {
+            setTab('home')
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+          className="mx-auto flex max-w-6xl cursor-pointer items-center gap-3 px-4 py-3 sm:px-6"
+          style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}
+        >
           {tab !== 'home' && (
-            <button onClick={() => setTab('home')} className="grid h-9 w-9 place-items-center rounded-full text-neutral-500 transition hover:bg-black/5 active:scale-90 dark:hover:bg-white/10" aria-label="back">
+            <button onClick={(e) => { e.stopPropagation(); setTab('home') }} className="grid h-9 w-9 place-items-center rounded-full text-neutral-500 transition hover:bg-black/5 active:scale-90 dark:hover:bg-white/10" aria-label="back">
               <ArrowLeft size={20} />
             </button>
           )}
-          <button
-            onClick={() => {
-              setTab('home')
-              window.scrollTo({ top: 0, behavior: 'smooth' })
-            }}
-            className="min-w-0 flex-1 text-left transition active:scale-[0.98]"
-            aria-label="回到首页顶部"
-          >
+          <div className="min-w-0 flex-1">
             <div className="truncate text-[17px] font-semibold leading-tight">{h.title}</div>
             <div className="truncate text-[11px] text-neutral-400">{h.sub}</div>
-          </button>
+          </div>
           {tab === 'design' && (
-            <button className="hidden items-center gap-1 rounded-full border border-brand-300 px-3.5 py-1.5 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50 active:scale-95 dark:border-brand-700 dark:text-brand-300 dark:hover:bg-brand-900/30 sm:flex">
+            <button onClick={(e) => e.stopPropagation()} className="hidden items-center gap-1 rounded-full border border-brand-300 px-3.5 py-1.5 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50 active:scale-95 dark:border-brand-700 dark:text-brand-300 dark:hover:bg-brand-900/30 sm:flex">
               <CheckIcon size={14} /> {t('header.save')}
             </button>
           )}
           {/* Language toggle */}
           <button
-            onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+            onClick={(e) => { e.stopPropagation(); setLang(lang === 'zh' ? 'en' : 'zh') }}
             className="grid h-9 min-w-[38px] place-items-center rounded-full px-2 text-[13px] font-semibold text-neutral-500 transition hover:bg-black/5 active:scale-90 dark:text-neutral-300 dark:hover:bg-white/10"
             aria-label="toggle language"
           >
             {lang === 'zh' ? 'EN' : '中'}
           </button>
           <button
-            onClick={() => setDark((d) => !d)}
+            onClick={(e) => { e.stopPropagation(); setDark((d) => !d) }}
             className="grid h-9 w-9 place-items-center rounded-full text-neutral-500 transition hover:bg-black/5 active:scale-90 dark:text-neutral-300 dark:hover:bg-white/10"
             aria-label="toggle theme"
           >
