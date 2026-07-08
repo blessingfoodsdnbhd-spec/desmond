@@ -4,10 +4,10 @@ import { BraceletRing } from './BraceletRing.jsx'
 import { ProductSheet } from './ProductSheet.jsx'
 import { IceCaveImage } from './CrystalBackground.jsx'
 import { CRYSTALS, CRYSTAL_MAP } from '../data/crystals.js'
-import { PRESETS } from '../data/recommendations.js'
+import { PRESETS, ZODIACS, BIRTH_MONTHS, zodiacByDate, buildPatternFromCrystals } from '../data/recommendations.js'
 import { useStore, effectiveDefaultProducts } from '../data/store.js'
 import { makeBead } from '../utils/bracelet.js'
-import { useLang, localizeCrystal, money, PRESET_I18N } from '../i18n.jsx'
+import { useLang, localizeCrystal, money, PRESET_I18N, ZODIAC_I18N } from '../i18n.jsx'
 import {
   DesignIcon,
   SparkleIcon,
@@ -31,7 +31,19 @@ export function Home({ onStart }) {
   const { t, lang } = useLang()
   const store = useStore()
   const [product, setProduct] = useState(null)
+  const [birthday, setBirthday] = useState('1998-08-15')
   const featured = [...effectiveDefaultProducts(store), ...store.products]
+
+  const generateByBirthday = () => {
+    const bd = new Date(birthday + 'T00:00:00')
+    if (isNaN(bd.getTime())) return
+    const m = bd.getMonth() + 1
+    const d = bd.getDate()
+    const z = zodiacByDate(m, d)
+    const theme = BIRTH_MONTHS[m - 1]
+    onStart(buildPatternFromCrystals([...z.crystals, ...theme.crystals], 14))
+  }
+
   return (
     <div className="pb-24 lg:pb-12">
       <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
@@ -85,38 +97,48 @@ export function Home({ onStart }) {
           ))}
         </section>
 
-        {/* Popular presets */}
+        {/* 生日 · 星座配对 */}
         <section className="mt-7">
-          <div className="mb-3 flex items-center justify-between px-1">
-            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{t('home.popular')}</h2>
-            <button onClick={() => onStart()} className="flex items-center gap-0.5 text-[13px] text-neutral-400 transition hover:text-brand-500">
-              {t('home.more')} <ChevronRight size={15} />
+          <div className="mb-3 px-1">
+            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{t('home.match.title')}</h2>
+            <p className="text-[12px] text-neutral-400">{t('home.match.sub')}</p>
+          </div>
+
+          {/* 生日输入 */}
+          <div className="mb-3 flex items-center gap-2 rounded-3xl border border-black/5 bg-white/80 p-2.5 shadow-card glass dark:border-white/10 dark:bg-neutral-900/60">
+            <span className="pl-1 text-lg">🎂</span>
+            <input
+              type="date"
+              value={birthday}
+              onChange={(e) => setBirthday(e.target.value)}
+              className="min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 py-2.5 text-[14px] text-neutral-900 outline-none focus:border-brand-400 dark:border-white/10 dark:bg-neutral-800 dark:text-white"
+            />
+            <button
+              onClick={generateByBirthday}
+              className="shrink-0 rounded-xl bg-brand-500 px-4 py-2.5 text-[13px] font-medium text-white transition hover:bg-brand-600 active:scale-95"
+            >
+              {t('home.match.generate')}
             </button>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {PRESETS.map((p) => {
-              const name = lang === 'zh' ? p.name : PRESET_I18N[p.id]?.name || p.name
-              const tagText =
-                lang === 'zh'
-                  ? p.tags.join(' · ')
-                  : [...new Set(p.pattern)].slice(0, 3).map((id) => localizeCrystal(CRYSTAL_MAP[id], lang)?.name).join(' · ')
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => onStart(p.pattern)}
-                  className="group flex items-center gap-3 rounded-3xl border border-black/5 bg-white p-3 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-[0.99] dark:border-white/5 dark:bg-neutral-800 sm:flex-col sm:items-stretch sm:text-center"
-                >
-                  <div className="h-20 w-20 shrink-0 rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 p-1 dark:from-neutral-700 dark:to-neutral-900 sm:h-auto sm:w-full sm:aspect-square">
-                    <BraceletRing beads={patternToBeads(p.pattern)} />
-                  </div>
-                  <div className="min-w-0 flex-1 sm:mt-1">
-                    <div className="text-[15px] font-semibold text-neutral-900 dark:text-white">{name}</div>
-                    <div className="truncate text-[12px] text-neutral-400">{tagText}</div>
-                    <div className="mt-1 text-[15px] font-bold text-brand-600 dark:text-brand-300">{money(p.price)}</div>
-                  </div>
-                </button>
-              )
-            })}
+
+          {/* 十二星座 */}
+          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+            {ZODIACS.map((z) => (
+              <button
+                key={z.key}
+                onClick={() => onStart(buildPatternFromCrystals(z.crystals, 12))}
+                className="flex w-[100px] shrink-0 flex-col items-center gap-1 rounded-3xl border border-black/5 bg-white p-3 text-center shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-95 dark:border-white/5 dark:bg-neutral-800"
+              >
+                <span className="text-2xl">{z.emoji}</span>
+                <div className="text-[13px] font-semibold text-neutral-900 dark:text-white">{lang === 'zh' ? z.name : ZODIAC_I18N[z.key]?.name}</div>
+                <div className="text-[10px] text-neutral-400">{z.range}</div>
+                <div className="mt-0.5 flex gap-0.5">
+                  {z.crystals.map((id) => (
+                    <Bead key={id} crystal={CRYSTAL_MAP[id]} size={16} />
+                  ))}
+                </div>
+              </button>
+            ))}
           </div>
         </section>
 
