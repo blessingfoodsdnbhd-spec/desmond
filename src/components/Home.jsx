@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Bead } from './Bead.jsx'
 import { BraceletRing } from './BraceletRing.jsx'
 import { ProductSheet } from './ProductSheet.jsx'
-import { GeodeCluster } from './CrystalBackground.jsx'
+import { IceCaveImage } from './CrystalBackground.jsx'
 import { CRYSTALS, CRYSTAL_MAP } from '../data/crystals.js'
 import { PRESETS } from '../data/recommendations.js'
 import { useStore, effectiveDefaultProducts } from '../data/store.js'
@@ -35,29 +35,32 @@ export function Home({ onStart }) {
   return (
     <div className="pb-24 lg:pb-12">
       <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
-        {/* Hero · 冰晶洞 */}
-        <section className="relative overflow-hidden rounded-4xl border border-white/50 bg-gradient-to-br from-cyan-100/85 via-sky-50/55 to-blue-100/70 p-6 shadow-card glass dark:border-white/10 dark:from-[#0a2740]/70 dark:via-[#0b2033]/70 dark:to-[#08182a]/60 sm:p-9">
-          <div className="absolute left-1/2 -top-16 h-52 w-72 -translate-x-1/2 rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at center, rgba(236,250,255,0.75), transparent 70%)' }} />
-          <div className="absolute -right-10 top-6 h-48 w-48 rounded-full bg-cyan-300/45 blur-3xl dark:bg-cyan-600/30" />
-          <div className="absolute -left-16 top-10 h-44 w-44 rounded-full bg-sky-300/40 blur-3xl dark:bg-sky-700/25" />
-          <GeodeCluster className="pointer-events-none absolute inset-x-0 bottom-0 h-20 opacity-75" />
-          <div className="relative flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
-            <div className="text-center sm:text-left">
-              <p className="text-[13px] font-medium tracking-wide text-brand-600 dark:text-brand-300">{t('brand.full')}</p>
-              <h1 className="mt-2 text-2xl font-bold leading-tight text-neutral-900 dark:text-white sm:text-4xl">
+        {/* Hero · 沉浸式冰洞实景 */}
+        <section className="relative min-h-[340px] overflow-hidden rounded-4xl shadow-card-lg sm:min-h-[380px]">
+          <div className="absolute inset-0 animate-cave-in">
+            <IceCaveImage className="h-full w-full object-cover animate-cave-drift" />
+          </div>
+          {/* 文字可读遮罩 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#04121f]/80 via-[#06182a]/40 to-[#06182a]/20" />
+          {/* 进光 */}
+          <div className="absolute left-1/2 top-0 h-40 w-80 -translate-x-1/2 -translate-y-10 rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at center, rgba(224,246,255,0.55), transparent 70%)' }} />
+          <div className="relative flex min-h-[340px] flex-col items-center justify-center gap-6 p-6 text-center sm:min-h-[380px] sm:flex-row sm:justify-between sm:p-9 sm:text-left">
+            <div>
+              <p className="text-[13px] font-medium tracking-wide text-cyan-200/90 drop-shadow">{t('brand.full')}</p>
+              <h1 className="mt-2 text-2xl font-bold leading-tight text-white drop-shadow-lg sm:text-4xl">
                 {t('home.heroTitle1')}
                 <br />
-                <span className="bg-gradient-to-r from-brand-500 to-emerald-500 bg-clip-text text-transparent">{t('home.heroTitle2')}</span>
+                <span className="bg-gradient-to-r from-cyan-200 via-sky-100 to-white bg-clip-text text-transparent">{t('home.heroTitle2')}</span>
               </h1>
-              <p className="mt-3 text-[14px] text-neutral-500 dark:text-neutral-400">{t('home.heroSub')}</p>
+              <p className="mt-3 text-[14px] text-white/85 drop-shadow">{t('home.heroSub')}</p>
               <button
                 onClick={() => onStart()}
-                className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-brand-500 px-6 py-3 text-[15px] font-medium text-white shadow-glow transition hover:bg-brand-600 hover:shadow-card-lg active:scale-95"
+                className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-6 py-3 text-[15px] font-semibold text-sky-800 shadow-card-lg backdrop-blur transition hover:bg-white active:scale-95"
               >
                 {t('home.start')} <ChevronRight size={17} />
               </button>
             </div>
-            <div className="relative h-44 w-44 shrink-0 animate-float sm:h-56 sm:w-56">
+            <div className="relative h-44 w-44 shrink-0 animate-float drop-shadow-2xl sm:h-56 sm:w-56">
               <BraceletRing beads={patternToBeads(PRESETS[0].pattern)} />
             </div>
           </div>

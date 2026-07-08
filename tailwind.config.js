@@ -63,6 +63,14 @@ export default {
           '0%,100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-6px)' },
         },
+        'cave-in': {
+          '0%': { transform: 'scale(1.18)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        'cave-drift': {
+          '0%,100%': { transform: 'scale(1.04) translateY(0)' },
+          '50%': { transform: 'scale(1.1) translateY(-1%)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.5s cubic-bezier(0.22,1,0.36,1) both',
@@ -70,6 +78,8 @@ export default {
         'pop': 'pop 0.35s cubic-bezier(0.34,1.56,0.64,1) both',
         'spin-slow': 'spin-slow 18s linear infinite',
         'float': 'float 4s ease-in-out infinite',
+        'cave-in': 'cave-in 1.8s cubic-bezier(0.22,1,0.36,1) both',
+        'cave-drift': 'cave-drift 26s ease-in-out infinite',
       },
     },
   },
