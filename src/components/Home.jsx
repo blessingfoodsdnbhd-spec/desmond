@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Bead } from './Bead.jsx'
 import { BraceletRing } from './BraceletRing.jsx'
 import { ProductSheet } from './ProductSheet.jsx'
+import { GeodeCluster } from './CrystalBackground.jsx'
 import { CRYSTALS, CRYSTAL_MAP } from '../data/crystals.js'
 import { PRESETS } from '../data/recommendations.js'
 import { useStore, effectiveDefaultProducts } from '../data/store.js'
@@ -34,9 +35,11 @@ export function Home({ onStart }) {
   return (
     <div className="pb-24 lg:pb-12">
       <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
-        {/* Hero */}
-        <section className="relative overflow-hidden rounded-4xl bg-gradient-to-br from-brand-50 via-white to-emerald-50/60 p-6 shadow-card dark:from-brand-900/40 dark:via-neutral-900 dark:to-neutral-900 sm:p-9">
-          <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-brand-200/40 blur-3xl dark:bg-brand-700/20" />
+        {/* Hero · 水晶洞 */}
+        <section className="relative overflow-hidden rounded-4xl border border-white/50 bg-gradient-to-br from-violet-100/85 via-white/55 to-emerald-100/70 p-6 shadow-card glass dark:border-white/10 dark:from-violet-950/60 dark:via-neutral-900/70 dark:to-emerald-950/40 sm:p-9">
+          <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-violet-300/45 blur-3xl dark:bg-violet-700/30" />
+          <div className="absolute -left-16 top-8 h-48 w-48 rounded-full bg-emerald-200/40 blur-3xl dark:bg-emerald-800/25" />
+          <GeodeCluster className="pointer-events-none absolute inset-x-0 bottom-0 h-20 opacity-70" />
           <div className="relative flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
             <div className="text-center sm:text-left">
               <p className="text-[13px] font-medium tracking-wide text-brand-600 dark:text-brand-300">{t('brand.full')}</p>
