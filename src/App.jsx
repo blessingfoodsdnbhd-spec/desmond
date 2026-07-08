@@ -78,10 +78,17 @@ export default function App() {
               <ArrowLeft size={20} />
             </button>
           )}
-          <div className="min-w-0 flex-1">
+          <button
+            onClick={() => {
+              setTab('home')
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
+            className="min-w-0 flex-1 text-left transition active:scale-[0.98]"
+            aria-label="回到首页顶部"
+          >
             <div className="truncate text-[17px] font-semibold leading-tight">{h.title}</div>
             <div className="truncate text-[11px] text-neutral-400">{h.sub}</div>
-          </div>
+          </button>
           {tab === 'design' && (
             <button className="hidden items-center gap-1 rounded-full border border-brand-300 px-3.5 py-1.5 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50 active:scale-95 dark:border-brand-700 dark:text-brand-300 dark:hover:bg-brand-900/30 sm:flex">
               <CheckIcon size={14} /> {t('header.save')}
