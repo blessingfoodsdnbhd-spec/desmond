@@ -107,6 +107,8 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   const applyPattern = (ids, label) => {
     commit(ids.map((id) => makeBead(id, size)))
     if (label) notify(label)
+    // 生成后滚到顶部，看到手链预览与价钱（等弹窗关闭、恢复滚动后再滚）
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 150)
   }
   const randomize = () => {
     const n = beads.length || recommendCount(wrist, size)
