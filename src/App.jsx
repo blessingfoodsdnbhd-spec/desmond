@@ -3,6 +3,7 @@ import { Home } from './components/Home.jsx'
 import { Designer } from './components/Designer.jsx'
 import { Admin } from './components/Admin.jsx'
 import { CrystalBackground } from './components/CrystalBackground.jsx'
+import { EnergyGuide } from './components/EnergyGuide.jsx'
 import { Bead } from './components/Bead.jsx'
 import { CRYSTALS, CATEGORIES, ELEMENTS } from './data/crystals.js'
 import { makeBead } from './utils/bracelet.js'
@@ -116,7 +117,7 @@ export default function App() {
       <main className="animate-fade-in" key={tab}>
         {tab === 'home' && <Home onStart={start} />}
         {tab === 'design' && <Designer key={designKey} dark={dark} initialBeads={initialBeads} smartSignal={smartSignal} />}
-        {tab === 'discover' && <Discover onStart={start} />}
+        {tab === 'discover' && <EnergyGuide onStart={start} />}
         {tab === 'order' && <Orders onStart={start} />}
         {tab === 'me' && <Profile dark={dark} setDark={setDark} onOpenAdmin={() => setShowAdmin(true)} />}
       </main>
@@ -272,7 +273,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v6 · 2026.07.08 · 真实水晶珠</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v7 · 2026.07.08 · 真实水晶珠 · 能量图鉴</p>
     </div>
   )
 }
