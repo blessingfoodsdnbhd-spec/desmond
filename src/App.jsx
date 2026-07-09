@@ -143,11 +143,15 @@ export default function App() {
                 <span className="relative grid h-7 place-items-center">
                   {active && (
                     <span
-                      className="absolute -inset-2 rounded-full animate-glow-pulse"
-                      style={{ '--glow': 'rgba(47,156,102,0.55)', background: 'radial-gradient(circle, rgba(79,179,126,0.55), rgba(47,156,102,0.15) 60%, transparent 72%)' }}
+                      className="absolute -inset-2 rounded-full"
+                      style={{ background: 'radial-gradient(circle, rgba(79,179,126,0.5), rgba(47,156,102,0.12) 60%, transparent 72%)' }}
                     />
                   )}
-                  <tb.icon size={23} className={`relative transition-transform duration-300 ${active ? 'scale-110 drop-shadow-[0_0_6px_rgba(47,156,102,0.6)]' : ''}`} />
+                  <tb.icon
+                    size={23}
+                    className={`relative drop-shadow-[0_0_6px_rgba(47,156,102,0.5)] ${active ? 'scale-110' : 'scale-100 drop-shadow-none'}`}
+                    style={{ transition: 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1)' }}
+                  />
                 </span>
                 <span className="text-[10px] font-medium">{t(tb.tkey)}</span>
               </button>
@@ -286,7 +290,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v13 · 2026.07.09 · Vision Pro 水晶质感升级</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v14 · 2026.07.09 · 高级质感 · 毛玻璃 · 滚动揭示</p>
     </div>
   )
 }

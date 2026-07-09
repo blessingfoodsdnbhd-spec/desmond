@@ -32,7 +32,10 @@ function BeadNode({ p, selected, onSelect, assembling, index }) {
       }}
     >
       <g className={assembling ? '' : 'animate-pop'} style={innerStyle}>
+        {/* 选中：柔和能量辉光 + 轻微放大 */}
+        {selected && <circle r={r + 9} fill="#3ddc9a" opacity="0.28" style={{ filter: 'blur(3px)' }} />}
         {selected && <circle r={r + 4} fill="none" stroke="#2f9c66" strokeWidth="2.5" />}
+        <g style={{ transform: selected ? 'scale(1.08)' : 'scale(1)', transition: 'transform 0.32s cubic-bezier(0.34,1.56,0.64,1)' }}>
         {p.crystal?.photo ? (
           <>
             <clipPath id={`ringclip-${p.uid}`}>
@@ -58,6 +61,7 @@ function BeadNode({ p, selected, onSelect, assembling, index }) {
             <circle r={r * 0.98} fill="none" stroke={p.crystal?.gradient?.ring || '#999'} strokeOpacity="0.45" strokeWidth={Math.max(0.6, r * 0.05)} />
           </>
         )}
+        </g>
       </g>
     </g>
   )
