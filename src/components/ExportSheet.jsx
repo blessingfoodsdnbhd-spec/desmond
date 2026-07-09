@@ -4,8 +4,11 @@ import { renderProductImage, downloadDataUrl } from '../utils/render.js'
 import { useLang, localizeCrystal, money } from '../i18n.jsx'
 import { CRYSTAL_MAP } from '../data/crystals.js'
 import { summarize } from '../utils/bracelet.js'
-import { waLink } from '../data/store.js'
+import { waLink, isCloud } from '../data/store.js'
+import { api } from '../data/api.js'
 import { DownloadIcon, ShareIcon, WhatsAppIcon } from './icons.jsx'
+
+const apiCreateOrder = api.createOrder
 
 export function ExportSheet({ open, onClose, beads, dark, wristCm }) {
   const { t, lang } = useLang()
@@ -81,6 +84,16 @@ export function ExportSheet({ open, onClose, beads, dark, wristCm }) {
     if (!name.trim() || !address.trim()) return notify(t('order.needinfo'))
     // 先保存设计图，方便顾客在 WhatsApp 里附上
     downloadDataUrl(renderProductImage(beads, { dark, wristCm, i18n: imgI18n }), 'my-bracelet.png')
+
+    // 云端记录订单（部署在 Cloudflare 时生效；否则静默忽略）
+    if (isCloud()) {
+      apiCreateOrder({
+        name, phone, address,
+        items: { beads: beads.map((b) => b.crystalId), wristCm, count: stats.count },
+        summary: `${stats.count} 颗 · ${composition.join('、')}`,
+        total: stats.price, channel: 'web',
+      }).catch(() => {})
+    }
 
     const lines =
       lang === 'zh'

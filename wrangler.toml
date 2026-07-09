@@ -1,0 +1,14 @@
+# Cloudflare Pages 配置（阿发水晶阁）
+name = "ahhuat-crystal"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
+
+# 数据库(D1)与密码请在 Cloudflare 控制台里绑定/设置（见 docs/上线指南-Cloudflare.md 第5步）：
+#   Settings → Functions → D1 database bindings：变量名 DB → 选 ahhuat
+#   Settings → Environment variables：ADMIN_PASSWORD、AUTH_SECRET
+#
+# 如果你改用命令行 wrangler 本地开发，可解开下面注释并填入真实 database_id：
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "ahhuat"
+# database_id = "你的-d1-database-id"

@@ -3,6 +3,14 @@
 import { useSyncExternalStore } from 'react'
 import { CRYSTAL_MAP, CRYSTALS } from './crystals.js'
 import { PRODUCTS } from './products.js'
+import { api, cloudReady, getToken, setToken } from './api.js'
+
+// 云端推送（部署在 Cloudflare 时生效）：best-effort，失败不影响本地
+let CLOUD = false
+function push(fn) {
+  if (!CLOUD || !getToken()) return
+  Promise.resolve().then(fn).catch(() => {})
+}
 
 // 默认项目的原始副本（用于叠加编辑）
 const ORIG_BEAD = Object.fromEntries(CRYSTALS.map((c) => [c.id, c]))
@@ -55,6 +63,36 @@ Object.keys(ORIG_BEAD).forEach(applyBeadEdit)
 // 启动时注册已保存的自定义珠子
 state.beads.forEach(registerBead)
 
+// ---------- 云端同步（Cloudflare 部署时）----------
+async function syncFromCloud() {
+  try {
+    const ok = await cloudReady()
+    if (!ok) return
+    CLOUD = true
+    const s = await api.state()
+    if (!s?.ok) return
+    state.beads = Array.isArray(s.beads) ? s.beads : []
+    state.products = Array.isArray(s.products) ? s.products : []
+    state.beadEdits = s.beadEdits || {}
+    state.beadHidden = Array.isArray(s.beadHidden) ? s.beadHidden : []
+    state.productEdits = s.productEdits || {}
+    state.productHidden = Array.isArray(s.productHidden) ? s.productHidden : []
+    state.cloudWa = s.settings?.wa || null
+    // 缓存到本地并注册
+    write(K.beads, state.beads); write(K.products, state.products)
+    write(K.beadEdits, state.beadEdits); write(K.beadHidden, state.beadHidden)
+    write(K.productEdits, state.productEdits); write(K.productHidden, state.productHidden)
+    state.beads.forEach(registerBead)
+    Object.keys(ORIG_BEAD).forEach(applyBeadEdit)
+    emit()
+  } catch (_) {}
+}
+syncFromCloud()
+
+export function isCloud() {
+  return CLOUD
+}
+
 // 生效后的默认项目（应用编辑 + 过滤隐藏）
 export function effectiveDefaultBeads(s) {
   return CRYSTALS.map((c) => ({ ...c, ...(s.beadEdits[c.id] || {}) })).filter((c) => !s.beadHidden.includes(c.id))
@@ -69,21 +107,25 @@ export function setBeadEdit(id, patch) {
   write(K.beadEdits, state.beadEdits)
   applyBeadEdit(id)
   emit()
+  push(() => api.setOverride({ scope: 'bead', ref_id: id, patch: state.beadEdits[id], hidden: state.beadHidden.includes(id) }))
 }
 export function toggleHideBead(id) {
   state.beadHidden = state.beadHidden.includes(id) ? state.beadHidden.filter((x) => x !== id) : [...state.beadHidden, id]
   write(K.beadHidden, state.beadHidden)
   emit()
+  push(() => api.setOverride({ scope: 'bead', ref_id: id, patch: state.beadEdits[id] || null, hidden: state.beadHidden.includes(id) }))
 }
 export function setProductEdit(id, patch) {
   state.productEdits = { ...state.productEdits, [id]: { ...(state.productEdits[id] || {}), ...patch } }
   write(K.productEdits, state.productEdits)
   emit()
+  push(() => api.setOverride({ scope: 'product', ref_id: id, patch: state.productEdits[id], hidden: state.productHidden.includes(id) }))
 }
 export function toggleHideProduct(id) {
   state.productHidden = state.productHidden.includes(id) ? state.productHidden.filter((x) => x !== id) : [...state.productHidden, id]
   write(K.productHidden, state.productHidden)
   emit()
+  push(() => api.setOverride({ scope: 'product', ref_id: id, patch: state.productEdits[id] || null, hidden: state.productHidden.includes(id) }))
 }
 
 const listeners = new Set()
@@ -107,7 +149,24 @@ export function useStore() {
 export function getPassword() {
   return read(K.pass, DEFAULT_PASS)
 }
-export function login(pw) {
+export async function login(pw) {
+  // 云端模式：向服务器验证并取得 token
+  if (CLOUD) {
+    try {
+      const r = await api.login(pw)
+      if (r?.ok && r.token) {
+        setToken(r.token)
+        state.authed = true
+        write(K.authed, true)
+        emit()
+        return true
+      }
+      return false
+    } catch {
+      return false
+    }
+  }
+  // 本地模式
   if (pw === getPassword()) {
     state.authed = true
     write(K.authed, true)
@@ -118,23 +177,27 @@ export function login(pw) {
 }
 export function logout() {
   state.authed = false
+  setToken('')
   write(K.authed, false)
   emit()
 }
 export function setPassword(pw) {
   if (!pw || pw.length < 4) return false
   write(K.pass, pw)
+  push(() => api.saveSettings({ admin_pass: pw }))
   return true
 }
 
 // ---------- WhatsApp 下单 ----------
 export function getWa() {
-  return read(K.wa, DEFAULT_WA)
+  return state.cloudWa || read(K.wa, DEFAULT_WA)
 }
 export function setWa(num) {
   const clean = String(num).replace(/[^0-9]/g, '')
   write(K.wa, clean)
+  state.cloudWa = clean
   emit()
+  push(() => api.saveSettings({ wa: clean }))
   return clean
 }
 export function waLink(text) {
@@ -164,25 +227,30 @@ export function addBead(bead) {
   state.beads = [...state.beads, b]
   write(K.beads, state.beads)
   emit()
+  push(() => api.saveBead(b))
   return b
 }
 export function updateBead(id, patch) {
+  let updated = null
   state.beads = state.beads.map((b) => {
     if (b.id !== id) return b
     const merged = { ...b, ...patch }
     if (patch.keywords) merged.keywords = patch.keywords
     merged.basePrice = Number(merged.basePrice) || b.basePrice
     registerBead(merged)
+    updated = merged
     return merged
   })
   write(K.beads, state.beads)
   emit()
+  if (updated) push(() => api.saveBead(updated))
 }
 export function deleteBead(id) {
   state.beads = state.beads.filter((b) => b.id !== id)
   delete CRYSTAL_MAP[id]
   write(K.beads, state.beads)
   emit()
+  push(() => api.deleteBead(id))
 }
 
 // ---------- 自定义成品产品 ----------
@@ -204,17 +272,25 @@ export function addProduct(p) {
   state.products = [...state.products, prod]
   write(K.products, state.products)
   emit()
+  push(() => api.saveProduct(prod))
   return prod
 }
 export function updateProduct(id, patch) {
-  state.products = state.products.map((p) => (p.id === id ? { ...p, ...patch } : p))
+  let updated = null
+  state.products = state.products.map((p) => {
+    if (p.id !== id) return p
+    updated = { ...p, ...patch }
+    return updated
+  })
   write(K.products, state.products)
   emit()
+  if (updated) push(() => api.saveProduct(updated))
 }
 export function deleteProduct(id) {
   state.products = state.products.filter((p) => p.id !== id)
   write(K.products, state.products)
   emit()
+  push(() => api.deleteProduct(id))
 }
 
 // ---------- 备份 导出 / 导入 ----------

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Bead } from './Bead.jsx'
 import { CATEGORIES, ELEMENTS, CRYSTALS } from '../data/crystals.js'
 import { PRODUCTS } from '../data/products.js'
@@ -25,7 +25,9 @@ import {
   setPassword,
   exportData,
   importData,
+  isCloud,
 } from '../data/store.js'
+import { api } from '../data/api.js'
 import { CloseIcon, PlusIcon, TrashIcon, CheckIcon, DownloadIcon, WhatsAppIcon, EyeIcon, EyeOffIcon, EditIcon } from './icons.jsx'
 
 const ELEMENT_KEYS = Object.keys(ELEMENTS)
@@ -48,8 +50,8 @@ export function Admin({ open, onClose }) {
 
   // ---- Login gate ----
   if (!store.authed) {
-    const doLogin = () => {
-      if (login(pw)) {
+    const doLogin = async () => {
+      if (await login(pw)) {
         setErr('')
         setPw('')
       } else setErr(t('admin.login.err'))
@@ -95,8 +97,11 @@ export function Admin({ open, onClose }) {
       </div>
 
       <div className="mx-auto max-w-2xl px-4 pb-24 pt-4">
-        <div className="mb-4 flex gap-1 rounded-2xl bg-black/5 p-1 dark:bg-white/5">
+        <div className="mb-4 flex gap-1 overflow-x-auto no-scrollbar rounded-2xl bg-black/5 p-1 dark:bg-white/5">
           {[
+            { k: 'stats', l: lang === 'zh' ? '统计' : 'Stats' },
+            { k: 'orders', l: lang === 'zh' ? '订单' : 'Orders' },
+            { k: 'customers', l: lang === 'zh' ? '客户' : 'Customers' },
             { k: 'beads', l: t('admin.tab.beads') },
             { k: 'products', l: t('admin.tab.products') },
             { k: 'settings', l: t('admin.tab.settings') },
@@ -104,13 +109,16 @@ export function Admin({ open, onClose }) {
             <button
               key={x.k}
               onClick={() => setTab(x.k)}
-              className={`flex-1 rounded-xl py-2 text-[13px] font-medium transition ${tab === x.k ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}`}
+              className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-2 text-[13px] font-medium transition ${tab === x.k ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}`}
             >
               {x.l}
             </button>
           ))}
         </div>
 
+        {tab === 'stats' && <StatsAdmin />}
+        {tab === 'orders' && <OrdersAdmin onMsg={(m) => toast(setMsg, m)} />}
+        {tab === 'customers' && <CustomersAdmin />}
         {tab === 'beads' && <BeadAdmin store={store} onMsg={(m) => toast(setMsg, m)} />}
         {tab === 'products' && <ProductAdmin store={store} onMsg={(m) => toast(setMsg, m)} />}
         {tab === 'settings' && <SettingsAdmin onMsg={(m) => toast(setMsg, m)} />}
@@ -519,3 +527,144 @@ function SettingsAdmin({ onMsg }) {
     </div>
   )
 }
+
+/* ============ CRM：统计 / 订单 / 客户（需部署在 Cloudflare）============ */
+const ORDER_STATUS = [
+  { k: 'new', zh: '新订单', en: 'New', c: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
+  { k: 'confirmed', zh: '已确认', en: 'Confirmed', c: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
+  { k: 'paid', zh: '已付款', en: 'Paid', c: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' },
+  { k: 'shipped', zh: '已发货', en: 'Shipped', c: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300' },
+  { k: 'done', zh: '完成', en: 'Done', c: 'bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200' },
+  { k: 'cancelled', zh: '取消', en: 'Cancelled', c: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' },
+]
+
+function CloudNotice() {
+  const { lang } = useLang()
+  return (
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-center text-[13px] text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-200">
+      {lang === 'zh'
+        ? '此功能需要网站上线到 Cloudflare（云端后台）后才能使用。目前是本地/离线版本。'
+        : 'This needs the site deployed to Cloudflare (cloud backend). Currently local/offline.'}
+    </div>
+  )
+}
+
+function fmtDate(ms) {
+  if (!ms) return ''
+  const d = new Date(ms)
+  const p = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
+}
+
+function StatsAdmin() {
+  const { lang } = useLang()
+  const [s, setS] = useState(null)
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    if (!isCloud()) { setLoading(false); return }
+    api.stats().then((r) => setS(r.stats)).catch(() => {}).finally(() => setLoading(false))
+  }, [])
+  if (!isCloud()) return <CloudNotice />
+  if (loading) return <div className="py-10 text-center text-[13px] text-neutral-400">…</div>
+  if (!s) return <div className="py-10 text-center text-[13px] text-neutral-400">{lang === 'zh' ? '暂无数据' : 'No data'}</div>
+  const cards = [
+    { label: lang === 'zh' ? '总订单' : 'Orders', value: s.totalOrders },
+    { label: lang === 'zh' ? '总营业额' : 'Revenue', value: money(s.totalRevenue) },
+    { label: lang === 'zh' ? '已收款' : 'Paid', value: money(s.paidRevenue) },
+    { label: lang === 'zh' ? '客户数' : 'Customers', value: s.customers },
+    { label: lang === 'zh' ? '近30天订单' : '30d Orders', value: s.last30Orders },
+    { label: lang === 'zh' ? '近30天营业额' : '30d Revenue', value: money(s.last30Revenue) },
+  ]
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {cards.map((c) => (
+        <div key={c.label} className="rounded-2xl border border-black/5 bg-white p-4 shadow-card dark:border-white/5 dark:bg-neutral-800">
+          <div className="text-[12px] text-neutral-400">{c.label}</div>
+          <div className="mt-1 text-xl font-bold text-neutral-900 dark:text-white">{c.value}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function OrdersAdmin({ onMsg }) {
+  const { lang } = useLang()
+  const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(true)
+  const load = () => {
+    if (!isCloud()) { setLoading(false); return }
+    api.listOrders().then((r) => setOrders(r.orders || [])).catch(() => {}).finally(() => setLoading(false))
+  }
+  useEffect(load, [])
+  if (!isCloud()) return <CloudNotice />
+  if (loading) return <div className="py-10 text-center text-[13px] text-neutral-400">…</div>
+  if (!orders.length) return <div className="py-10 text-center text-[13px] text-neutral-400">{lang === 'zh' ? '还没有订单' : 'No orders yet'}</div>
+  const setStatus = async (id, status) => {
+    try { await api.patchOrder(id, { status }); setOrders((o) => o.map((x) => (x.id === id ? { ...x, status } : x))); onMsg?.(lang === 'zh' ? '已更新' : 'Updated') } catch (_) {}
+  }
+  const del = async (id) => {
+    try { await api.deleteOrder(id); setOrders((o) => o.filter((x) => x.id !== id)) } catch (_) {}
+  }
+  return (
+    <div className="space-y-3">
+      {orders.map((o) => {
+        const st = ORDER_STATUS.find((x) => x.k === o.status) || ORDER_STATUS[0]
+        return (
+          <div key={o.id} className="rounded-2xl border border-black/5 bg-white p-3.5 shadow-card dark:border-white/5 dark:bg-neutral-800">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <div className="text-[14px] font-semibold text-neutral-900 dark:text-white">{o.name || '—'} {o.phone && <span className="text-[12px] font-normal text-neutral-400">{o.phone}</span>}</div>
+                <div className="truncate text-[12px] text-neutral-500 dark:text-neutral-400">{o.summary}</div>
+                {o.address && <div className="truncate text-[11px] text-neutral-400">{o.address}</div>}
+                <div className="mt-0.5 text-[11px] text-neutral-400">{fmtDate(o.created_at)}</div>
+              </div>
+              <div className="shrink-0 text-right">
+                <div className="text-[15px] font-bold text-brand-600 dark:text-brand-300">{money(o.total || 0)}</div>
+                <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${st.c}`}>{lang === 'zh' ? st.zh : st.en}</span>
+              </div>
+            </div>
+            <div className="mt-2.5 flex flex-wrap items-center gap-1.5 border-t border-black/5 pt-2.5 dark:border-white/5">
+              {ORDER_STATUS.map((x) => (
+                <button key={x.k} onClick={() => setStatus(o.id, x.k)} className={`rounded-lg px-2 py-1 text-[11px] font-medium transition ${o.status === x.k ? x.c : 'bg-black/5 text-neutral-500 dark:bg-white/5 dark:text-neutral-400'}`}>
+                  {lang === 'zh' ? x.zh : x.en}
+                </button>
+              ))}
+              <button onClick={() => del(o.id)} className="ml-auto grid h-7 w-7 place-items-center rounded-lg text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"><TrashIcon size={15} /></button>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function CustomersAdmin() {
+  const { lang } = useLang()
+  const [list, setList] = useState([])
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    if (!isCloud()) { setLoading(false); return }
+    api.listCustomers().then((r) => setList(r.customers || [])).catch(() => {}).finally(() => setLoading(false))
+  }, [])
+  if (!isCloud()) return <CloudNotice />
+  if (loading) return <div className="py-10 text-center text-[13px] text-neutral-400">…</div>
+  if (!list.length) return <div className="py-10 text-center text-[13px] text-neutral-400">{lang === 'zh' ? '还没有客户' : 'No customers yet'}</div>
+  return (
+    <div className="space-y-2.5">
+      {list.map((c) => (
+        <div key={c.phone} className="flex items-center justify-between rounded-2xl border border-black/5 bg-white p-3.5 shadow-card dark:border-white/5 dark:bg-neutral-800">
+          <div className="min-w-0">
+            <div className="text-[14px] font-semibold text-neutral-900 dark:text-white">{c.name || '—'}</div>
+            <div className="text-[12px] text-neutral-400">{c.phone}</div>
+            {c.address && <div className="truncate text-[11px] text-neutral-400">{c.address}</div>}
+          </div>
+          <div className="shrink-0 text-right">
+            <div className="text-[13px] font-bold text-brand-600 dark:text-brand-300">{money(c.total_spent || 0)}</div>
+            <div className="text-[11px] text-neutral-400">{c.orders_count} {lang === 'zh' ? '单' : 'orders'}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
