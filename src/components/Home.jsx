@@ -8,19 +8,15 @@ import { PRESETS, ZODIACS, BIRTH_MONTHS, zodiacByDate, buildPatternFromCrystals 
 import { useStore, effectiveDefaultProducts } from '../data/store.js'
 import { makeBead } from '../utils/bracelet.js'
 import { useLang, localizeCrystal, money, PRESET_I18N, ZODIAC_I18N } from '../i18n.jsx'
-import {
-  DesignIcon,
-  SparkleIcon,
-  EnergyIcon,
-  OrderTagIcon,
-  ChevronRight,
-} from './icons.jsx'
+import { GemCrystalIcon, DiamondSparkIcon, EnergyOrbIcon, GiftGlowIcon } from './CrystalIcons.jsx'
+import { useRipple, Sparkles } from './effects.jsx'
+import { SparkleIcon, ChevronRight } from './icons.jsx'
 
 const FEATURE_KEYS = [
-  { icon: DesignIcon, t: 'feat.design', d: 'feat.design.d' },
-  { icon: SparkleIcon, t: 'feat.ai', d: 'feat.ai.d' },
-  { icon: EnergyIcon, t: 'feat.energy', d: 'feat.energy.d' },
-  { icon: OrderTagIcon, t: 'feat.order', d: 'feat.order.d' },
+  { Icon: GemCrystalIcon, t: 'feat.design', d: 'feat.design.d', from: '#1e7fd4', to: '#0b3f74', glow: 'rgba(56,150,230,0.75)' },
+  { Icon: DiamondSparkIcon, t: 'feat.ai', d: 'feat.ai.d', from: '#9a4ff0', to: '#4a1a9c', glow: 'rgba(160,90,240,0.8)' },
+  { Icon: EnergyOrbIcon, t: 'feat.energy', d: 'feat.energy.d', from: '#5a63e6', to: '#2a2192', glow: 'rgba(110,120,240,0.8)' },
+  { Icon: GiftGlowIcon, t: 'feat.order', d: 'feat.order.d', from: '#e0a340', to: '#9a6414', glow: 'rgba(240,180,80,0.8)' },
 ]
 
 function patternToBeads(pattern) {
@@ -63,6 +59,8 @@ export function Home({ onStart, onOpenGuide }) {
           <div className="absolute inset-0 bg-gradient-to-t from-[#04121f]/80 via-[#06182a]/40 to-[#06182a]/20" />
           {/* 进光 */}
           <div className="absolute left-1/2 top-0 h-40 w-80 -translate-x-1/2 -translate-y-10 rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at center, rgba(224,246,255,0.55), transparent 70%)' }} />
+          {/* 星光粒子 */}
+          <Sparkles />
           <div className="relative flex min-h-[340px] flex-col items-center justify-center gap-6 p-6 text-center sm:min-h-[380px] sm:flex-row sm:justify-between sm:p-9 sm:text-left">
             <div>
               <p className="text-[13px] font-medium tracking-wide text-cyan-200/90 drop-shadow">{t('brand.full')}</p>
@@ -74,37 +72,47 @@ export function Home({ onStart, onOpenGuide }) {
               <p className="mt-3 text-[14px] text-white/85 drop-shadow">{t('home.heroSub')}</p>
               <button
                 onClick={() => onStart()}
-                className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-6 py-3 text-[15px] font-semibold text-sky-800 shadow-card-lg backdrop-blur transition hover:bg-white active:scale-95"
+                className="group relative mt-5 inline-flex items-center gap-2 overflow-hidden rounded-full border border-white/40 bg-white/15 px-6 py-3 text-[15px] font-semibold text-white glass shadow-card-lg transition active:scale-95"
+                style={{ '--glow': 'rgba(150,200,255,0.85)' }}
               >
-                {t('home.start')} <ChevronRight size={17} />
+                <span className="absolute inset-0 rounded-full animate-glow-pulse" />
+                <span className="relative grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-cyan-200 to-sky-500 shadow-[0_0_10px_rgba(160,220,255,0.9)]">
+                  <span className="h-2.5 w-2.5 rounded-full bg-white/90" />
+                </span>
+                <span className="relative">{t('home.start')}</span>
+                <ChevronRight size={17} className="relative" />
               </button>
             </div>
-            <div className="relative h-60 w-60 shrink-0 animate-float drop-shadow-2xl sm:h-72 sm:w-72">
-              <BraceletRing beads={heroBeads} brandStyle="hero" />
+            <div className="relative h-60 w-60 shrink-0 sm:h-72 sm:w-72">
+              {/* 呼吸光环 */}
+              <div className="absolute inset-2 rounded-full animate-breath" style={{ background: 'radial-gradient(circle, rgba(120,190,255,0.45), rgba(150,120,255,0.18) 55%, transparent 72%)' }} />
+              {/* 旋转光点环 */}
+              <div className="absolute inset-0 animate-orbit">
+                <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-cyan-200 shadow-[0_0_8px_2px_rgba(180,230,255,0.9)]" />
+                <span className="absolute right-2 top-1/2 h-1 w-1 rounded-full bg-purple-200 shadow-[0_0_8px_2px_rgba(210,180,255,0.9)]" />
+                <span className="absolute bottom-1 left-1/3 h-1.5 w-1.5 rounded-full bg-amber-100 shadow-[0_0_8px_2px_rgba(255,235,180,0.9)]" />
+              </div>
+              <div className="relative h-full w-full animate-float drop-shadow-2xl">
+                <BraceletRing beads={heroBeads} brandStyle="hero" />
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Features */}
+        {/* Features · 立体水晶玻璃卡 */}
         <section className="mt-5 grid grid-cols-4 gap-2 sm:gap-4">
           {FEATURE_KEYS.map((f) => (
-            <button
+            <FeatureCard
               key={f.t}
+              f={f}
+              label={t(f.t)}
+              desc={t(f.d)}
               onClick={() => {
                 if (f.t === 'feat.ai') onStart('smart')
                 else if (f.t === 'feat.energy') onOpenGuide?.()
                 else onStart()
               }}
-              className="flex flex-col items-center gap-2 rounded-3xl border border-black/5 bg-white/70 p-3 text-center shadow-card glass transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-95 dark:border-white/5 dark:bg-neutral-900/60 sm:p-5"
-            >
-              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-500 dark:bg-brand-900/40 dark:text-brand-300 sm:h-14 sm:w-14">
-                <f.icon size={22} />
-              </span>
-              <div>
-                <div className="text-[13px] font-semibold text-neutral-900 dark:text-white sm:text-[15px]">{t(f.t)}</div>
-                <div className="hidden text-[11px] text-neutral-400 sm:block">{t(f.d)}</div>
-              </div>
-            </button>
+            />
           ))}
         </section>
 
@@ -258,5 +266,34 @@ export function Home({ onStart, onOpenGuide }) {
 
       <ProductSheet open={!!product} onClose={() => setProduct(null)} product={product} />
     </div>
+  )
+}
+
+/* ---------- 立体水晶玻璃功能卡（带能量波纹） ---------- */
+function FeatureCard({ f, label, desc, onClick }) {
+  const { onDown, rippleNode } = useRipple()
+  const Icon = f.Icon
+  return (
+    <button
+      onClick={onClick}
+      onPointerDown={onDown}
+      style={{ '--glow': f.glow, background: `linear-gradient(160deg, ${f.from}, ${f.to})` }}
+      className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-3xl p-3 text-center text-white glass-card shadow-card transition hover:-translate-y-1 hover:shadow-card-lg active:scale-95 sm:p-4"
+    >
+      {/* 内发光 + 顶部高光 */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent" />
+      <span className="pointer-events-none absolute -inset-px rounded-3xl animate-glow-pulse opacity-70" />
+      <span className="relative grid h-12 w-12 place-items-center sm:h-14 sm:w-14">
+        <span className="absolute inset-0 rounded-full opacity-70 blur-md" style={{ background: f.glow }} />
+        <span className="relative animate-float" style={{ animationDelay: '0.3s' }}>
+          <Icon size={44} />
+        </span>
+      </span>
+      <div className="relative">
+        <div className="text-[13px] font-semibold drop-shadow sm:text-[14px]">{label}</div>
+        <div className="hidden text-[10px] text-white/70 sm:block">{desc}</div>
+      </div>
+      {rippleNode}
+    </button>
   )
 }

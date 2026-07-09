@@ -80,6 +80,89 @@ input[type='range']::-moz-range-thumb {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15), 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
+/* ============================================================
+   Vision-Pro × Crystal — premium motion & glass utilities
+   ============================================================ */
+
+/* 呼吸光晕 */
+@keyframes breath {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.14); opacity: 0.95; }
+}
+.animate-breath { animation: breath 4.5s ease-in-out infinite; }
+
+/* 缓慢自转（粒子/光环） */
+@keyframes orbit-cw { to { transform: rotate(360deg); } }
+@keyframes orbit-ccw { to { transform: rotate(-360deg); } }
+.animate-orbit { animation: orbit-cw 24s linear infinite; }
+.animate-orbit-rev { animation: orbit-ccw 30s linear infinite; }
+
+/* 流光扫过（玻璃高光） */
+@keyframes shimmer {
+  0% { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
+  35% { opacity: 0.85; }
+  100% { transform: translateX(220%) skewX(-18deg); opacity: 0; }
+}
+.shimmer-sweep { position: relative; overflow: hidden; }
+.shimmer-sweep::after {
+  content: '';
+  position: absolute; inset: 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.55), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+  animation: shimmer 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 星光闪烁 */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+.animate-twinkle { animation: twinkle 3.2s ease-in-out infinite; }
+
+/* 能量脉冲光环 */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 22px -6px var(--glow, rgba(120,160,255,0.7)); }
+  50% { box-shadow: 0 0 40px 2px var(--glow, rgba(120,160,255,0.95)); }
+}
+.animate-glow-pulse { animation: glow-pulse 3.6s ease-in-out infinite; }
+
+/* 点击能量波纹 */
+@keyframes ripple-out {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0.55; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+.energy-ripple {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(150,190,255,0.4) 40%, transparent 70%);
+  animation: ripple-out 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  z-index: 5;
+}
+
+/* 珠子飞入组成手链 */
+@keyframes bead-assemble {
+  0% { opacity: 0; transform: translate(var(--fx, 0px), var(--fy, 0px)) scale(0.2); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+/* 深色玻璃卡（Glassmorphism） */
+.glass-card {
+  backdrop-filter: saturate(160%) blur(18px);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  border: 1px solid rgba(255,255,255,0.22);
+}
+
+/* 极光渐变边框 */
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.aurora-border { background-size: 220% 220%; animation: aurora-shift 6s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

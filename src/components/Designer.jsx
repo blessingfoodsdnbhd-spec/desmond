@@ -55,7 +55,9 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   const [showSmart, setShowSmart] = useState(false)
   const [showExport, setShowExport] = useState(false)
   const [toast, setToast] = useState('')
+  const [assembling, setAssembling] = useState(false)
   const toastTimer = useRef(null)
+  const assembleTimer = useRef(null)
 
   const STEPS = [t('step.choose'), t('step.arrange'), t('step.finish')]
 
@@ -63,6 +65,16 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   useEffect(() => {
     if (smartSignal) setShowSmart(true)
   }, [smartSignal])
+
+  // 从首页带方案进入时，播放珠子飞入组成手链动画
+  useEffect(() => {
+    if ((initialBeads?.length || 0) > 0) {
+      setAssembling(true)
+      const tmr = setTimeout(() => setAssembling(false), 1400)
+      return () => clearTimeout(tmr)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const commit = (next) => {
     setPast((p) => [...p.slice(-40), beads])
@@ -107,6 +119,10 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   const applyPattern = (ids, label) => {
     commit(ids.map((id) => makeBead(id, size)))
     if (label) notify(label)
+    // 珠子飞入组成手链动画
+    setAssembling(true)
+    clearTimeout(assembleTimer.current)
+    assembleTimer.current = setTimeout(() => setAssembling(false), 1400)
     // 生成后滚到顶部，看到手链预览与价钱（等弹窗关闭、恢复滚动后再滚）
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 150)
   }
@@ -268,6 +284,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
                     selectedUid={selectedUid}
                     onSelectBead={setSelectedUid}
                     onClearSelection={() => setSelectedUid(null)}
+                    assembling={assembling}
                   />
                 </div>
               </div>

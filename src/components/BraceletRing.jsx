@@ -8,8 +8,17 @@ const CY = VIEW / 2
 const beadR = (size) => size * 2 // 6->12, 8->16, 10->20, 12->24
 
 // 珠子在 viewBox 中的绘制（<g>，可平滑过渡位置）
-function BeadNode({ p, selected, onSelect }) {
+function BeadNode({ p, selected, onSelect, assembling, index }) {
   const r = beadR(p.size)
+  // 组合动画：从圆心飞入到各自位置
+  const innerStyle = assembling
+    ? {
+        animation: 'bead-assemble 0.62s cubic-bezier(0.22,1,0.36,1) both',
+        animationDelay: `${Math.min(index, 24) * 55}ms`,
+        '--fx': `${CX - p.x}px`,
+        '--fy': `${CY - p.y}px`,
+      }
+    : undefined
   return (
     <g
       style={{
@@ -22,7 +31,7 @@ function BeadNode({ p, selected, onSelect }) {
         onSelect?.(p.uid)
       }}
     >
-      <g className="animate-pop">
+      <g className={assembling ? '' : 'animate-pop'} style={innerStyle}>
         {selected && <circle r={r + 4} fill="none" stroke="#2f9c66" strokeWidth="2.5" />}
         {p.crystal?.photo ? (
           <>
@@ -54,7 +63,7 @@ function BeadNode({ p, selected, onSelect }) {
   )
 }
 
-export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelection, brandStyle = 'default' }) {
+export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelection, brandStyle = 'default', assembling = false }) {
   const maxSize = beads.length ? Math.max(...beads.map((b) => b.size)) : 8
   const ringRadius = fitRingRadius(beads, beadR(maxSize) * 2, VIEW)
   const positions = layoutRing(beads, { cx: CX, cy: CY, ringRadius })
@@ -124,8 +133,8 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
         </>
       )}
 
-      {positions.map((p) => (
-        <BeadNode key={p.uid} p={p} selected={p.uid === selectedUid} onSelect={onSelectBead} />
+      {positions.map((p, i) => (
+        <BeadNode key={p.uid} p={p} index={i} assembling={assembling} selected={p.uid === selectedUid} onSelect={onSelectBead} />
       ))}
     </svg>
   )

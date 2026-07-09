@@ -138,9 +138,17 @@ export default function App() {
               <button
                 key={tb.key}
                 onClick={() => setTab(tb.key)}
-                className={`flex flex-1 flex-col items-center gap-0.5 py-2 transition ${active ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-400'}`}
+                className={`relative flex flex-1 flex-col items-center gap-0.5 py-2 transition ${active ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-400'}`}
               >
-                <tb.icon size={23} className={active ? 'scale-105' : ''} />
+                <span className="relative grid h-7 place-items-center">
+                  {active && (
+                    <span
+                      className="absolute -inset-2 rounded-full animate-glow-pulse"
+                      style={{ '--glow': 'rgba(47,156,102,0.55)', background: 'radial-gradient(circle, rgba(79,179,126,0.55), rgba(47,156,102,0.15) 60%, transparent 72%)' }}
+                    />
+                  )}
+                  <tb.icon size={23} className={`relative transition-transform duration-300 ${active ? 'scale-110 drop-shadow-[0_0_6px_rgba(47,156,102,0.6)]' : ''}`} />
+                </span>
                 <span className="text-[10px] font-medium">{t(tb.tkey)}</span>
               </button>
             )
@@ -278,7 +286,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v12 · 2026.07.09 · 首页大圈招牌</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v13 · 2026.07.09 · Vision Pro 水晶质感升级</p>
     </div>
   )
 }
