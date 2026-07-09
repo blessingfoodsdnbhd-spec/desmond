@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CRYSTAL_MAP, ELEMENTS } from '../data/crystals.js'
 import { Bead } from './Bead.jsx'
 import { Modal } from './Modal.jsx'
@@ -98,6 +98,11 @@ export function EnergyGuide({ onStart }) {
   const { t, lang } = useLang()
   const [detailId, setDetailId] = useState(null)
   const detail = detailId ? localizeCrystal(CRYSTAL_MAP[detailId], lang) : null
+
+  // 进入图鉴时始终从最上面开始（标题/解说）
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [])
 
   return (
     <div className="relative min-h-full pb-28">
