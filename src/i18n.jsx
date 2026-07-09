@@ -442,7 +442,6 @@ export const CRYSTAL_I18N = {
   'tiger-eye': { keywords: ['Courage', 'Confidence'], energy: 'Stone of courage with a shimmering eye. Strengthens aura and decisiveness, wards off negativity, keeps you calm and bold.' },
   obsidian: { keywords: ['Protect', 'Ward'], energy: 'Stone of protection. Absorbs negative energy, steadies emotions and forms a strong shield — best worn on the right hand.' },
   moonstone: { keywords: ['Intuition', 'Inspire'], energy: "Lovers' stone, gentle as moonlight. Heightens intuition and inspiration, soothes moods and draws warm connections." },
-  strawberry: { keywords: ['Love', 'Charm'], energy: 'Sweet stone with golden-red needles. Boosts romance and charm, letting affection flow naturally.' },
   aquamarine: { keywords: ['Communicate', 'Truth'], energy: 'Stone of communication, calm as the sea. Opens the throat chakra for sincere, easy expression and eases inner tension.' },
   garnet: { keywords: ['Vitality', 'Energy'], energy: 'Stone of vitality, deep pomegranate red. Replenishes energy and circulation, enhancing charm and regeneration.' },
   lapis: { keywords: ['Wisdom', 'Truth'], energy: 'Stone of wisdom, royal blue flecked with gold. Opens spiritual vision and insight, guarding you and revealing truth.' },

@@ -23,7 +23,6 @@ import pGreenPhantom from '../assets/beads/green-phantom.webp'
 import pTigerEye from '../assets/beads/tiger-eye.webp'
 import pObsidian from '../assets/beads/obsidian.webp'
 import pMoonstone from '../assets/beads/moonstone.webp'
-import pStrawberry from '../assets/beads/strawberry.webp'
 import pAquamarine from '../assets/beads/aquamarine.webp'
 import pLapis from '../assets/beads/lapis.webp'
 import pGarnet from '../assets/beads/garnet.webp'
@@ -167,20 +166,6 @@ export const CRYSTALS = [
     energy:
       '恋人之石，温柔如月华。提升直觉与灵感，安抚情绪起伏，招来美好姻缘与温暖人缘。',
     gradient: { light: '#ffffff', base: '#e2e8f2', deep: '#b7c3d6', ring: '#9aa8c0', sheen: '#cfe4ff' },
-  },
-  {
-    id: 'strawberry',
-    photo: pStrawberry,
-    name: '草莓晶',
-    pinyin: 'Strawberry Quartz',
-    category: ['love', 'popular'],
-    element: 'fire',
-    basePrice: 18,
-    density: 2.66,
-    keywords: ['爱情', '人缘'],
-    energy:
-      '甜蜜之石，内含草莓般的金红针。旺盛桃花人缘，提升魅力与亲和力，让爱意自然流动。',
-    gradient: { light: '#ffe0e6', base: '#e57b8e', deep: '#b8465c', ring: '#96384a' },
   },
   {
     id: 'aquamarine',

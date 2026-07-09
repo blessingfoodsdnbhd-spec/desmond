@@ -20,7 +20,7 @@ const GROUPS = [
     zh: '爱情桃花', en: 'Love & Romance',
     items: [
       { id: 'rose', zh: ['爱情', '人缘', '温柔'], en: ['Love', 'Charm', 'Gentle'] },
-      { id: 'strawberry', zh: ['恋爱', '甜蜜', '吸引'], en: ['Romance', 'Sweet', 'Attraction'] },
+      { id: 'garnet', zh: ['真爱', '热情', '活力'], en: ['True Love', 'Passion', 'Vitality'] },
       { id: 'moonstone', zh: ['女性', '魅力', '守护'], en: ['Feminine', 'Charm', 'Guard'] },
     ],
   },

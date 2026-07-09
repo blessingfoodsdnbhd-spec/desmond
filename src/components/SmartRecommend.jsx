@@ -23,7 +23,7 @@ import {
 
 const GOALS = [
   { key: 'wealth', label: '招财旺运', crystals: ['citrine', 'green-phantom', 'tiger-eye'] },
-  { key: 'love', label: '爱情桃花', crystals: ['rose', 'strawberry', 'moonstone'] },
+  { key: 'love', label: '爱情桃花', crystals: ['rose', 'garnet', 'moonstone'] },
   { key: 'health', label: '健康平衡', crystals: ['clear', 'aquamarine', 'amethyst'] },
   { key: 'guard', label: '辟邪守护', crystals: ['obsidian', 'clear', 'lapis'] },
   { key: 'wisdom', label: '智慧专注', crystals: ['amethyst', 'lapis', 'clear'] },
