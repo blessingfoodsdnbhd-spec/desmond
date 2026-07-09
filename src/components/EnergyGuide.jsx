@@ -182,7 +182,7 @@ export function EnergyGuide({ onStart }) {
       </div>
 
       {/* 单颗水晶 · 照片 + 能量解释 */}
-      <Modal open={!!detail} onClose={() => setDetailId(null)} maxWidth="max-w-md">
+      <Modal open={!!detail} onClose={() => setDetailId(null)} maxWidth="max-w-md" center>
         {detail && (
           <div className="text-center">
             <div className="relative mx-auto grid h-40 w-40 place-items-center">

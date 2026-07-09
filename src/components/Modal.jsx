@@ -1,14 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { CloseIcon } from './icons.jsx'
 
 // Apple 风格底部弹出面板 / 居中卡片
-export function Modal({ open, onClose, title, subtitle, children, footer, maxWidth = 'max-w-lg' }) {
+export function Modal({ open, onClose, title, subtitle, children, footer, maxWidth = 'max-w-lg', center = false }) {
+  const scrollRef = useRef(null)
   useEffect(() => {
     if (!open) return
     const onKey = (e) => e.key === 'Escape' && onClose?.()
     document.addEventListener('keydown', onKey)
     document.body.style.overflow = 'hidden'
+    // 打开时始终从最上面显示内容
+    if (scrollRef.current) scrollRef.current.scrollTop = 0
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
@@ -17,13 +20,13 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
 
   if (!open) return null
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <div className={`fixed inset-0 z-50 flex justify-center ${center ? 'items-center p-4' : 'items-end sm:items-center'}`}>
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
       <div
-        className={`relative w-full ${maxWidth} max-h-[88vh] flex flex-col overflow-hidden rounded-t-3xl sm:rounded-3xl bg-white/95 dark:bg-neutral-900/95 glass shadow-card-lg animate-scale-in`}
+        className={`relative w-full ${maxWidth} max-h-[88vh] flex flex-col overflow-hidden ${center ? 'rounded-3xl' : 'rounded-t-3xl sm:rounded-3xl'} bg-white/95 dark:bg-neutral-900/95 glass shadow-card-lg animate-scale-in`}
       >
         <div className="flex items-start justify-between gap-4 px-6 pt-5 pb-3 border-b border-black/5 dark:border-white/5">
           <div>
@@ -38,7 +41,7 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
             <CloseIcon size={18} />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto thin-scrollbar px-6 py-4">{children}</div>
+        <div ref={scrollRef} className="flex-1 overflow-y-auto thin-scrollbar px-6 py-4">{children}</div>
         {footer && (
           <div className="px-6 py-4 border-t border-black/5 dark:border-white/5 bg-white/60 dark:bg-neutral-900/60">
             {footer}
