@@ -4,6 +4,7 @@ import { Designer } from './components/Designer.jsx'
 import { Admin } from './components/Admin.jsx'
 import { CrystalBackground } from './components/CrystalBackground.jsx'
 import { EnergyGuide } from './components/EnergyGuide.jsx'
+import { NAV_GLOSS } from './components/NavGlossIcons.jsx'
 import { Bead } from './components/Bead.jsx'
 import { CRYSTALS, CATEGORIES, ELEMENTS } from './data/crystals.js'
 import { makeBead } from './utils/bracelet.js'
@@ -134,24 +135,29 @@ export default function App() {
         <div className="mx-auto flex max-w-6xl items-stretch justify-around px-2">
           {TAB_KEYS.map((tb) => {
             const active = tab === tb.key
+            const Gloss = NAV_GLOSS[tb.key]
             return (
               <button
                 key={tb.key}
                 onClick={() => setTab(tb.key)}
-                className={`relative flex flex-1 flex-col items-center gap-0.5 py-2 transition ${active ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-400'}`}
+                className={`relative flex flex-1 flex-col items-center gap-0.5 py-2 transition ${active ? 'text-sky-600 dark:text-sky-300' : 'text-neutral-400'}`}
               >
-                <span className="relative grid h-7 place-items-center">
+                <span className="relative grid h-7 w-8 place-items-center">
+                  {/* 选中：能量光圈 */}
                   {active && (
-                    <span
-                      className="absolute -inset-2 rounded-full"
-                      style={{ background: 'radial-gradient(circle, rgba(79,179,126,0.5), rgba(47,156,102,0.12) 60%, transparent 72%)' }}
-                    />
+                    <>
+                      <span className="absolute -inset-2 rounded-full" style={{ background: 'radial-gradient(circle, rgba(90,170,255,0.5), rgba(90,120,255,0.12) 60%, transparent 72%)' }} />
+                      <span className="absolute bottom-0 left-1/2 h-1.5 w-6 -translate-x-1/2 rounded-[50%] blur-[2px]" style={{ background: 'radial-gradient(ellipse, rgba(120,190,255,0.85), transparent 70%)' }} />
+                    </>
                   )}
-                  <tb.icon
-                    size={23}
-                    className={`relative drop-shadow-[0_0_6px_rgba(47,156,102,0.5)] ${active ? 'scale-110' : 'scale-100 drop-shadow-none'}`}
-                    style={{ transition: 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1)' }}
-                  />
+                  {/* 点击前=线条 / 点击后=立体发光 */}
+                  {active ? (
+                    <span key="on" className="relative animate-pop">
+                      <Gloss size={26} />
+                    </span>
+                  ) : (
+                    <tb.icon size={23} className="relative" />
+                  )}
                 </span>
                 <span className="text-[10px] font-medium">{t(tb.tkey)}</span>
               </button>
@@ -290,7 +296,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v16 · 2026.07.09 · 立体水晶能量图标</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v17 · 2026.07.09 · 底部导航立体发光图标</p>
     </div>
   )
 }
