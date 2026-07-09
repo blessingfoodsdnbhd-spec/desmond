@@ -26,6 +26,12 @@ import pMoonstone from '../assets/beads/moonstone.webp'
 import pStrawberry from '../assets/beads/strawberry.webp'
 import pAquamarine from '../assets/beads/aquamarine.webp'
 import pLapis from '../assets/beads/lapis.webp'
+import pGarnet from '../assets/beads/garnet.webp'
+import pRutilated from '../assets/beads/rutilated.webp'
+import pRedAgate from '../assets/beads/red-agate.webp'
+import pAventurine from '../assets/beads/aventurine.webp'
+import pSmoky from '../assets/beads/smoky.webp'
+import pRedTigerEye from '../assets/beads/red-tiger-eye.webp'
 
 export const SIZES = [8, 10, 12] // mm
 
@@ -192,6 +198,7 @@ export const CRYSTALS = [
   },
   {
     id: 'garnet',
+    photo: pGarnet,
     name: '石榴石',
     pinyin: 'Garnet',
     category: ['health', 'love'],
@@ -219,6 +226,7 @@ export const CRYSTALS = [
   },
   {
     id: 'rutilated',
+    photo: pRutilated,
     name: '金发晶',
     pinyin: 'Golden Rutilated Quartz',
     category: ['wealth', 'popular'],
@@ -232,6 +240,7 @@ export const CRYSTALS = [
   },
   {
     id: 'red-agate',
+    photo: pRedAgate,
     name: '红玛瑙',
     pinyin: 'Red Agate',
     category: ['health', 'guard'],
@@ -245,6 +254,7 @@ export const CRYSTALS = [
   },
   {
     id: 'aventurine',
+    photo: pAventurine,
     name: '东陵玉',
     pinyin: 'Green Aventurine',
     category: ['wealth', 'health'],
@@ -258,6 +268,7 @@ export const CRYSTALS = [
   },
   {
     id: 'smoky',
+    photo: pSmoky,
     name: '茶晶',
     pinyin: 'Smoky Quartz',
     category: ['guard', 'health'],
@@ -271,6 +282,7 @@ export const CRYSTALS = [
   },
   {
     id: 'red-tiger-eye',
+    photo: pRedTigerEye,
     name: '红虎眼',
     pinyin: 'Red Tiger Eye',
     category: ['wealth', 'health', 'guard'],
