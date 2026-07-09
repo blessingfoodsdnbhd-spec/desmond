@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Modal } from './Modal.jsx'
-import { renderProductImage, downloadDataUrl, exportPdf } from '../utils/render.js'
+import { renderProductImage, downloadDataUrl } from '../utils/render.js'
 import { useLang, localizeCrystal, money } from '../i18n.jsx'
 import { CRYSTAL_MAP } from '../data/crystals.js'
 import { summarize } from '../utils/bracelet.js'
 import { waLink } from '../data/store.js'
-import { DownloadIcon, ShareIcon, PdfIcon, WhatsAppIcon } from './icons.jsx'
+import { DownloadIcon, ShareIcon, WhatsAppIcon } from './icons.jsx'
 
 export function ExportSheet({ open, onClose, beads, dark, wristCm }) {
   const { t, lang } = useLang()
@@ -77,15 +77,6 @@ export function ExportSheet({ open, onClose, beads, dark, wristCm }) {
     notify(t('order.saved'))
   }
 
-  const pdf = async () => {
-    setBusy('pdf')
-    try {
-      await exportPdf(beads, { dark, wristCm, i18n: imgI18n })
-    } finally {
-      setBusy('')
-    }
-  }
-
   const sendOrder = () => {
     if (!name.trim() || !address.trim()) return notify(t('order.needinfo'))
     // 先保存设计图，方便顾客在 WhatsApp 里附上
@@ -139,11 +130,10 @@ export function ExportSheet({ open, onClose, beads, dark, wristCm }) {
         <span className="text-lg font-bold text-brand-600 dark:text-brand-300">{money(stats.price)}</span>
       </div>
 
-      {/* 保存 / 分享 / PDF */}
-      <div className="mt-3 grid grid-cols-3 gap-2">
+      {/* 保存 / 分享 */}
+      <div className="mt-3 grid grid-cols-2 gap-2">
         <MiniBtn onClick={savePng} icon={<DownloadIcon size={18} />} label={t('export.png')} />
         <MiniBtn onClick={shareImg} icon={<ShareIcon size={18} />} label={t('export.share')} />
-        <MiniBtn onClick={pdf} icon={<PdfIcon size={18} />} label={busy === 'pdf' ? t('export.pdf.busy') : t('export.pdf')} disabled={busy === 'pdf'} />
       </div>
 
       {/* 收货信息 */}

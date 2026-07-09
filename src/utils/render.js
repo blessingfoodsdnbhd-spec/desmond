@@ -241,16 +241,3 @@ export function downloadDataUrl(dataUrl, filename) {
   document.body.removeChild(a)
 }
 
-export async function exportPdf(beads, opts = {}) {
-  const { default: JsPDF } = await import('jspdf')
-  const dataUrl = renderProductImage(beads, { ...opts, width: 1080, height: 1350 })
-  const pdf = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  const pageW = pdf.internal.pageSize.getWidth()
-  const pageH = pdf.internal.pageSize.getHeight()
-  const imgW = pageW - 24
-  const imgH = (imgW * 1350) / 1080
-  const x = 12
-  const y = Math.max(12, (pageH - imgH) / 2)
-  pdf.addImage(dataUrl, 'PNG', x, y, imgW, imgH)
-  pdf.save('crystal-bracelet.pdf')
-}
