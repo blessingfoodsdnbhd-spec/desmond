@@ -6,6 +6,7 @@ import { CrystalBackground } from './components/CrystalBackground.jsx'
 import { EnergyGuide } from './components/EnergyGuide.jsx'
 import { NAV_GLOSS } from './components/NavGlossIcons.jsx'
 import { Bead } from './components/Bead.jsx'
+import logoMark from './assets/brand/logo-mark.webp'
 import { CRYSTALS, CATEGORIES, ELEMENTS } from './data/crystals.js'
 import { makeBead } from './utils/bracelet.js'
 import { useLang, localizeCrystal, CATEGORY_I18N, ELEMENT_I18N } from './i18n.jsx'
@@ -91,6 +92,9 @@ export default function App() {
             <button onClick={(e) => { e.stopPropagation(); setTab('home') }} className="grid h-9 w-9 place-items-center rounded-full text-neutral-500 transition hover:bg-black/5 active:scale-90 dark:hover:bg-white/10" aria-label="back">
               <ArrowLeft size={20} />
             </button>
+          )}
+          {tab === 'home' && (
+            <img src={logoMark} alt="AH HUAT" className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_2px_6px_rgba(90,160,230,0.35)]" />
           )}
           <div className="min-w-0 flex-1">
             <div className="truncate text-[17px] font-semibold leading-tight">{h.title}</div>
@@ -296,7 +300,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v18 · 2026.07.09 · 星座与产品毛玻璃精修</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v19 · 2026.07.09 · 公司 Logo 融入</p>
     </div>
   )
 }

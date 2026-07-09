@@ -1,5 +1,6 @@
 import { CRYSTALS, SPACER } from '../data/crystals.js'
 import { layoutRing, fitRingRadius } from '../utils/bracelet.js'
+import logoMark from '../assets/brand/logo-mark.webp'
 
 const VIEW = 360
 const CX = VIEW / 2
@@ -127,14 +128,9 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
       {/* 中心招牌名字 */}
       {brandStyle === 'hero' ? (
         <g filter="url(#brandShadow)">
-          {/* 发光水晶标识 */}
-          <g filter="url(#brandGemGlow)" transform={`translate(${CX}, ${CY - 40})`}>
-            <path d="M0 -15 L11 -4 L7 12 L0 17 L-7 12 L-11 -4 Z" fill="url(#brandGem)" />
-            <path d="M0 -15 L11 -4 L0 -1 Z" fill="#ffffff" fillOpacity="0.6" />
-            <path d="M0 -15 L-11 -4 L0 -1 Z" fill="#ffffff" fillOpacity="0.3" />
-            <path d="M-11 -4 L0 -1 L-7 12 Z" fill="#1c6ba8" fillOpacity="0.35" />
-            <path d="M11 -4 L0 -1 L7 12 Z" fill="#2f88c8" fillOpacity="0.2" />
-            <path d="M0 -1 L0 17" stroke="#eafcff" strokeOpacity="0.5" strokeWidth="0.6" />
+          {/* 公司水晶 Logo */}
+          <g filter="url(#brandGemGlow)">
+            <image href={logoMark} x={CX - 27} y={CY - 58} width="54" height="47" preserveAspectRatio="xMidYMid meet" />
           </g>
           <text x={CX} y={CY + 8} textAnchor="middle" fill="#ffffff" style={{ fontSize: 24, fontWeight: 800, letterSpacing: 2 }}>
             阿发水晶阁
