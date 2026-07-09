@@ -56,8 +56,9 @@ export function Home({ onStart, onOpenGuide }) {
           <div className="absolute inset-0 animate-cave-in">
             <IceCaveImage className="h-full w-full object-cover animate-cave-drift" />
           </div>
-          {/* 文字可读遮罩 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#04121f]/80 via-[#06182a]/40 to-[#06182a]/20" />
+          {/* 文字可读遮罩 · 深空宇宙 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050b1e]/90 via-[#0a1430]/60 to-[#0d1638]/40" />
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(90% 70% at 50% 42%, rgba(60,120,255,0.14), transparent 70%)' }} />
           {/* 进光 */}
           <div className="absolute left-1/2 top-0 h-40 w-80 -translate-x-1/2 -translate-y-10 rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at center, rgba(224,246,255,0.55), transparent 70%)' }} />
           {/* 沉浸氛围：能量雾 + 光线 + 漂浮粒子 */}
@@ -74,8 +75,8 @@ export function Home({ onStart, onOpenGuide }) {
               <button
                 onClick={() => onStart()}
                 onPointerDown={startRipple.onDown}
-                className="shimmer-sweep group relative mt-5 inline-flex items-center gap-2 rounded-full border border-white/45 px-6 py-3 text-[15px] font-semibold text-white shadow-card-lg backdrop-blur-md transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-12px_rgba(70,150,255,0.6)] active:scale-[0.96]"
-                style={{ background: 'linear-gradient(140deg, rgba(120,190,255,0.45), rgba(60,110,220,0.35))' }}
+                className="shimmer-sweep group relative mt-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/60 px-6 py-3 text-[15px] font-semibold text-white backdrop-blur-md transition duration-300 hover:-translate-y-0.5 active:scale-[0.96]"
+                style={{ background: 'linear-gradient(140deg, rgba(24,52,104,0.6), rgba(30,22,72,0.55))', boxShadow: '0 0 22px -4px rgba(90,180,255,0.7), inset 0 1px 0 rgba(180,225,255,0.5)' }}
               >
                 <span className="relative grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-cyan-100 to-sky-500 shadow-[0_0_10px_rgba(160,220,255,0.85)]">
                   <span className="h-2.5 w-2.5 rounded-full bg-white/90" />
@@ -86,9 +87,15 @@ export function Home({ onStart, onOpenGuide }) {
               </button>
             </div>
             <div className="relative h-60 w-60 shrink-0 sm:h-72 sm:w-72">
-              {/* 呼吸光环 */}
-              <div className="absolute inset-2 rounded-full animate-breath" style={{ background: 'radial-gradient(circle, rgba(120,190,255,0.4), rgba(150,120,255,0.16) 55%, transparent 72%)' }} />
-              {/* 手链极轻微摇摆 + 浮动，像活的一样 */}
+              {/* 能量辉光（更强，宇宙感） */}
+              <div className="absolute -inset-2 rounded-full animate-breath" style={{ background: 'radial-gradient(circle, rgba(110,180,255,0.55), rgba(150,110,255,0.28) 50%, transparent 70%)' }} />
+              {/* 绕圈能量光点 */}
+              <div className="absolute inset-0 animate-orbit">
+                <span className="absolute left-1/2 top-1 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-cyan-200" style={{ boxShadow: '0 0 10px 3px rgba(150,220,255,0.95)' }} />
+                <span className="absolute right-3 top-1/2 h-1 w-1 rounded-full bg-violet-200" style={{ boxShadow: '0 0 10px 3px rgba(200,170,255,0.95)' }} />
+                <span className="absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-sky-200" style={{ boxShadow: '0 0 10px 3px rgba(160,210,255,0.95)' }} />
+              </div>
+              {/* 手链极轻微摇摆，像活的一样 */}
               <div className="relative h-full w-full animate-sway drop-shadow-2xl">
                 <BraceletRing beads={heroBeads} brandStyle="hero" />
               </div>
@@ -266,7 +273,7 @@ export function Home({ onStart, onOpenGuide }) {
   )
 }
 
-/* ---------- 毛玻璃水晶功能卡（Liquid Glass，带能量波纹） ---------- */
+/* ---------- 深色能量玻璃功能卡（发光边框 + 绕圈光环 + 波纹） ---------- */
 function FeatureCard({ f, label, desc, onClick }) {
   const { onDown, rippleNode } = useRipple()
   const Icon = f.Icon
@@ -274,21 +281,25 @@ function FeatureCard({ f, label, desc, onClick }) {
     <button
       onClick={onClick}
       onPointerDown={onDown}
-      style={{ '--glow': f.glow, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(16,24,40,0.04), 0 10px 26px -14px rgba(16,24,40,0.18)' }}
-      className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-3xl border border-white/60 bg-white/55 p-3 text-center glass-card transition duration-300 hover:-translate-y-1 active:scale-[0.96] dark:border-white/10 dark:bg-white/10 sm:p-4"
+      style={{
+        border: `1px solid ${f.glow}`,
+        background: 'linear-gradient(160deg, rgba(18,32,60,0.72), rgba(10,18,38,0.78))',
+        boxShadow: `0 0 20px -6px ${f.glow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+      }}
+      className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-3xl p-3 text-center text-white glass-card transition duration-300 hover:-translate-y-1 active:scale-[0.96] sm:p-4"
     >
-      {/* 顶部柔光 + 底部蓝色能量渐变 */}
-      <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/50 to-transparent dark:from-white/10" />
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 opacity-80" style={{ background: `linear-gradient(to top, ${f.glow}, transparent 78%)`, mixBlendMode: 'screen' }} />
-      <span className="relative grid h-12 w-12 place-items-center sm:h-14 sm:w-14">
-        <span className="absolute inset-1 rounded-full opacity-55 blur-md transition-opacity duration-300 group-hover:opacity-90" style={{ background: f.glow }} />
-        <span className="relative animate-float" style={{ animationDelay: '0.3s' }}>
-          <Icon size={44} />
+      {/* 顶部柔光 + 底部能量渐变 */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/12 to-transparent" />
+      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 opacity-70" style={{ background: `linear-gradient(to top, ${f.glow}, transparent 82%)`, mixBlendMode: 'screen' }} />
+      {/* 图标 + 绕圈能量光环 */}
+      <span className="glow-ring relative grid h-12 w-12 place-items-center rounded-full sm:h-14 sm:w-14" style={{ '--rc': f.glow }}>
+        <span className="relative z-10 animate-float" style={{ animationDelay: '0.3s' }}>
+          <Icon size={38} />
         </span>
       </span>
       <div className="relative">
-        <div className="text-[13px] font-semibold text-neutral-800 dark:text-white sm:text-[14px]">{label}</div>
-        <div className="hidden text-[10px] text-neutral-500 dark:text-white/60 sm:block">{desc}</div>
+        <div className="text-[13px] font-semibold drop-shadow sm:text-[14px]">{label}</div>
+        <div className="hidden text-[10px] text-white/60 sm:block">{desc}</div>
       </div>
       {rippleNode}
     </button>

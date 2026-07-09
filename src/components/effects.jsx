@@ -28,35 +28,34 @@ const PARTICLES = [
   { x: 74, y: 58, s: 2, d: 4.6, dur: 12.5 }, { x: 90, y: 68, s: 2.6, d: 0.8, dur: 10 },
 ]
 
-// Hero 沉浸氛围：蓝色能量雾 + 缓慢光线 + 上升粒子
+// 星空（稳定分布）
+const STARS = [
+  { x: 6, y: 12, s: 1.4, d: 0 }, { x: 16, y: 30, s: 1, d: 1.2 }, { x: 28, y: 8, s: 1.6, d: 0.5 },
+  { x: 38, y: 22, s: 1, d: 2.1 }, { x: 47, y: 6, s: 1.3, d: 1.6 }, { x: 60, y: 16, s: 1, d: 0.8 },
+  { x: 72, y: 9, s: 1.6, d: 2.4 }, { x: 84, y: 20, s: 1.1, d: 1.0 }, { x: 92, y: 34, s: 1.3, d: 0.3 },
+  { x: 10, y: 48, s: 1, d: 1.8 }, { x: 88, y: 50, s: 1.2, d: 2.6 }, { x: 66, y: 40, s: 1, d: 1.4 },
+  { x: 33, y: 46, s: 1.1, d: 0.6 }, { x: 54, y: 30, s: 1, d: 2.0 }, { x: 78, y: 62, s: 1.3, d: 1.1 },
+]
+
+// Hero 沉浸氛围：星空 + 能量星云 + 缓慢光线 + 上升粒子
 export function HeroAtmosphere() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* 蓝色能量雾 */}
-      <div
-        className="absolute -left-10 top-6 h-56 w-72 rounded-full blur-3xl"
-        style={{ background: 'radial-gradient(circle, rgba(80,160,255,0.35), transparent 70%)', animation: 'mist-drift 16s ease-in-out infinite' }}
-      />
-      <div
-        className="absolute -right-8 bottom-4 h-52 w-72 rounded-full blur-3xl"
-        style={{ background: 'radial-gradient(circle, rgba(140,120,255,0.28), transparent 70%)', animation: 'mist-drift 20s ease-in-out infinite reverse' }}
-      />
+      {/* 深空叠加，压暗成宇宙冰洞 */}
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(120% 90% at 50% 20%, transparent 30%, rgba(6,14,34,0.55) 100%)' }} />
+      {/* 能量星云 */}
+      <div className="absolute -left-12 top-2 h-64 w-80 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(70,150,255,0.5), transparent 70%)', animation: 'mist-drift 16s ease-in-out infinite' }} />
+      <div className="absolute -right-10 top-1/3 h-64 w-80 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(150,110,255,0.42), transparent 70%)', animation: 'mist-drift 20s ease-in-out infinite reverse' }} />
+      <div className="absolute bottom-0 left-1/3 h-56 w-72 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(90,200,255,0.32), transparent 70%)', animation: 'mist-drift 24s ease-in-out infinite' }} />
       {/* 缓慢流过的光线 */}
-      <div
-        className="absolute inset-y-0 left-0 w-1/3 blur-2xl"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(220,240,255,0.28), transparent)', animation: 'light-flow 14s ease-in-out infinite' }}
-      />
-      {/* 上升柔光粒子 */}
+      <div className="absolute inset-y-0 left-0 w-1/3 blur-2xl" style={{ background: 'linear-gradient(90deg, transparent, rgba(220,240,255,0.3), transparent)', animation: 'light-flow 14s ease-in-out infinite' }} />
+      {/* 星空 */}
+      {STARS.map((s, i) => (
+        <span key={`st${i}`} className="absolute rounded-full bg-white" style={{ left: `${s.x}%`, top: `${s.y}%`, width: s.s, height: s.s, boxShadow: '0 0 4px 1px rgba(210,230,255,0.9)', animation: `star-tw ${3 + (i % 3)}s ease-in-out ${s.d}s infinite` }} />
+      ))}
+      {/* 上升能量粒子 */}
       {PARTICLES.map((p, i) => (
-        <span
-          key={i}
-          className="absolute rounded-full bg-white"
-          style={{
-            left: `${p.x}%`, top: `${p.y}%`, width: p.s, height: p.s,
-            boxShadow: '0 0 7px 1px rgba(200,225,255,0.85)',
-            animation: `drift-up ${p.dur}s ease-in-out ${p.d}s infinite`,
-          }}
-        />
+        <span key={`pt${i}`} className="absolute rounded-full bg-white" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.s, height: p.s, boxShadow: '0 0 8px 2px rgba(160,210,255,0.9)', animation: `drift-up ${p.dur}s ease-in-out ${p.d}s infinite` }} />
       ))}
     </div>
   )

@@ -109,6 +109,14 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
         <filter id="brandShadow" x="-60%" y="-60%" width="220%" height="220%">
           <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#04121f" floodOpacity="0.9" />
         </filter>
+        <linearGradient id="brandGem" x1="30%" y1="0%" x2="70%" y2="100%">
+          <stop offset="0%" stopColor="#e6faff" />
+          <stop offset="45%" stopColor="#5cc6f0" />
+          <stop offset="100%" stopColor="#2a7fc4" />
+        </linearGradient>
+        <filter id="brandGemGlow" x="-120%" y="-120%" width="340%" height="340%">
+          <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#6fd0ff" floodOpacity="0.95" />
+        </filter>
       </defs>
 
       {/* 引导虚线圆 */}
@@ -119,10 +127,19 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
       {/* 中心招牌名字 */}
       {brandStyle === 'hero' ? (
         <g filter="url(#brandShadow)">
-          <text x={CX} y={CY - 4} textAnchor="middle" fill="#ffffff" style={{ fontSize: 26, fontWeight: 800, letterSpacing: 2 }}>
+          {/* 发光水晶标识 */}
+          <g filter="url(#brandGemGlow)" transform={`translate(${CX}, ${CY - 40})`}>
+            <path d="M0 -15 L11 -4 L7 12 L0 17 L-7 12 L-11 -4 Z" fill="url(#brandGem)" />
+            <path d="M0 -15 L11 -4 L0 -1 Z" fill="#ffffff" fillOpacity="0.6" />
+            <path d="M0 -15 L-11 -4 L0 -1 Z" fill="#ffffff" fillOpacity="0.3" />
+            <path d="M-11 -4 L0 -1 L-7 12 Z" fill="#1c6ba8" fillOpacity="0.35" />
+            <path d="M11 -4 L0 -1 L7 12 Z" fill="#2f88c8" fillOpacity="0.2" />
+            <path d="M0 -1 L0 17" stroke="#eafcff" strokeOpacity="0.5" strokeWidth="0.6" />
+          </g>
+          <text x={CX} y={CY + 8} textAnchor="middle" fill="#ffffff" style={{ fontSize: 24, fontWeight: 800, letterSpacing: 2 }}>
             阿发水晶阁
           </text>
-          <text x={CX} y={CY + 18} textAnchor="middle" fill="#eaf6ff" style={{ fontSize: 8.5, fontWeight: 600, letterSpacing: 0.6 }}>
+          <text x={CX} y={CY + 26} textAnchor="middle" fill="#eaf6ff" style={{ fontSize: 8.5, fontWeight: 600, letterSpacing: 0.6 }}>
             AH HUAT CRYSTAL PAVILION
           </text>
         </g>
