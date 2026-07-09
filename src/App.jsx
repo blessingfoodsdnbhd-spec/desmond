@@ -63,6 +63,11 @@ export default function App() {
     setTab('design')
   }
 
+  const goTab = (name) => {
+    setTab(name)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const h = {
     title: t(`header.${tab}.title`),
     sub: t(`header.${tab}.sub`),
@@ -115,7 +120,7 @@ export default function App() {
 
       {/* Pages */}
       <main className="animate-fade-in" key={tab}>
-        {tab === 'home' && <Home onStart={start} />}
+        {tab === 'home' && <Home onStart={start} onOpenGuide={() => goTab('discover')} />}
         {tab === 'design' && <Designer key={designKey} dark={dark} initialBeads={initialBeads} smartSignal={smartSignal} />}
         {tab === 'discover' && <EnergyGuide onStart={start} />}
         {tab === 'order' && <Orders onStart={start} />}
@@ -273,7 +278,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v7 · 2026.07.08 · 真实水晶珠 · 能量图鉴</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v8 · 2026.07.09 · 水晶知识弹窗 · 能量图鉴</p>
     </div>
   )
 }

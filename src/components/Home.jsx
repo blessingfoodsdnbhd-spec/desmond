@@ -27,7 +27,7 @@ function patternToBeads(pattern) {
   return pattern.map((id) => makeBead(id, 8))
 }
 
-export function Home({ onStart }) {
+export function Home({ onStart, onOpenGuide }) {
   const { t, lang } = useLang()
   const store = useStore()
   const [product, setProduct] = useState(null)
@@ -207,11 +207,11 @@ export function Home({ onStart }) {
         <section className="mt-7">
           <div className="mb-3 flex items-center justify-between px-1">
             <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{t('home.know')}</h2>
-            <button onClick={() => onStart()} className="flex items-center gap-0.5 text-[13px] text-neutral-400 transition hover:text-brand-500">
+            <button onClick={() => onOpenGuide?.()} className="flex items-center gap-0.5 text-[13px] text-neutral-400 transition hover:text-brand-500">
               {t('home.more')} <ChevronRight size={15} />
             </button>
           </div>
-          <div className="rounded-3xl border border-black/5 bg-white p-4 shadow-card dark:border-white/5 dark:bg-neutral-800">
+          <button onClick={() => onOpenGuide?.()} className="block w-full rounded-3xl border border-black/5 bg-white p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-[0.99] dark:border-white/5 dark:bg-neutral-800">
             <div className="flex items-center gap-4">
               <div className="grid h-20 w-20 shrink-0 grid-cols-3 gap-1 rounded-2xl bg-gradient-to-br from-purple-100 to-white p-2 dark:from-purple-900/40 dark:to-neutral-900">
                 {['amethyst', 'rose', 'citrine', 'green-phantom', 'lapis', 'obsidian'].map((id) => (
@@ -223,8 +223,9 @@ export function Home({ onStart }) {
                 <p className="mt-1 line-clamp-2 text-[13px] text-neutral-500 dark:text-neutral-400">{t('home.know.desc')}</p>
                 <div className="mt-1.5 text-[11px] text-neutral-400">{t('home.know.read')}</div>
               </div>
+              <ChevronRight size={18} className="shrink-0 text-neutral-300" />
             </div>
-          </div>
+          </button>
           {/* Quick crystal chips */}
           <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar pb-1">
             {CRYSTALS.map((raw) => {
@@ -232,7 +233,7 @@ export function Home({ onStart }) {
               return (
                 <button
                   key={c.id}
-                  onClick={() => onStart()}
+                  onClick={() => onOpenGuide?.()}
                   className="flex shrink-0 items-center gap-1.5 rounded-full border border-black/5 bg-white py-1.5 pl-1.5 pr-3 shadow-card transition hover:-translate-y-0.5 dark:border-white/5 dark:bg-neutral-800"
                 >
                   <Bead crystal={c} size={26} />

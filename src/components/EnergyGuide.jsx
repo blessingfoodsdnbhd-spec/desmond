@@ -1,6 +1,8 @@
-import { CRYSTAL_MAP } from '../data/crystals.js'
+import { useState } from 'react'
+import { CRYSTAL_MAP, ELEMENTS } from '../data/crystals.js'
 import { Bead } from './Bead.jsx'
-import { useLang, localizeCrystal } from '../i18n.jsx'
+import { Modal } from './Modal.jsx'
+import { useLang, localizeCrystal, ELEMENT_I18N } from '../i18n.jsx'
 import { SparkleIcon } from './icons.jsx'
 
 // 按能量功效分组的图鉴（对照实拍美图）
@@ -94,6 +96,8 @@ function GuideBead({ crystal, size = 78, onPick }) {
 
 export function EnergyGuide({ onStart }) {
   const { t, lang } = useLang()
+  const [detailId, setDetailId] = useState(null)
+  const detail = detailId ? localizeCrystal(CRYSTAL_MAP[detailId], lang) : null
 
   return (
     <div className="relative min-h-full pb-28">
@@ -152,7 +156,7 @@ export function EnergyGuide({ onStart }) {
                   const kw = lang === 'zh' ? it.zh : it.en
                   return (
                     <div key={g.zh + it.id + idx} className="flex flex-col items-center">
-                      <GuideBead crystal={c} onPick={(id) => onStart?.([id])} />
+                      <GuideBead crystal={c} onPick={(id) => setDetailId(id)} />
                       <div className="mt-1 text-center text-[11px] leading-relaxed text-[#9a866c] dark:text-amber-200/55">
                         {kw.join(' · ')}
                       </div>
@@ -176,6 +180,46 @@ export function EnergyGuide({ onStart }) {
           <SparkleIcon size={18} /> {t('discover.cta')}
         </button>
       </div>
+
+      {/* 单颗水晶 · 照片 + 能量解释 */}
+      <Modal open={!!detail} onClose={() => setDetailId(null)} maxWidth="max-w-md">
+        {detail && (
+          <div className="text-center">
+            <div className="relative mx-auto grid h-40 w-40 place-items-center">
+              <span className="absolute left-1/2 top-[80%] h-6 w-24 -translate-x-1/2 rounded-[50%] bg-black/25 blur-[6px] dark:bg-black/50" />
+              {detail.photo ? (
+                <img
+                  src={detail.photo}
+                  alt={detail.name}
+                  className="h-40 w-40 rounded-full object-cover"
+                  style={{ filter: 'drop-shadow(0 8px 14px rgba(60,40,20,0.32))' }}
+                />
+              ) : (
+                <Bead crystal={detail} size={160} />
+              )}
+            </div>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <h3 className="text-xl font-bold text-neutral-900 dark:text-white">{detail.name}</h3>
+              <span className="text-[12px] text-neutral-400">{detail.pinyin}</span>
+            </div>
+            <div className="mt-2 flex items-center justify-center gap-2">
+              <span className="rounded-full px-2 py-0.5 text-[11px] font-medium text-white" style={{ background: ELEMENTS[detail.element]?.color }}>
+                {t('discover.element')}·{lang === 'zh' ? ELEMENTS[detail.element]?.label : ELEMENT_I18N[detail.element]}
+              </span>
+              {detail.keywords?.map((k) => (
+                <span key={k} className="rounded-full bg-brand-50 px-2.5 py-0.5 text-[11px] font-medium text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">{k}</span>
+              ))}
+            </div>
+            <p className="mt-4 text-left text-[14px] leading-relaxed text-neutral-600 dark:text-neutral-300">{detail.energy}</p>
+            <button
+              onClick={() => { const id = detailId; setDetailId(null); onStart?.([id]) }}
+              className="mt-5 flex w-full items-center justify-center gap-1.5 rounded-2xl bg-brand-500 py-3.5 font-medium text-white shadow-glow transition hover:bg-brand-600 active:scale-[0.99]"
+            >
+              <SparkleIcon size={18} /> {t('discover.cta')}
+            </button>
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }
