@@ -278,7 +278,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v11 · 2026.07.09 · 全部17种真实水晶珠</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v12 · 2026.07.09 · 首页大圈招牌</p>
     </div>
   )
 }

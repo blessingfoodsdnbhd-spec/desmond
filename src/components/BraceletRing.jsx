@@ -54,7 +54,7 @@ function BeadNode({ p, selected, onSelect }) {
   )
 }
 
-export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelection }) {
+export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelection, brandStyle = 'default' }) {
   const maxSize = beads.length ? Math.max(...beads.map((b) => b.size)) : 8
   const ringRadius = fitRingRadius(beads, beadR(maxSize) * 2, VIEW)
   const positions = layoutRing(beads, { cx: CX, cy: CY, ringRadius })
@@ -93,6 +93,9 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
         <filter id="beadShadow" x="-50%" y="-50%" width="200%" height="200%">
           <feDropShadow dx="0" dy="2.5" stdDeviation="3" floodColor="#0b1220" floodOpacity="0.28" />
         </filter>
+        <filter id="brandShadow" x="-60%" y="-60%" width="220%" height="220%">
+          <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#04121f" floodOpacity="0.9" />
+        </filter>
       </defs>
 
       {/* 引导虚线圆 */}
@@ -100,13 +103,26 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
         <circle cx={CX} cy={CY} r={VIEW * 0.3} fill="none" stroke="currentColor" className="text-neutral-300 dark:text-neutral-600" strokeWidth="1.5" strokeDasharray="4 7" />
       )}
 
-      {/* 中心水印 */}
-      <text x={CX} y={CY - 6} textAnchor="middle" className="fill-neutral-300 dark:fill-neutral-600" style={{ fontSize: 18, fontWeight: 600, letterSpacing: 1 }}>
-        阿发水晶阁
-      </text>
-      <text x={CX} y={CY + 14} textAnchor="middle" className="fill-neutral-300 dark:fill-neutral-600" style={{ fontSize: 9, letterSpacing: 1 }}>
-        AH HUAT CRYSTAL
-      </text>
+      {/* 中心招牌名字 */}
+      {brandStyle === 'hero' ? (
+        <g filter="url(#brandShadow)">
+          <text x={CX} y={CY - 4} textAnchor="middle" fill="#ffffff" style={{ fontSize: 26, fontWeight: 800, letterSpacing: 2 }}>
+            阿发水晶阁
+          </text>
+          <text x={CX} y={CY + 18} textAnchor="middle" fill="#eaf6ff" style={{ fontSize: 8.5, fontWeight: 600, letterSpacing: 0.6 }}>
+            AH HUAT CRYSTAL PAVILION
+          </text>
+        </g>
+      ) : (
+        <>
+          <text x={CX} y={CY - 6} textAnchor="middle" className="fill-neutral-300 dark:fill-neutral-600" style={{ fontSize: 18, fontWeight: 600, letterSpacing: 1 }}>
+            阿发水晶阁
+          </text>
+          <text x={CX} y={CY + 14} textAnchor="middle" className="fill-neutral-300 dark:fill-neutral-600" style={{ fontSize: 9, letterSpacing: 1 }}>
+            AH HUAT CRYSTAL
+          </text>
+        </>
+      )}
 
       {positions.map((p) => (
         <BeadNode key={p.uid} p={p} selected={p.uid === selectedUid} onSelect={onSelectBead} />

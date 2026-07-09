@@ -27,6 +27,13 @@ function patternToBeads(pattern) {
   return pattern.map((id) => makeBead(id, 8))
 }
 
+// 首页大圈手链：14 颗大珠，围出宽阔的中心以显示招牌名字
+const HERO_PATTERN = [
+  'citrine', 'green-phantom', 'tiger-eye', 'citrine', 'amethyst', 'green-phantom', 'tiger-eye',
+  'citrine', 'green-phantom', 'tiger-eye', 'citrine', 'amethyst', 'green-phantom', 'tiger-eye',
+]
+const heroBeads = HERO_PATTERN.map((id) => makeBead(id, 12))
+
 export function Home({ onStart, onOpenGuide }) {
   const { t, lang } = useLang()
   const store = useStore()
@@ -72,8 +79,8 @@ export function Home({ onStart, onOpenGuide }) {
                 {t('home.start')} <ChevronRight size={17} />
               </button>
             </div>
-            <div className="relative h-44 w-44 shrink-0 animate-float drop-shadow-2xl sm:h-56 sm:w-56">
-              <BraceletRing beads={patternToBeads(PRESETS[0].pattern)} />
+            <div className="relative h-60 w-60 shrink-0 animate-float drop-shadow-2xl sm:h-72 sm:w-72">
+              <BraceletRing beads={heroBeads} brandStyle="hero" />
             </div>
           </div>
         </section>
