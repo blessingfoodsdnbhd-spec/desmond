@@ -123,45 +123,55 @@ export function Home({ onStart, onOpenGuide }) {
         {/* 生日 · 星座配对 */}
         <Reveal as="section" className="mt-7">
           <div className="mb-3 px-1">
-            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{t('home.match.title')}</h2>
-            <p className="text-[12px] text-neutral-400">{t('home.match.sub')}</p>
+            <h2 className="text-xl font-bold text-neutral-900 dark:text-white">{t('home.match.title')}</h2>
+            <p className="text-[12px] text-neutral-500 dark:text-neutral-400">{t('home.match.sub')}</p>
           </div>
 
-          {/* 生日输入 */}
-          <div className="mb-3 flex items-center gap-2 rounded-3xl border border-black/5 bg-white/80 p-2.5 shadow-card glass dark:border-white/10 dark:bg-neutral-900/60">
-            <span className="pl-1 text-lg">🎂</span>
-            <input
-              type="date"
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-              className="min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 py-2.5 text-[14px] text-neutral-900 outline-none focus:border-brand-400 dark:border-white/10 dark:bg-neutral-800 dark:text-white"
-            />
-            <button
-              onClick={generateByBirthday}
-              className="shrink-0 rounded-xl bg-brand-500 px-4 py-2.5 text-[13px] font-medium text-white transition hover:bg-brand-600 active:scale-95"
-            >
-              {t('home.match.generate')}
-            </button>
-          </div>
-
-          {/* 十二星座 */}
-          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
-            {ZODIACS.map((z) => (
+          {/* 毛玻璃面板 */}
+          <div className="rounded-4xl border border-white/60 bg-white/45 p-3 shadow-card glass-card dark:border-white/10 dark:bg-white/10 sm:p-4">
+            {/* 生日输入 */}
+            <div className="mb-3 flex items-center gap-2 rounded-3xl border border-white/70 bg-white/70 p-2 shadow-inner dark:border-white/10 dark:bg-neutral-900/50">
+              <span className="grid h-10 w-10 shrink-0 place-items-center text-2xl">🎂</span>
+              <input
+                type="date"
+                value={birthday}
+                onChange={(e) => setBirthday(e.target.value)}
+                className="min-w-0 flex-1 rounded-2xl border border-black/5 bg-white px-3 py-2.5 text-center text-[15px] font-medium text-neutral-900 outline-none focus:border-violet-300 dark:border-white/10 dark:bg-neutral-800 dark:text-white"
+              />
               <button
-                key={z.key}
-                onClick={() => onStart(buildPatternFromCrystals(z.crystals, 12))}
-                className="flex w-[100px] shrink-0 flex-col items-center gap-1 rounded-3xl border border-black/5 bg-white p-3 text-center shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-95 dark:border-white/5 dark:bg-neutral-800"
+                onClick={generateByBirthday}
+                className="shimmer-sweep shrink-0 rounded-2xl px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 active:scale-95"
+                style={{ background: 'linear-gradient(140deg, #a274f5, #6d3bd6)', boxShadow: '0 0 18px -4px rgba(150,90,240,0.75), inset 0 1px 0 rgba(255,255,255,0.4)' }}
               >
-                <span className="text-2xl">{z.emoji}</span>
-                <div className="text-[13px] font-semibold text-neutral-900 dark:text-white">{lang === 'zh' ? z.name : ZODIAC_I18N[z.key]?.name}</div>
-                <div className="text-[10px] text-neutral-400">{z.range}</div>
-                <div className="mt-0.5 flex gap-0.5">
-                  {z.crystals.map((id) => (
-                    <Bead key={id} crystal={CRYSTAL_MAP[id]} size={16} />
-                  ))}
-                </div>
+                {t('home.match.generate')}
               </button>
-            ))}
+            </div>
+
+            {/* 十二星座 */}
+            <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+              {ZODIACS.map((z) => (
+                <button
+                  key={z.key}
+                  onClick={() => onStart(buildPatternFromCrystals(z.crystals, 12))}
+                  className="flex w-[104px] shrink-0 flex-col items-center gap-1.5 rounded-3xl border border-white/70 bg-white/55 p-3 text-center shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-card-lg active:scale-95 dark:border-white/10 dark:bg-white/10"
+                >
+                  {/* 紫色玻璃星座牌 */}
+                  <span
+                    className="grid h-11 w-11 place-items-center rounded-2xl text-[22px] font-semibold text-white"
+                    style={{ background: 'linear-gradient(150deg, #b98bf7, #7b3fe0)', boxShadow: '0 4px 12px -4px rgba(120,60,220,0.7), inset 0 1px 0 rgba(255,255,255,0.5)' }}
+                  >
+                    {z.emoji}
+                  </span>
+                  <div className="text-[14px] font-semibold text-neutral-900 dark:text-white">{lang === 'zh' ? z.name : ZODIAC_I18N[z.key]?.name}</div>
+                  <div className="text-[10px] text-neutral-400">{z.range}</div>
+                  <div className="mt-0.5 flex gap-0.5">
+                    {z.crystals.map((id) => (
+                      <Bead key={id} crystal={CRYSTAL_MAP[id]} size={17} />
+                    ))}
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </Reveal>
 
@@ -169,8 +179,8 @@ export function Home({ onStart, onOpenGuide }) {
         <Reveal as="section" className="mt-7">
           <div className="mb-3 flex items-center justify-between px-1">
             <div>
-              <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{t('home.featured')}</h2>
-              <p className="text-[12px] text-neutral-400">{t('home.featured.sub')}</p>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">{t('home.featured')}</h2>
+              <p className="text-[12px] text-neutral-500 dark:text-neutral-400">{t('home.featured.sub')}</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -184,20 +194,26 @@ export function Home({ onStart, onOpenGuide }) {
                 <button
                   key={pr.id}
                   onClick={() => setProduct(pr)}
-                  className="group flex flex-col overflow-hidden rounded-3xl border border-black/5 bg-white text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-[0.99] dark:border-white/5 dark:bg-neutral-800"
+                  className="group flex flex-col overflow-hidden rounded-4xl border border-white/60 bg-white/50 text-left shadow-card glass-card transition duration-300 hover:-translate-y-1 hover:shadow-card-lg active:scale-[0.99] dark:border-white/10 dark:bg-white/10"
                 >
-                  <div className="relative aspect-square bg-gradient-to-br from-neutral-50 to-neutral-100 p-2 dark:from-neutral-700/50 dark:to-neutral-900">
-                    <img src={pr.image} alt={name} className="h-full w-full object-contain drop-shadow-md transition group-hover:scale-105" />
+                  <div className="relative aspect-square p-2">
+                    <div className="absolute inset-2 rounded-3xl bg-gradient-to-br from-white/70 to-sky-50/40 dark:from-neutral-700/40 dark:to-neutral-900/40" />
+                    <img src={pr.image} alt={name} className="relative h-full w-full object-contain drop-shadow-lg transition duration-300 group-hover:scale-105" />
                     {badge && (
-                      <span className="absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur">
+                      <span className="absolute left-3 top-3 rounded-full bg-black/50 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur">
                         {badge}
                       </span>
                     )}
                   </div>
-                  <div className="p-3">
-                    <div className="text-[14px] font-semibold text-neutral-900 dark:text-white">{name}</div>
-                    <div className="truncate text-[11px] text-neutral-400">{kws.join(' · ')}</div>
-                    <div className="mt-1 text-[14px] font-bold text-brand-600 dark:text-brand-300">{min ? t('product.from', money(min)) : ''}</div>
+                  <div className="flex items-end justify-between p-3.5 pt-1">
+                    <div className="min-w-0">
+                      <div className="text-[15px] font-semibold text-neutral-900 dark:text-white">{name}</div>
+                      <div className="truncate text-[11px] text-neutral-400">{kws.join(' · ')}</div>
+                      <div className="mt-1 text-[15px] font-bold text-brand-600 dark:text-brand-300">{min ? t('product.from', money(min)) : ''}</div>
+                    </div>
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-sky-200/70 bg-white/70 text-sky-500 shadow-sm backdrop-blur transition group-hover:bg-sky-500 group-hover:text-white dark:border-white/10 dark:bg-white/10">
+                      <ChevronRight size={17} />
+                    </span>
                   </div>
                 </button>
               )

@@ -296,7 +296,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v17 · 2026.07.09 · 底部导航立体发光图标</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v18 · 2026.07.09 · 星座与产品毛玻璃精修</p>
     </div>
   )
 }
