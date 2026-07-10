@@ -377,7 +377,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
                   className="pointer-events-none absolute left-1/2 top-1/2 h-[74%] w-[74%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-lg"
                   style={{ background: `radial-gradient(circle, rgba(255,255,255,0.4), ${glow}99 46%, transparent 72%)`, opacity: 0.9 }}
                 />
-                <Bead crystal={c} size={60} className="relative drop-shadow-[0_6px_16px_rgba(0,0,0,0.5)] transition group-hover:scale-105" />
+                <Bead crystal={c} size={72} className="relative drop-shadow-[0_8px_18px_rgba(0,0,0,0.55)] transition group-hover:scale-105" />
               </div>
               {/* 名称 + 价钱 */}
               <div className="relative text-center">

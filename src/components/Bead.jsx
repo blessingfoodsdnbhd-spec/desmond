@@ -6,7 +6,7 @@ export function Bead({ crystal, size = 48, className = '', style }) {
   const uid = `bead-${crystal?.id || 'x'}-${size}`
   const r = size / 2
 
-  // 自定义珠子：用上传的照片，裁成圆形
+  // 自定义珠子：用上传的照片，裁成圆形（加球面立体明暗 + 高光，更 3D）
   if (crystal?.photo) {
     return (
       <svg width={size} height={size} viewBox="0 0 100 100" className={className} style={style} aria-label={crystal?.name}>
@@ -14,10 +14,26 @@ export function Bead({ crystal, size = 48, className = '', style }) {
           <clipPath id={`${uid}-clip`}>
             <circle cx="50" cy="50" r="48" />
           </clipPath>
+          {/* 球面明暗：左上偏亮、边缘压暗，营造立体球感 */}
+          <radialGradient id={`${uid}-sphere`} cx="37%" cy="33%" r="74%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.28" />
+            <stop offset="42%" stopColor="#ffffff" stopOpacity="0.04" />
+            <stop offset="72%" stopColor="#000000" stopOpacity="0.06" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.5" />
+          </radialGradient>
         </defs>
         <image href={crystal.photo} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" clipPath={`url(#${uid}-clip)`} />
-        <ellipse cx="34" cy="30" rx="13" ry="8" fill="#ffffff" opacity="0.35" transform="rotate(-28 34 30)" />
-        <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(0,0,0,0.18)" strokeWidth="2" />
+        {/* 球面立体明暗 */}
+        <circle cx="50" cy="50" r="48" fill={`url(#${uid}-sphere)`} clipPath={`url(#${uid}-clip)`} />
+        {/* 底部透光反光 */}
+        <ellipse cx="57" cy="70" rx="17" ry="9" fill="#ffffff" opacity="0.12" />
+        {/* 柔和大高光 */}
+        <ellipse cx="35" cy="30" rx="16" ry="10" fill="#ffffff" opacity="0.34" transform="rotate(-28 35 30)" />
+        {/* 明亮镜面高光（3D 光点） */}
+        <ellipse cx="33" cy="28" rx="7.5" ry="4.6" fill="#ffffff" opacity="0.92" transform="rotate(-28 33 28)" />
+        {/* 细小闪光点 */}
+        <circle cx="41" cy="23" r="1.7" fill="#ffffff" opacity="0.95" />
+        <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="2" />
       </svg>
     )
   }
