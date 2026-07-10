@@ -36,6 +36,9 @@ import {
   CheckIcon,
   PlusIcon,
   EnergyIcon,
+  DownloadIcon,
+  OrderIcon,
+  ShareIcon,
 } from './icons.jsx'
 
 export function Designer({ dark, initialBeads, smartSignal }) {
@@ -46,7 +49,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   const [past, setPast] = useState([])
   const [future, setFuture] = useState([])
   const [size, setSize] = useState(8)
-  const [wrist, setWrist] = useState(15)
+  const [wrist, setWrist] = useState(16)
   const [cat, setCat] = useState('all')
   const [query, setQuery] = useState('')
   const [selectedUid, setSelectedUid] = useState(null)
@@ -54,6 +57,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   const [detail, setDetail] = useState(null) // localized crystal for detail modal
   const [showSmart, setShowSmart] = useState(false)
   const [showExport, setShowExport] = useState(false)
+  const [showEnergy, setShowEnergy] = useState(false)
   const [toast, setToast] = useState('')
   const [assembling, setAssembling] = useState(false)
   const toastTimer = useRef(null)
@@ -164,247 +168,211 @@ export function Designer({ dark, initialBeads, smartSignal }) {
 
   const selectedCrystal = localizeCrystal(CRYSTAL_MAP[beads.find((b) => b.uid === selectedUid)?.crystalId], lang)
 
+  // 顶部模式 Tab
+  const TABS = [
+    { k: 'free', label: lang === 'zh' ? '自由设计' : 'Free Design' },
+    { k: 'ai', label: lang === 'zh' ? 'AI 推荐' : 'AI Picks' },
+    { k: 'energy', label: lang === 'zh' ? '能量解读' : 'Energy' },
+    { k: 'order', label: lang === 'zh' ? '一键下单' : 'Order' },
+  ]
+  const onTab = (k) => {
+    if (k === 'ai') setShowSmart(true)
+    else if (k === 'energy') setShowEnergy(true)
+    else if (k === 'order') (beads.length ? setShowExport(true) : notify(t('design.addFirst')))
+  }
+  const WRISTS = [
+    { k: 'S', cm: 15 }, { k: 'M', cm: 16 }, { k: 'L', cm: 17 }, { k: 'XL', cm: 18 },
+  ]
+  const BEAD_SIZES = [6, 8, 10, 12]
+
+  // 能量分析：五行分布
+  const energyEls = useMemo(() => {
+    const el = {}
+    beads.forEach((b) => {
+      const c = CRYSTAL_MAP[b.crystalId]
+      if (c) el[c.element] = (el[c.element] || 0) + 1
+    })
+    return Object.entries(el).sort((a, b) => b[1] - a[1])
+  }, [beads])
+
   return (
-    <div className="pb-32 lg:pb-10">
-      {/* Step header */}
-      <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-6">
-        <div className="flex items-center gap-2 sm:gap-4">
-          {STEPS.map((s, i) => (
-            <button key={s} onClick={() => setStep(i)} className="flex flex-1 items-center gap-2">
-              <span
-                className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-[12px] font-semibold transition ${
-                  i <= step ? 'bg-brand-500 text-white' : 'bg-black/8 text-neutral-400 dark:bg-white/10'
-                }`}
-              >
-                {i < step ? <CheckIcon size={13} /> : i + 1}
-              </span>
-              <span className={`whitespace-nowrap text-[13px] font-medium transition ${i === step ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>{s}</span>
-              {i < STEPS.length - 1 && <span className="mx-1 hidden h-px flex-1 bg-black/8 dark:bg-white/10 sm:block" />}
+    <div className="mx-auto max-w-3xl px-4 pb-32 pt-3 sm:px-6 lg:pb-10">
+      {/* ===== 顶部模式 Tab ===== */}
+      <div className="flex items-center justify-between border-b border-white/10 pb-1">
+        {TABS.map((tb) => {
+          const active = tb.k === 'free'
+          return (
+            <button
+              key={tb.k}
+              onClick={() => onTab(tb.k)}
+              className={`relative px-1.5 py-2 text-[15px] font-semibold transition ${active ? 'text-white' : 'text-neutral-400 dark:text-neutral-400'}`}
+            >
+              {active && <span className="absolute -left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.8)]" />}
+              {tb.label}
+              {active && <span className="absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" />}
             </button>
-          ))}
-        </div>
+          )
+        })}
       </div>
 
-      <div className="mx-auto mt-4 flex max-w-6xl flex-col-reverse gap-5 px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_400px]">
-        {/* ==== Left: crystal palette ==== */}
-        <section className="rounded-3xl border border-black/5 bg-white/70 p-4 shadow-card glass dark:border-white/5 dark:bg-neutral-900/60 sm:p-5">
-          {/* Size selector */}
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-1 rounded-2xl bg-black/5 p-1 dark:bg-white/5">
-              {SIZES.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setSize(s)}
-                  className={`rounded-xl px-3 py-1.5 text-[13px] font-medium transition ${
-                    size === s ? 'bg-white text-brand-600 shadow-sm dark:bg-neutral-700 dark:text-brand-300' : 'text-neutral-500'
-                  }`}
-                >
-                  {s}mm
-                </button>
-              ))}
-            </div>
-            <span className="text-[12px] text-neutral-400">{t('design.size')}</span>
-          </div>
-
-          {/* Search */}
-          <div className="relative mb-3">
-            <SearchIcon size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t('design.search')}
-              className="w-full rounded-2xl border border-black/8 bg-white py-2.5 pl-10 pr-4 text-[14px] outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-100 dark:border-white/10 dark:bg-neutral-800 dark:text-white dark:focus:ring-brand-900/50"
+      {/* ===== 手链预览 + 右侧工具 ===== */}
+      <div className="mt-4 flex gap-3">
+        <div className="relative flex-1">
+          <div className="mx-auto aspect-square w-full max-w-[340px] rounded-full">
+            <BraceletRing
+              beads={beads}
+              selectedUid={selectedUid}
+              onSelectBead={setSelectedUid}
+              onClearSelection={() => setSelectedUid(null)}
+              assembling={assembling}
             />
           </div>
-
-          {/* Categories */}
-          <div className="mb-4 flex gap-2 overflow-x-auto no-scrollbar">
-            {CATEGORIES.map((c) => (
-              <button
-                key={c.key}
-                onClick={() => setCat(c.key)}
-                className={`shrink-0 rounded-full px-3.5 py-1.5 text-[13px] font-medium transition ${
-                  cat === c.key ? 'bg-brand-500 text-white shadow-sm' : 'bg-black/5 text-neutral-500 dark:bg-white/8 dark:text-neutral-300'
-                }`}
-              >
-                {lang === 'zh' ? c.label : CATEGORY_I18N[c.key]}
-              </button>
-            ))}
-          </div>
-
-          {/* Bead grid */}
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-            {filtered.map((raw) => {
-              const c = localizeCrystal(raw, lang)
-              return (
-                <div
-                  key={c.id}
-                  className="group relative flex flex-col items-center rounded-2xl border border-black/5 bg-white p-3 text-center shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg dark:border-white/5 dark:bg-neutral-800"
-                >
-                  <button
-                    onClick={() => setDetail(c)}
-                    className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-black/5 text-neutral-400 transition hover:bg-black/10 hover:text-brand-500 dark:bg-white/10"
-                    aria-label={t('design.energyRead')}
-                  >
-                    <EnergyIcon size={13} />
-                  </button>
-                  <button onClick={() => addBead(c)} className="flex flex-col items-center active:scale-95">
-                    <div className="relative">
-                      <Bead crystal={c} size={64} className="drop-shadow-md transition group-hover:scale-105" />
-                      <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-brand-500 text-white opacity-0 shadow-md transition group-hover:opacity-100">
-                        <PlusIcon size={14} />
-                      </span>
-                    </div>
-                    <div className="mt-2 text-[14px] font-medium text-neutral-900 dark:text-white">{c.name}</div>
-                    <div className="text-[11px] text-neutral-400">{c.keywords.join(' · ')}</div>
-                    <div className="mt-1 flex items-center gap-1.5">
-                      <span className="text-[13px] font-semibold text-brand-600 dark:text-brand-300">{money(beadPrice(c, size))}</span>
-                      <span className="rounded px-1 py-0.5 text-[10px] font-medium text-white" style={{ background: ELEMENTS[c.element]?.color }}>
-                        {lang === 'zh' ? ELEMENTS[c.element]?.label : ELEMENT_I18N[c.element]}
-                      </span>
-                    </div>
-                  </button>
-                </div>
-              )
-            })}
-            {filtered.length === 0 && (
-              <div className="col-span-full py-10 text-center text-[13px] text-neutral-400">{t('design.noResult')}</div>
-            )}
-          </div>
-        </section>
-
-        {/* ==== Right: bracelet preview ==== */}
-        <section className="lg:sticky lg:top-20 lg:self-start">
-          <div className="rounded-3xl border border-black/5 bg-white/70 p-4 shadow-card glass dark:border-white/5 dark:bg-neutral-900/60 sm:p-5">
-            <div className="flex gap-3">
-              <div className="relative flex-1">
-                <div className="mx-auto aspect-square w-full max-w-[300px] rounded-full bg-gradient-to-br from-white to-neutral-100 shadow-inner dark:from-neutral-800 dark:to-neutral-900">
-                  <BraceletRing
-                    beads={beads}
-                    selectedUid={selectedUid}
-                    onSelectBead={setSelectedUid}
-                    onClearSelection={() => setSelectedUid(null)}
-                    assembling={assembling}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col justify-center gap-2">
-                <RailBtn onClick={clearAll} icon={<TrashIcon size={18} />} label={t('rail.clear')} disabled={!beads.length} />
-                <RailBtn onClick={undo} icon={<UndoIcon size={18} />} label={t('rail.undo')} disabled={!past.length} />
-                <RailBtn onClick={redo} icon={<RedoIcon size={18} />} label={t('rail.redo')} disabled={!future.length} />
-                <RailBtn onClick={randomize} icon={<ShuffleIcon size={18} />} label={t('rail.random')} />
-              </div>
+          {beads.length === 0 && (
+            <div className="pointer-events-none absolute inset-0 grid place-items-center">
+              <p className="text-center text-[14px] leading-relaxed text-neutral-300/80">
+                {lang === 'zh' ? '拖拽水晶或' : 'Drag a crystal or'}<br />
+                {lang === 'zh' ? '点击添加到手链' : 'tap to add to bracelet'}
+              </p>
             </div>
-
-            {/* Selected bead action */}
-            {selectedUid && selectedCrystal && (
-              <div className="mt-3 flex items-center justify-between rounded-2xl bg-brand-50 px-3.5 py-2.5 dark:bg-brand-900/30 animate-fade-in">
-                <div className="flex items-center gap-2">
-                  <Bead crystal={selectedCrystal} size={26} />
-                  <span className="text-[13px] font-medium text-neutral-700 dark:text-neutral-200">
-                    {t('design.selected')} · {selectedCrystal.name}
-                  </span>
-                </div>
-                <button onClick={removeSelected} className="flex items-center gap-1 rounded-full bg-red-500/90 px-3 py-1.5 text-[12px] font-medium text-white transition active:scale-95">
-                  <TrashIcon size={14} /> {t('design.delete')}
-                </button>
-              </div>
-            )}
-
-            {/* Title + count */}
-            <div className="mt-3 flex items-end justify-between">
-              <div>
-                <div className="text-[15px] font-semibold text-neutral-900 dark:text-white">{t('design.preview')}</div>
-                <div className="text-[12px] text-neutral-500 dark:text-neutral-400">{t('design.selectedN', stats.count)}</div>
-              </div>
-              <div className="text-right">
-                <div className="text-xl font-bold text-neutral-900 dark:text-white">{money(stats.price)}</div>
-              </div>
-            </div>
-
-            {/* Reorder strip */}
-            <div className="mt-3 rounded-2xl bg-black/[0.03] p-2 dark:bg-white/5">
-              <SortableBeadStrip beads={beads} onReorder={reorder} onSelect={setSelectedUid} selectedUid={selectedUid} emptyHint={t('design.strip')} />
-            </div>
-
-            {/* Stats grid */}
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              <Stat label={t('stat.length')} value={`${stats.circumferenceCm.toFixed(1)}`} unit={t('unit.cm')} />
-              <Stat label={t('stat.weight')} value={`${stats.weightG.toFixed(1)}`} unit={t('unit.g')} />
-              <Stat label={t('stat.count')} value={`${stats.count}`} unit={t('unit.pcs')} />
-            </div>
-
-            {/* Wrist size */}
-            <div className="mt-4">
-              <div className="mb-1 flex items-center justify-between text-[13px]">
-                <span className="font-medium text-neutral-700 dark:text-neutral-200">{t('design.wrist')}</span>
-                <span className="text-neutral-500 dark:text-neutral-400">{wrist.toFixed(1)} cm</span>
-              </div>
-              <input
-                type="range"
-                min="13"
-                max="22"
-                step="0.5"
-                value={wrist}
-                onChange={(e) => setWrist(Number(e.target.value))}
-                className="w-full"
-                style={{ background: `linear-gradient(to right, #2f9c66 ${((wrist - 13) / 9) * 100}%, rgba(120,120,120,0.2) ${((wrist - 13) / 9) * 100}%)`, height: 4, borderRadius: 999 }}
-              />
-              <div className="mt-2 flex items-center justify-between rounded-2xl bg-brand-50/70 px-3.5 py-2.5 dark:bg-brand-900/20">
-                <div className="flex items-center gap-2 text-[12px] text-neutral-600 dark:text-neutral-300">
-                  <WandIcon size={16} className="text-brand-500" />
-                  <span>
-                    {t('design.aiRec', rec.target, size)}
-                    {rec.needed > 0 && <span className="text-neutral-400">{t('design.stillNeed', rec.needed)}</span>}
-                  </span>
-                </div>
-                <button onClick={autoFill} className="shrink-0 rounded-full bg-brand-500 px-3 py-1.5 text-[12px] font-medium text-white transition active:scale-95 disabled:opacity-40" disabled={rec.needed <= 0}>
-                  {t('design.autoFill')}
-                </button>
-              </div>
-            </div>
-
-            {/* Smart + Finish */}
-            <div className="mt-4 grid grid-cols-2 gap-2.5">
-              <button
-                onClick={() => setShowSmart(true)}
-                className="flex items-center justify-center gap-1.5 rounded-2xl border border-brand-200 bg-white py-3 text-[14px] font-medium text-brand-600 transition hover:bg-brand-50 active:scale-[0.99] dark:border-brand-800 dark:bg-neutral-800 dark:text-brand-300"
-              >
-                <SparkleIcon size={17} /> {t('design.smart')}
-              </button>
-              <button
-                onClick={() => (beads.length ? setShowExport(true) : notify(t('design.addFirst')))}
-                className="flex items-center justify-center gap-1.5 rounded-2xl bg-brand-500 py-3 text-[14px] font-medium text-white shadow-glow transition hover:bg-brand-600 active:scale-[0.99]"
-              >
-                {t('design.finish')} <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        </section>
+          )}
+        </div>
+        <div className="flex flex-col justify-center gap-2.5">
+          <RailBtn onClick={clearAll} icon={<TrashIcon size={18} />} label={lang === 'zh' ? '清空' : 'Clear'} disabled={!beads.length} />
+          <RailBtn onClick={undo} icon={<UndoIcon size={18} />} label={lang === 'zh' ? '撤销' : 'Undo'} disabled={!past.length} />
+          <RailBtn onClick={redo} icon={<RedoIcon size={18} />} label={lang === 'zh' ? '重做' : 'Redo'} disabled={!future.length} />
+          <RailBtn onClick={() => (beads.length ? setShowExport(true) : notify(t('design.addFirst')))} icon={<DownloadIcon size={18} />} label={lang === 'zh' ? '保存' : 'Save'} />
+        </div>
       </div>
 
-      {/* Mobile sticky summary bar */}
-      <div className="fixed inset-x-0 bottom-14 z-30 lg:hidden">
-        <div className="mx-3 mb-2 flex items-center gap-3 rounded-2xl border border-black/5 bg-white/85 px-4 py-2.5 shadow-card-lg glass dark:border-white/10 dark:bg-neutral-900/85">
-          <div className="flex -space-x-2 overflow-hidden">
-            {beads.slice(0, 6).map((b) => (
-              <div key={b.uid} className="rounded-full ring-2 ring-white dark:ring-neutral-900">
-                <Bead crystal={CRYSTAL_MAP[b.crystalId]} size={24} />
-              </div>
-            ))}
-            {beads.length === 0 && <span className="text-[13px] text-neutral-400">{t('design.noBeads')}</span>}
+      {/* 选中珠子操作 */}
+      {selectedUid && selectedCrystal && (
+        <div className="mt-1 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 animate-fade-in">
+          <div className="flex items-center gap-2">
+            <Bead crystal={selectedCrystal} size={26} />
+            <span className="text-[13px] font-medium text-neutral-200">{t('design.selected')} · {selectedCrystal.name}</span>
           </div>
-          <div className="ml-auto text-right">
-            <div className="text-[11px] text-neutral-400">{t('design.selN', stats.count)}</div>
-            <div className="text-[15px] font-bold text-neutral-900 dark:text-white">{money(stats.price)}</div>
-          </div>
-          <button
-            onClick={() => (beads.length ? setShowExport(true) : notify(t('design.addFirst')))}
-            className="rounded-full bg-brand-500 px-4 py-2 text-[13px] font-medium text-white active:scale-95"
-          >
-            {t('design.done')}
+          <button onClick={removeSelected} className="flex items-center gap-1 rounded-full bg-red-500/90 px-3 py-1.5 text-[12px] font-medium text-white transition active:scale-95">
+            <TrashIcon size={14} /> {t('design.delete')}
           </button>
         </div>
+      )}
+
+      {/* 拖拽重排 */}
+      {beads.length > 0 && (
+        <div className="mt-3 rounded-2xl border border-white/8 bg-white/5 p-2">
+          <SortableBeadStrip beads={beads} onReorder={reorder} onSelect={setSelectedUid} selectedUid={selectedUid} emptyHint={t('design.strip')} />
+        </div>
+      )}
+
+      {/* ===== 手链设置 ===== */}
+      <div className="mt-5 flex items-end justify-between">
+        <div>
+          <h3 className="text-[18px] font-bold text-white">{lang === 'zh' ? '手链设置' : 'Bracelet Setup'}</h3>
+          <p className="text-[12px] text-neutral-400">{lang === 'zh' ? '设置你的手链信息' : 'Configure your bracelet'}</p>
+        </div>
+        <div className="text-2xl font-extrabold text-white">{money(stats.price)}</div>
+      </div>
+
+      {/* 手链尺寸 */}
+      <div className="mt-4">
+        <div className="mb-2 text-[13px] text-neutral-300">
+          {lang === 'zh' ? '选择手链尺寸' : 'Bracelet size'}
+          <span className="ml-1 text-[11px] text-neutral-500">{lang === 'zh' ? '（适合大多数手腕，可稍后调整尺寸或联系客服）' : '(fits most wrists)'}</span>
+        </div>
+        <div className="grid grid-cols-4 gap-2.5">
+          {WRISTS.map((w) => {
+            const active = Math.round(wrist) === w.cm
+            return (
+              <button
+                key={w.k}
+                onClick={() => setWrist(w.cm)}
+                className={`rounded-2xl border px-2 py-2.5 text-center transition active:scale-95 ${active ? 'border-violet-400/80 bg-violet-500/15 text-white shadow-[0_0_16px_-4px_rgba(150,90,240,0.7)]' : 'border-white/12 bg-white/5 text-neutral-300'}`}
+              >
+                <span className="text-[14px] font-bold">{w.k}</span>
+                <span className="ml-1.5 text-[13px]">{w.cm}.0cm</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 珠子大小 */}
+      <div className="mt-4">
+        <div className="mb-2 text-[13px] text-neutral-300">{lang === 'zh' ? '选择珠子大小' : 'Bead size'}</div>
+        <div className="grid grid-cols-4 gap-2.5">
+          {BEAD_SIZES.map((s) => {
+            const active = size === s
+            return (
+              <button
+                key={s}
+                onClick={() => setSize(s)}
+                className={`flex items-center justify-center gap-1.5 rounded-2xl border px-2 py-2.5 transition active:scale-95 ${active ? 'border-violet-400/80 bg-violet-500/15 text-white shadow-[0_0_16px_-4px_rgba(150,90,240,0.7)]' : 'border-white/12 bg-white/5 text-neutral-300'}`}
+              >
+                <span className="rounded-full bg-white/25" style={{ width: 6 + (s - 6), height: 6 + (s - 6) }} />
+                <span className="text-[13px] font-medium">{s}.0mm</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* ===== 功能按钮 2x2 ===== */}
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <ActionCard onClick={() => setShowSmart(true)} tone="blue" icon={<SparkleIcon size={20} />} title={lang === 'zh' ? '智能配色' : 'Smart Match'} sub={lang === 'zh' ? 'AI 帮你搭配颜色' : 'AI colour matching'} />
+        <ActionCard onClick={() => setShowEnergy(true)} tone="green" icon={<EnergyIcon size={20} />} title={lang === 'zh' ? '能量分析' : 'Energy Analysis'} sub={lang === 'zh' ? '解析手链能量' : 'Analyse energy'} />
+        <ActionCard onClick={() => (beads.length ? setShowExport(true) : notify(t('design.addFirst')))} tone="blue" icon={<ShareIcon size={20} />} title={lang === 'zh' ? '分享我的设计' : 'Share Design'} sub={lang === 'zh' ? '分享给好友参考' : 'Share with friends'} />
+        <ActionCard onClick={() => (beads.length ? setShowExport(true) : notify(t('design.addFirst')))} tone="green" icon={<OrderIcon size={20} />} title={lang === 'zh' ? '加入购物车' : 'Add to Cart'} sub="" />
+      </div>
+
+      {/* ===== 分类 + 搜索 + 水晶网格 ===== */}
+      <div className="mt-5 flex gap-2 overflow-x-auto no-scrollbar">
+        {CATEGORIES.map((c) => (
+          <button
+            key={c.key}
+            onClick={() => setCat(c.key)}
+            className={`shrink-0 rounded-full px-4 py-1.5 text-[13px] font-medium transition ${cat === c.key ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-[0_0_14px_-3px_rgba(70,160,255,0.8)]' : 'border border-white/12 bg-white/5 text-neutral-300'}`}
+          >
+            {lang === 'zh' ? c.label : CATEGORY_I18N[c.key]}
+          </button>
+        ))}
+      </div>
+
+      <div className="relative mt-3">
+        <SearchIcon size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={lang === 'zh' ? '搜索水晶名称或能量功效' : 'Search crystal name or energy'}
+          className="w-full rounded-2xl border border-white/12 bg-white/5 py-3 pl-10 pr-4 text-[14px] text-white outline-none transition placeholder:text-neutral-500 focus:border-cyan-400/60"
+        />
+      </div>
+
+      {/* 水晶网格 4 列 */}
+      <div className="mt-4 grid grid-cols-4 gap-2.5">
+        {filtered.map((raw) => {
+          const c = localizeCrystal(raw, lang)
+          return (
+            <button
+              key={c.id}
+              onClick={() => addBead(c)}
+              className="group relative flex flex-col items-center rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/[0.02] p-2 text-center transition hover:-translate-y-0.5 hover:border-cyan-400/40 active:scale-95"
+            >
+              <span
+                onClick={(e) => { e.stopPropagation(); setDetail(c) }}
+                className="absolute right-1 top-1 z-10 grid h-5 w-5 place-items-center rounded-full bg-black/40 text-neutral-300 transition hover:text-cyan-300"
+                aria-label={t('design.energyRead')}
+              >
+                <EnergyIcon size={11} />
+              </span>
+              <Bead crystal={c} size={58} className="drop-shadow-md transition group-hover:scale-105" />
+              <div className="mt-1.5 w-full truncate text-[12px] font-medium text-white">{c.name}</div>
+              <div className="text-[12px] font-bold text-emerald-400">{money(beadPrice(c, size))}</div>
+            </button>
+          )
+        })}
+        {filtered.length === 0 && (
+          <div className="col-span-full py-10 text-center text-[13px] text-neutral-400">{t('design.noResult')}</div>
+        )}
       </div>
 
       {/* Toast */}
@@ -433,13 +401,42 @@ export function Designer({ dark, initialBeads, smartSignal }) {
               <span className="text-lg font-bold text-brand-600 dark:text-brand-300">{money(beadPrice(detail, size))}</span>
             </div>
             <button
-              onClick={() => {
-                addBead(detail)
-                setDetail(null)
-              }}
+              onClick={() => { addBead(detail); setDetail(null) }}
               className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-2xl bg-brand-500 py-3.5 font-medium text-white shadow-glow transition hover:bg-brand-600 active:scale-[0.99]"
             >
               <PlusIcon size={18} /> {t('design.addToBracelet')}
+            </button>
+          </div>
+        )}
+      </Modal>
+
+      {/* 能量分析 modal */}
+      <Modal open={showEnergy} onClose={() => setShowEnergy(false)} title={lang === 'zh' ? '能量分析' : 'Energy Analysis'} subtitle={lang === 'zh' ? `${stats.count} 颗 · ${money(stats.price)}` : `${stats.count} beads · ${money(stats.price)}`} maxWidth="max-w-sm">
+        {beads.length === 0 ? (
+          <p className="py-6 text-center text-[14px] text-neutral-500">{lang === 'zh' ? '还没有添加水晶，先加几颗再分析吧。' : 'Add some crystals first.'}</p>
+        ) : (
+          <div>
+            <div className="space-y-2.5">
+              {energyEls.map(([el, n]) => {
+                const pct = Math.round((n / stats.count) * 100)
+                return (
+                  <div key={el}>
+                    <div className="mb-1 flex items-center justify-between text-[13px]">
+                      <span className="font-medium text-neutral-700 dark:text-neutral-200">{lang === 'zh' ? `${ELEMENTS[el]?.label}行` : ELEMENT_I18N[el]}</span>
+                      <span className="text-neutral-400">{n} · {pct}%</span>
+                    </div>
+                    <div className="h-2.5 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+                      <div className="h-full rounded-full" style={{ width: `${pct}%`, background: ELEMENTS[el]?.color }} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <button
+              onClick={() => { setShowEnergy(false); setShowSmart(true) }}
+              className="mt-5 flex w-full items-center justify-center gap-1.5 rounded-2xl bg-brand-500 py-3 font-medium text-white shadow-glow transition active:scale-[0.99]"
+            >
+              <SparkleIcon size={17} /> {lang === 'zh' ? '让 AI 优化搭配' : 'Let AI optimise'}
             </button>
           </div>
         )}
@@ -456,22 +453,29 @@ function RailBtn({ onClick, icon, label, disabled }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="flex flex-col items-center gap-0.5 rounded-2xl bg-white px-2.5 py-2 text-neutral-600 shadow-card transition hover:text-brand-600 active:scale-95 disabled:opacity-35 dark:bg-neutral-800 dark:text-neutral-300"
+      className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-2xl border border-white/12 bg-white/5 text-neutral-200 backdrop-blur-sm transition hover:border-cyan-400/40 hover:text-white active:scale-95 disabled:opacity-35"
     >
       {icon}
-      <span className="text-[10px] font-medium">{label}</span>
+      <span className="text-[11px] font-medium">{label}</span>
     </button>
   )
 }
 
-function Stat({ label, value, unit }) {
+function ActionCard({ onClick, tone, icon, title, sub }) {
+  const c = tone === 'green'
+    ? { border: 'rgba(52,211,153,0.55)', glow: 'rgba(52,211,153,0.5)', icon: '#34d399' }
+    : { border: 'rgba(70,160,255,0.55)', glow: 'rgba(70,160,255,0.5)', icon: '#6bc0ff' }
   return (
-    <div className="rounded-2xl bg-black/[0.03] px-2 py-2.5 text-center dark:bg-white/5">
-      <div className="text-[11px] text-neutral-400">{label}</div>
-      <div className="text-[15px] font-bold text-neutral-900 dark:text-white">
-        {value}
-        <span className="ml-0.5 text-[11px] font-normal text-neutral-400">{unit}</span>
-      </div>
-    </div>
+    <button
+      onClick={onClick}
+      style={{ border: `1px solid ${c.border}`, boxShadow: `0 0 18px -6px ${c.glow}, inset 0 1px 0 rgba(255,255,255,0.1)`, background: 'linear-gradient(150deg, rgba(16,26,48,0.7), rgba(9,14,30,0.8))' }}
+      className="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-left transition hover:-translate-y-0.5 active:scale-[0.98]"
+    >
+      <span className="shrink-0" style={{ color: c.icon, filter: `drop-shadow(0 0 6px ${c.glow})` }}>{icon}</span>
+      <span className="min-w-0">
+        <span className="block text-[14px] font-semibold text-white">{title}</span>
+        {sub && <span className="block truncate text-[11px] text-neutral-400">{sub}</span>}
+      </span>
+    </button>
   )
 }
