@@ -357,12 +357,18 @@ export function Designer({ dark, initialBeads, smartSignal }) {
               key={c.id}
               onClick={() => addBead(c)}
               style={{
-                border: '1px solid rgba(120,170,255,0.22)',
-                background: `radial-gradient(115% 82% at 50% 34%, ${glow}44, transparent 60%), linear-gradient(180deg, #0c1730 0%, #060b1c 100%)`,
-                boxShadow: `0 0 18px -8px ${glow}aa, inset 0 1px 0 rgba(255,255,255,0.06)`,
+                border: '1px solid rgba(150,190,255,0.28)',
+                background: `linear-gradient(180deg, rgba(16,28,56,0.34) 0%, rgba(7,12,28,0.46) 100%)`,
+                boxShadow: `0 0 22px -8px ${glow}aa, inset 0 1px 0 rgba(255,255,255,0.12)`,
               }}
-              className="crystal-tile group relative flex flex-col items-center overflow-hidden rounded-2xl p-2 text-center transition hover:-translate-y-0.5 active:scale-95"
+              className="crystal-tile group relative flex flex-col items-center overflow-hidden rounded-2xl p-2 text-center backdrop-blur-md transition hover:-translate-y-0.5 active:scale-95"
             >
+              {/* 水晶后方亮光（紧贴珠子，不盖住文字） */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-[30px] h-16 w-16 -translate-x-1/2 rounded-full blur-lg"
+                style={{ background: `radial-gradient(circle, rgba(255,255,255,0.42), ${glow}99 46%, transparent 72%)`, opacity: 0.9 }}
+              />
               <span
                 onClick={(e) => { e.stopPropagation(); setDetail(c) }}
                 className="absolute right-1 top-1 z-10 grid h-5 w-5 place-items-center rounded-full bg-black/40 text-neutral-300 transition hover:text-cyan-300"
@@ -370,9 +376,9 @@ export function Designer({ dark, initialBeads, smartSignal }) {
               >
                 <EnergyIcon size={11} />
               </span>
-              <Bead crystal={c} size={58} className="drop-shadow-[0_6px_14px_rgba(0,0,0,0.55)] transition group-hover:scale-105" />
-              <div className="mt-1.5 w-full truncate text-[12px] font-medium text-white">{c.name}</div>
-              <div className="text-[12px] font-bold text-emerald-400">{money(beadPrice(c, size))}</div>
+              <Bead crystal={c} size={58} className="drop-shadow-[0_6px_16px_rgba(0,0,0,0.5)] transition group-hover:scale-105" />
+              <div className="mt-1.5 w-full truncate text-[12px] font-medium text-white drop-shadow">{c.name}</div>
+              <div className="text-[12px] font-bold text-emerald-400 drop-shadow">{money(beadPrice(c, size))}</div>
             </button>
           )
         })}
