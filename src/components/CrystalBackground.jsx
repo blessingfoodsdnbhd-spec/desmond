@@ -18,11 +18,11 @@ export function IceCaveImage({ className = '' }) {
   return <img src={iceCave} alt="" aria-hidden className={className} />
 }
 
-// 稳定分布的星点（无随机）
+// 稳定分布的星点（无随机）— 数量控制以保证流畅
 const STARS = []
 {
   const seed = [7, 13, 23, 31, 41, 53, 61, 71, 83, 97]
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 34; i++) {
     const x = (seed[i % 10] * 9.7 + i * 17.3) % 100
     const y = (seed[(i + 3) % 10] * 7.3 + i * 11.1) % 100
     const s = 0.6 + ((i * 37) % 20) / 12
@@ -31,11 +31,11 @@ const STARS = []
   }
 }
 
-// 稳定分布的四角闪钻（更亮的星光，集中在中间读作闪耀）
+// 稳定分布的四角闪钻（更亮的星光，集中在中间读作闪耀）— 精简数量
 const SPARKLES = []
 {
-  const sx = [15, 30, 46, 62, 80, 22, 38, 55, 70, 48, 33, 60, 26, 72, 42, 58]
-  const sy = [16, 26, 12, 30, 20, 46, 58, 50, 62, 38, 70, 34, 54, 44, 64, 24]
+  const sx = [15, 34, 58, 80, 24, 46, 68, 40, 30, 62]
+  const sy = [16, 26, 20, 30, 50, 44, 58, 66, 12, 38]
   for (let i = 0; i < sx.length; i++) {
     const size = 11 + (i % 4) * 6
     const dur = 3.4 + ((i * 7) % 30) / 10
@@ -69,28 +69,24 @@ export function CrystalBackground({ tab = 'home' }) {
 
       {/* ===== 深色：设计稿水晶洞背景（按页面切换）===== */}
       <div className="absolute inset-0 hidden dark:block" style={{ background: '#050912' }}>
-        {/* 水晶洞背景图：全屏固定、缓慢推拉（会移动）。切页淡入过渡 */}
+        {/* 水晶洞背景图：全屏固定（静态，省电流畅）。切页淡入过渡 */}
         <img
           key={pageBg}
           src={pageBg}
           alt=""
-          className="absolute inset-0 h-full w-full origin-center object-cover animate-cosmic-drift animate-fade-in"
+          className="absolute inset-0 h-full w-full object-cover animate-fade-in"
         />
         {/* 深色晕影，让中间内容区更暗更好读 */}
         <div className="absolute inset-0" style={{ background: 'radial-gradient(100% 78% at 50% 42%, rgba(5,9,18,0.72) 0%, rgba(5,9,18,0.35) 46%, rgba(5,9,18,0.15) 100%)' }} />
         <div className="absolute inset-x-0 bottom-0 h-40" style={{ background: 'linear-gradient(to top, #050912, transparent)' }} />
 
-        {/* 星云辉光（screen 混合，缓慢流动，叠在洞图上更亮） */}
-        <div className="absolute -left-16 top-8 h-[42vh] w-[64vw] rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(70,140,255,0.36), transparent 70%)', mixBlendMode: 'screen', animation: 'mist-drift 20s ease-in-out infinite' }} />
-        <div className="absolute -right-16 top-1/3 h-[44vh] w-[64vw] rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(165,110,255,0.32), transparent 70%)', mixBlendMode: 'screen', animation: 'mist-drift 26s ease-in-out infinite reverse' }} />
+        {/* 星云辉光（静态，一次绘制，不逐帧重绘） */}
+        <div className="absolute -left-16 top-8 h-[42vh] w-[64vw] rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(70,140,255,0.3), transparent 70%)', mixBlendMode: 'screen' }} />
+        <div className="absolute -right-16 top-1/3 h-[44vh] w-[64vw] rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(165,110,255,0.28), transparent 70%)', mixBlendMode: 'screen' }} />
 
-        {/* 斜向光束缓缓扫过 */}
-        <div className="absolute -top-1/4 left-0 h-[150vh] w-40 blur-2xl" style={{ background: 'linear-gradient(90deg, transparent, rgba(150,200,255,0.42), transparent)', mixBlendMode: 'screen', animation: 'ray-sweep 14s ease-in-out infinite' }} />
-        <div className="absolute -top-1/4 left-0 h-[150vh] w-28 blur-2xl" style={{ background: 'linear-gradient(90deg, transparent, rgba(180,150,255,0.34), transparent)', mixBlendMode: 'screen', animation: 'ray-sweep 19s ease-in-out 5s infinite' }} />
-
-        {/* 星点 */}
+        {/* 星点（仅透明度闪烁，轻量） */}
         {STARS.map(([x, y, s, d, dur], i) => (
-          <span key={`s${i}`} className="absolute rounded-full bg-white" style={{ left: `${x}%`, top: `${y}%`, width: s, height: s, boxShadow: '0 0 4px 1px rgba(200,225,255,0.85)', animation: `star-tw ${dur}s ease-in-out ${d}s infinite`, mixBlendMode: 'screen' }} />
+          <span key={`s${i}`} className="absolute rounded-full bg-white" style={{ left: `${x}%`, top: `${y}%`, width: s, height: s, boxShadow: '0 0 4px 1px rgba(200,225,255,0.85)', animation: `star-tw ${dur}s ease-in-out ${d}s infinite` }} />
         ))}
 
         {/* 四角闪钻（闪闪发亮） */}

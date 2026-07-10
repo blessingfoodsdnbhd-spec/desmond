@@ -37,24 +37,21 @@ const STARS = [
   { x: 33, y: 46, s: 1.1, d: 0.6 }, { x: 54, y: 30, s: 1, d: 2.0 }, { x: 78, y: 62, s: 1.3, d: 1.1 },
 ]
 
-// Hero 沉浸氛围：星空 + 能量星云 + 缓慢光线 + 上升粒子
+// Hero 沉浸氛围：轻量版（星空底图已提供星云，这里只加压暗 + 少量闪烁星 + 上升粒子）
 export function HeroAtmosphere() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {/* 深空叠加，压暗成宇宙冰洞 */}
       <div className="absolute inset-0" style={{ background: 'radial-gradient(120% 90% at 50% 20%, transparent 30%, rgba(6,14,34,0.55) 100%)' }} />
-      {/* 能量星云 */}
-      <div className="absolute -left-12 top-2 h-64 w-80 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(70,150,255,0.5), transparent 70%)', animation: 'mist-drift 16s ease-in-out infinite' }} />
-      <div className="absolute -right-10 top-1/3 h-64 w-80 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(150,110,255,0.42), transparent 70%)', animation: 'mist-drift 20s ease-in-out infinite reverse' }} />
-      <div className="absolute bottom-0 left-1/3 h-56 w-72 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(90,200,255,0.32), transparent 70%)', animation: 'mist-drift 24s ease-in-out infinite' }} />
-      {/* 缓慢流过的光线 */}
-      <div className="absolute inset-y-0 left-0 w-1/3 blur-2xl" style={{ background: 'linear-gradient(90deg, transparent, rgba(220,240,255,0.3), transparent)', animation: 'light-flow 14s ease-in-out infinite' }} />
-      {/* 星空 */}
+      {/* 静态能量星云（一次绘制，不逐帧重绘） */}
+      <div className="absolute -left-12 top-2 h-56 w-72 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(70,150,255,0.4), transparent 70%)' }} />
+      <div className="absolute -right-10 top-1/3 h-56 w-72 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(150,110,255,0.34), transparent 70%)' }} />
+      {/* 星空（仅闪烁） */}
       {STARS.map((s, i) => (
         <span key={`st${i}`} className="absolute rounded-full bg-white" style={{ left: `${s.x}%`, top: `${s.y}%`, width: s.s, height: s.s, boxShadow: '0 0 4px 1px rgba(210,230,255,0.9)', animation: `star-tw ${3 + (i % 3)}s ease-in-out ${s.d}s infinite` }} />
       ))}
-      {/* 上升能量粒子 */}
-      {PARTICLES.map((p, i) => (
+      {/* 少量上升能量粒子 */}
+      {PARTICLES.slice(0, 5).map((p, i) => (
         <span key={`pt${i}`} className="absolute rounded-full bg-white" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.s, height: p.s, boxShadow: '0 0 8px 2px rgba(160,210,255,0.9)', animation: `drift-up ${p.dur}s ease-in-out ${p.d}s infinite` }} />
       ))}
     </div>
