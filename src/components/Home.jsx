@@ -12,6 +12,7 @@ import { GemCrystalIcon, DiamondSparkIcon, EnergyOrbIcon, GiftGlowIcon, ZodiacMe
 import { useRipple, HeroAtmosphere, Reveal } from './effects.jsx'
 import { SparkleIcon, ChevronRight } from './icons.jsx'
 import aiCrystal from '../assets/ai/ai-crystal.webp'
+import knowledgeBalls from '../assets/ai/knowledge-balls.webp'
 
 const FEATURE_KEYS = [
   { Icon: GemCrystalIcon, t: 'feat.design', d: 'feat.design.d', from: '#1e7fd4', to: '#0b3f74', glow: 'rgba(56,150,230,0.75)' },
@@ -286,10 +287,8 @@ export function Home({ onStart, onOpenGuide }) {
             className="block w-full rounded-3xl border border-black/5 bg-white p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-[0.99] dark:border-[rgba(120,180,255,0.18)] dark:bg-[rgba(13,23,44,0.6)] dark:shadow-[0_0_22px_-8px_rgba(90,160,255,0.5)] dark:backdrop-blur-xl"
           >
             <div className="flex items-center gap-4">
-              <div className="grid h-20 w-20 shrink-0 grid-cols-3 gap-1 rounded-2xl bg-gradient-to-br from-purple-100 to-white p-2 dark:from-[rgba(60,40,110,0.5)] dark:to-[rgba(10,16,34,0.7)]">
-                {['amethyst', 'rose', 'citrine', 'green-phantom', 'lapis', 'obsidian'].map((id) => (
-                  <Bead key={id} crystal={CRYSTAL_MAP[id]} size={18} />
-                ))}
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-[0_0_18px_-6px_rgba(120,160,255,0.55)]">
+                <img src={knowledgeBalls} alt="" className="h-full w-full object-cover" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[15px] font-semibold text-neutral-900 dark:text-white">{t('home.know.title')}</div>
