@@ -13,12 +13,16 @@ import { useRipple, HeroAtmosphere, Reveal } from './effects.jsx'
 import { SparkleIcon, ChevronRight } from './icons.jsx'
 import aiCrystal from '../assets/ai/ai-crystal.webp'
 import knowledgeBalls from '../assets/ai/knowledge-balls.webp'
+import featFree from '../assets/feat/feat-free.webp'
+import featAi from '../assets/feat/feat-ai.webp'
+import featEnergy from '../assets/feat/feat-energy.webp'
+import featOrder from '../assets/feat/feat-order.webp'
 
 const FEATURE_KEYS = [
-  { Icon: GemCrystalIcon, t: 'feat.design', d: 'feat.design.d', from: '#1e7fd4', to: '#0b3f74', glow: 'rgba(56,150,230,0.75)' },
-  { Icon: DiamondSparkIcon, t: 'feat.ai', d: 'feat.ai.d', from: '#9a4ff0', to: '#4a1a9c', glow: 'rgba(160,90,240,0.8)' },
-  { Icon: EnergyOrbIcon, t: 'feat.energy', d: 'feat.energy.d', from: '#5a63e6', to: '#2a2192', glow: 'rgba(110,120,240,0.8)' },
-  { Icon: GiftGlowIcon, t: 'feat.order', d: 'feat.order.d', from: '#e0a340', to: '#9a6414', glow: 'rgba(240,180,80,0.8)' },
+  { img: featFree, t: 'feat.design', d: 'feat.design.d', glow: 'rgba(90,170,255,0.7)' },
+  { img: featAi, t: 'feat.ai', d: 'feat.ai.d', glow: 'rgba(90,170,255,0.7)' },
+  { img: featEnergy, t: 'feat.energy', d: 'feat.energy.d', glow: 'rgba(90,170,255,0.7)' },
+  { img: featOrder, t: 'feat.order', d: 'feat.order.d', glow: 'rgba(90,170,255,0.7)' },
 ]
 
 function patternToBeads(pattern) {
@@ -377,26 +381,31 @@ function EyeGlyph() {
 /* ---------- 深色能量玻璃功能卡（发光边框 + 绕圈光环 + 波纹） ---------- */
 function FeatureCard({ f, label, desc, onClick }) {
   const { onDown, rippleNode } = useRipple()
-  const Icon = f.Icon
   return (
     <button
       onClick={onClick}
       onPointerDown={onDown}
       style={{
-        border: `1px solid ${f.glow}`,
-        background: 'linear-gradient(160deg, rgba(18,32,60,0.72), rgba(10,18,38,0.78))',
-        boxShadow: `0 0 20px -6px ${f.glow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+        border: '1px solid rgba(120,180,255,0.5)',
+        background: 'linear-gradient(160deg, rgba(46,86,160,0.34), rgba(18,42,92,0.5))',
+        boxShadow: '0 0 20px -6px rgba(90,160,255,0.6), inset 0 1px 0 rgba(255,255,255,0.2)',
       }}
-      className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-3xl p-3 text-center text-white glass-card transition duration-300 hover:-translate-y-1 active:scale-[0.96] sm:p-4"
+      className="group relative flex flex-col items-center gap-1.5 overflow-hidden rounded-3xl p-2.5 text-center text-white glass-card transition duration-300 hover:-translate-y-1 active:scale-[0.96] sm:p-3.5"
     >
-      {/* 顶部柔光 + 底部能量渐变 */}
-      <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/12 to-transparent" />
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 opacity-70" style={{ background: `linear-gradient(to top, ${f.glow}, transparent 82%)`, mixBlendMode: 'screen' }} />
-      {/* 图标 + 绕圈能量光环 */}
-      <span className="glow-ring relative grid h-12 w-12 place-items-center rounded-full sm:h-14 sm:w-14" style={{ '--rc': f.glow }}>
-        <span className="relative z-10 animate-float" style={{ animationDelay: '0.3s' }}>
-          <Icon size={38} />
-        </span>
+      {/* 顶部柔光 */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/14 to-transparent" />
+      {/* ZIP 原图发光 3D 图标（边缘渐隐融入卡面） */}
+      <span className="relative grid h-16 w-16 place-items-center sm:h-[70px] sm:w-[70px]">
+        <img
+          src={f.img}
+          alt=""
+          className="h-full w-full animate-float object-cover"
+          style={{
+            animationDelay: '0.3s',
+            WebkitMaskImage: 'radial-gradient(ellipse 62% 62% at 50% 46%, #000 58%, transparent 82%)',
+            maskImage: 'radial-gradient(ellipse 62% 62% at 50% 46%, #000 58%, transparent 82%)',
+          }}
+        />
       </span>
       <div className="relative">
         <div className="text-[13px] font-semibold drop-shadow sm:text-[14px]">{label}</div>
