@@ -223,6 +223,37 @@ input[type='range']::-moz-range-thumb {
   50% { opacity: 0.95; }
 }
 
+/* 水晶卡：深空星点铺底（每张卡内的宇宙背景） */
+.crystal-tile { position: relative; isolation: isolate; }
+.crystal-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.2px 1.2px at 18% 24%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1px 1px at 68% 40%, rgba(200,225,255,0.5), transparent),
+    radial-gradient(1.3px 1.3px at 42% 74%, rgba(180,210,255,0.5), transparent),
+    radial-gradient(1px 1px at 84% 66%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 30% 88%, rgba(200,220,255,0.4), transparent),
+    radial-gradient(1.1px 1.1px at 78% 18%, rgba(255,255,255,0.45), transparent);
+  opacity: 0.8;
+  z-index: 0;
+}
+/* 底部反光地面 */
+.crystal-tile::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 42%;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(120,170,255,0.14), transparent 78%);
+  z-index: 0;
+}
+.crystal-tile > * { position: relative; z-index: 1; }
+
 /* 四角闪光（星光钻） */
 @keyframes sparkle-pop {
   0%, 100% { opacity: 0.12; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }

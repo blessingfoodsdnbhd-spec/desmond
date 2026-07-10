@@ -351,11 +351,17 @@ export function Designer({ dark, initialBeads, smartSignal }) {
       <div className="mt-4 grid grid-cols-4 gap-2.5">
         {filtered.map((raw) => {
           const c = localizeCrystal(raw, lang)
+          const glow = c.gradient?.base || '#88aaff'
           return (
             <button
               key={c.id}
               onClick={() => addBead(c)}
-              className="group relative flex flex-col items-center rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/[0.02] p-2 text-center transition hover:-translate-y-0.5 hover:border-cyan-400/40 active:scale-95"
+              style={{
+                border: '1px solid rgba(120,170,255,0.22)',
+                background: `radial-gradient(115% 82% at 50% 34%, ${glow}44, transparent 60%), linear-gradient(180deg, #0c1730 0%, #060b1c 100%)`,
+                boxShadow: `0 0 18px -8px ${glow}aa, inset 0 1px 0 rgba(255,255,255,0.06)`,
+              }}
+              className="crystal-tile group relative flex flex-col items-center overflow-hidden rounded-2xl p-2 text-center transition hover:-translate-y-0.5 active:scale-95"
             >
               <span
                 onClick={(e) => { e.stopPropagation(); setDetail(c) }}
@@ -364,7 +370,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
               >
                 <EnergyIcon size={11} />
               </span>
-              <Bead crystal={c} size={58} className="drop-shadow-md transition group-hover:scale-105" />
+              <Bead crystal={c} size={58} className="drop-shadow-[0_6px_14px_rgba(0,0,0,0.55)] transition group-hover:scale-105" />
               <div className="mt-1.5 w-full truncate text-[12px] font-medium text-white">{c.name}</div>
               <div className="text-[12px] font-bold text-emerald-400">{money(beadPrice(c, size))}</div>
             </button>
