@@ -9,7 +9,7 @@ const CY = VIEW / 2
 const beadR = (size) => size * 2 // 6->12, 8->16, 10->20, 12->24
 
 // 珠子在 viewBox 中的绘制（<g>，可平滑过渡位置）
-function BeadNode({ p, selected, onSelect, assembling, index }) {
+function BeadNode({ p, selected, onSelect, assembling, index, glow }) {
   const r = beadR(p.size)
   // 组合动画：从圆心飞入到各自位置
   const innerStyle = assembling
@@ -33,6 +33,13 @@ function BeadNode({ p, selected, onSelect, assembling, index }) {
       }}
     >
       <g className={assembling ? '' : 'animate-pop'} style={innerStyle}>
+        {/* 能量辉光（hero 发光水晶） */}
+        {glow && <circle r={r * 1.5} fill="url(#heroBeadGlow)" />}
+        {glow && (
+          <g className="animate-twinkle" style={{ transformOrigin: `${-r * 0.5}px ${-r * 0.6}px`, animationDelay: `${(index % 5) * 0.5}s` }}>
+            <path d={`M${-r * 0.5} ${-r * 0.6 - 2.4} L${-r * 0.5 + 0.9} ${-r * 0.6 - 0.9} L${-r * 0.5 + 2.4} ${-r * 0.6} L${-r * 0.5 + 0.9} ${-r * 0.6 + 0.9} L${-r * 0.5} ${-r * 0.6 + 2.4} L${-r * 0.5 - 0.9} ${-r * 0.6 + 0.9} L${-r * 0.5 - 2.4} ${-r * 0.6} L${-r * 0.5 - 0.9} ${-r * 0.6 - 0.9} Z`} fill="#ffffff" />
+          </g>
+        )}
         {/* 选中：柔和能量辉光 + 轻微放大 */}
         {selected && <circle r={r + 9} fill="#3ddc9a" opacity="0.28" style={{ filter: 'blur(3px)' }} />}
         {selected && <circle r={r + 4} fill="none" stroke="#2f9c66" strokeWidth="2.5" />}
@@ -118,6 +125,11 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
         <filter id="brandGemGlow" x="-120%" y="-120%" width="340%" height="340%">
           <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#6fd0ff" floodOpacity="0.95" />
         </filter>
+        <radialGradient id="heroBeadGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#cfe6ff" stopOpacity="0.55" />
+          <stop offset="45%" stopColor="#9cc4ff" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#9cc4ff" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* 引导虚线圆 */}
@@ -151,7 +163,7 @@ export function BraceletRing({ beads, selectedUid, onSelectBead, onClearSelectio
       )}
 
       {positions.map((p, i) => (
-        <BeadNode key={p.uid} p={p} index={i} assembling={assembling} selected={p.uid === selectedUid} onSelect={onSelectBead} />
+        <BeadNode key={p.uid} p={p} index={i} assembling={assembling} glow={brandStyle === 'hero'} selected={p.uid === selectedUid} onSelect={onSelectBead} />
       ))}
     </svg>
   )

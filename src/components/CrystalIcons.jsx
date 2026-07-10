@@ -1,134 +1,129 @@
-// 立体水晶能量图标（玻璃球质感 + 高光 + 光泽 + 能量），对照实拍点击效果
-// 全部 SVG 渐变绘制，自带 HDR 高光与折射感，配合卡片外围光环。
+// 立体发光水晶能量图标（对照参考图）：水晶体 + 环绕能量光环(土星环) + 星光
+// 全部 SVG 渐变绘制，配合卡片外发光。
 
-// 通用：玻璃能量球
-function GlossSphere({ id, stops, r = 17 }) {
+// 环绕能量光环（横向椭圆，双圈，发光）
+function OrbitRing({ color = '#7cc4ff' }) {
+  return (
+    <g opacity="0.95">
+      <ellipse cx="24" cy="27" rx="21.5" ry="6.6" fill="none" stroke={color} strokeWidth="1.4" opacity="0.85" transform="rotate(-16 24 27)" style={{ filter: `drop-shadow(0 0 3px ${color})` }} />
+      <ellipse cx="24" cy="27" rx="15" ry="4" fill="none" stroke="#ffffff" strokeWidth="0.8" opacity="0.5" transform="rotate(-16 24 27)" />
+    </g>
+  )
+}
+
+function Sparks({ pts, color = '#ffffff' }) {
   return (
     <>
-      <defs>
-        <radialGradient id={id} cx="38%" cy="30%" r="72%">
-          {stops.map((s, i) => (
-            <stop key={i} offset={s[0]} stopColor={s[1]} />
-          ))}
-        </radialGradient>
-        <radialGradient id={`${id}-rim`} cx="50%" cy="50%" r="50%">
-          <stop offset="72%" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.5" />
-        </radialGradient>
-      </defs>
-      <circle cx="24" cy="24" r={r} fill={`url(#${id})`} filter="url(#ci-sh)" />
-      <circle cx="24" cy="24" r={r} fill={`url(#${id}-rim)`} />
-      {/* 高光 */}
-      <ellipse cx="18" cy="15.5" rx="6.2" ry="3.6" fill="#ffffff" opacity="0.9" transform="rotate(-26 18 15.5)" />
-      <ellipse cx="15.5" cy="13.5" rx="2.2" ry="1.3" fill="#ffffff" transform="rotate(-26 15.5 13.5)" />
-      <circle cx="31" cy="32" r="1.9" fill="#ffffff" opacity="0.5" />
+      {pts.map(([x, y, r], i) => (
+        <g key={i} className="animate-twinkle" style={{ animationDelay: `${(i % 4) * 0.5}s`, transformOrigin: `${x}px ${y}px` }}>
+          <path d={`M${x} ${y - r} L${x + r * 0.32} ${y - r * 0.32} L${x + r} ${y} L${x + r * 0.32} ${y + r * 0.32} L${x} ${y + r} L${x - r * 0.32} ${y + r * 0.32} L${x - r} ${y} L${x - r * 0.32} ${y - r * 0.32} Z`} fill={color} />
+        </g>
+      ))}
     </>
   )
 }
 
-const SHADOW = (
-  <defs>
-    <filter id="ci-sh" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2.4" floodColor="#0b1a3a" floodOpacity="0.5" />
-    </filter>
-  </defs>
-)
-
-// 自由设计 — 蓝色切面水晶能量球
-export function GemCrystalIcon({ size = 44 }) {
+// 自由设计 — 蓝白发光水晶体（簇尖）
+export function GemCrystalIcon({ size = 46 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-      {SHADOW}
-      <GlossSphere id="ci-blue" stops={[['0%', '#eaf8ff'], ['24%', '#96d4ff'], ['62%', '#2f8fe0'], ['100%', '#134f92']]} />
-      {/* 切面线，营造水晶球折射 */}
-      <g stroke="#dff2ff" strokeOpacity="0.4" strokeWidth="0.7" fill="none">
-        <path d="M11 22 L24 17 L37 22" />
-        <path d="M14 30 L24 26 L34 30" />
-        <path d="M24 7 L24 41" strokeOpacity="0.22" />
+      <defs>
+        <linearGradient id="ci-crys" x1="30%" y1="0%" x2="70%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="45%" stopColor="#bfe6ff" />
+          <stop offset="100%" stopColor="#5aa8e6" />
+        </linearGradient>
+        <filter id="ci-g1" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="0" stdDeviation="2.6" floodColor="#8fd0ff" floodOpacity="0.95" /></filter>
+      </defs>
+      <OrbitRing color="#7cc4ff" />
+      <g filter="url(#ci-g1)">
+        {/* 主晶体 */}
+        <path d="M24 5 L31 18 L27 32 L24 36 L21 32 L17 18 Z" fill="url(#ci-crys)" />
+        <path d="M24 5 L31 18 L24 20 Z" fill="#ffffff" fillOpacity="0.75" />
+        <path d="M24 5 L17 18 L24 20 Z" fill="#ffffff" fillOpacity="0.45" />
+        <path d="M17 18 L24 20 L21 32 Z" fill="#3d84c4" fillOpacity="0.35" />
+        <path d="M31 18 L24 20 L27 32 Z" fill="#2f78bd" fillOpacity="0.22" />
+        {/* 侧小晶 */}
+        <path d="M15 20 L18.5 26 L16 33 L13.5 26 Z" fill="url(#ci-crys)" opacity="0.9" />
+        <path d="M33 21 L30 27 L32 33 L34.5 27 Z" fill="url(#ci-crys)" opacity="0.85" />
       </g>
+      <Sparks pts={[[13, 12, 2], [37, 15, 1.6], [34, 34, 1.4]]} color="#eaf7ff" />
     </svg>
   )
 }
 
-// AI 推荐 — 紫色能量球 + 星光
-export function DiamondSparkIcon({ size = 44 }) {
+// AI 推荐 — 紫色发光钻（八面体）
+export function DiamondSparkIcon({ size = 46 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-      {SHADOW}
-      <GlossSphere id="ci-purple" stops={[['0%', '#f3e6ff'], ['26%', '#c79bff'], ['62%', '#8a4fe0'], ['100%', '#4a1e9c']]} />
-      {/* 星光 */}
-      <g className="animate-twinkle" style={{ transformOrigin: '39px 10px' }}>
-        <path d="M39 5 L40.1 8.6 L43.6 9.7 L40.1 10.8 L39 14.4 L37.9 10.8 L34.4 9.7 L37.9 8.6 Z" fill="#fff6ff" />
+      <defs>
+        <linearGradient id="ci-dia" x1="30%" y1="0%" x2="70%" y2="100%">
+          <stop offset="0%" stopColor="#f0d9ff" />
+          <stop offset="45%" stopColor="#b98cff" />
+          <stop offset="100%" stopColor="#6a34d6" />
+        </linearGradient>
+        <filter id="ci-g2" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="0" stdDeviation="2.8" floodColor="#b98cff" floodOpacity="0.95" /></filter>
+      </defs>
+      <OrbitRing color="#b98cff" />
+      <g filter="url(#ci-g2)">
+        {/* 八面体钻 */}
+        <path d="M24 7 L34 20 L24 24 L14 20 Z" fill="url(#ci-dia)" />
+        <path d="M14 20 L24 24 L24 39 Z" fill="#7a3fd6" />
+        <path d="M34 20 L24 24 L24 39 Z" fill="#5a25b0" />
+        <path d="M24 7 L34 20 L24 24 Z" fill="#ffffff" fillOpacity="0.5" />
+        <path d="M24 7 L14 20 L24 24 Z" fill="#ffffff" fillOpacity="0.3" />
+        <path d="M14 20 L34 20" stroke="#f3e6ff" strokeOpacity="0.6" strokeWidth="0.7" />
       </g>
-      <circle cx="9" cy="18" r="1.4" fill="#ffffff" className="animate-twinkle" style={{ animationDelay: '1s' }} />
-      <circle cx="40" cy="34" r="1.2" fill="#f0d9ff" className="animate-twinkle" style={{ animationDelay: '1.8s' }} />
+      <Sparks pts={[[36, 9, 2.2], [12, 16, 1.6], [38, 30, 1.5], [11, 30, 1.3]]} color="#fbefff" />
     </svg>
   )
 }
 
 // 能量解读 — 深紫能量球 + 发光闪电
-export function EnergyOrbIcon({ size = 44 }) {
+export function EnergyOrbIcon({ size = 46 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-      {SHADOW}
-      <GlossSphere id="ci-indigo" stops={[['0%', '#e7ecff'], ['28%', '#8f9bf0'], ['62%', '#5340c8'], ['100%', '#2a1d80']]} />
-      {/* 闪电 */}
-      <g filter="url(#ci-bolt)">
-        <path d="M27 12 L17.5 26 L23 26 L20.5 36 L30.5 22 L25 22 Z" fill="#fff7c8" stroke="#ffe680" strokeWidth="0.6" strokeLinejoin="round" />
-      </g>
       <defs>
-        <filter id="ci-bolt" x="-40%" y="-40%" width="180%" height="180%">
-          <feDropShadow dx="0" dy="0" stdDeviation="1.6" floodColor="#ffe680" floodOpacity="0.9" />
-        </filter>
+        <radialGradient id="ci-orb" cx="40%" cy="34%" r="68%">
+          <stop offset="0%" stopColor="#c9d6ff" />
+          <stop offset="45%" stopColor="#6a63e6" />
+          <stop offset="100%" stopColor="#2a1d80" />
+        </radialGradient>
+        <filter id="ci-g3" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="0" stdDeviation="2.8" floodColor="#7c8cff" floodOpacity="0.95" /></filter>
       </defs>
+      <OrbitRing color="#8fb4ff" />
+      <g filter="url(#ci-g3)">
+        <circle cx="24" cy="22" r="13" fill="url(#ci-orb)" />
+        <ellipse cx="19" cy="16" rx="4.6" ry="2.8" fill="#ffffff" opacity="0.6" transform="rotate(-26 19 16)" />
+      </g>
+      <g style={{ filter: 'drop-shadow(0 0 2.4px #ffe680)' }}>
+        <path d="M27 12 L18 24 L23 24 L20.5 33 L30 20 L25 20 Z" fill="#fff7c8" stroke="#ffe680" strokeWidth="0.7" strokeLinejoin="round" />
+      </g>
+      <Sparks pts={[[37, 13, 1.8], [11, 18, 1.5]]} color="#eaf0ff" />
     </svg>
   )
 }
 
-// 一键下单 — 打开的礼盒，飞出水晶与金色粒子
-export function GiftGlowIcon({ size = 44 }) {
+// 一键下单 — 金色发光礼盒开盖
+export function GiftGlowIcon({ size = 46 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
       <defs>
-        <linearGradient id="ci-box" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#ffe6a6" />
-          <stop offset="100%" stopColor="#c88a2c" />
-        </linearGradient>
-        <linearGradient id="ci-lid" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#fff1c8" />
-          <stop offset="100%" stopColor="#e0a83e" />
-        </linearGradient>
-        <radialGradient id="ci-burst" cx="50%" cy="40%" r="60%">
-          <stop offset="0%" stopColor="#fff4cf" stopOpacity="0.95" />
-          <stop offset="100%" stopColor="#fff4cf" stopOpacity="0" />
-        </radialGradient>
-        <filter id="ci-sh2" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#7a5214" floodOpacity="0.45" />
-        </filter>
+        <linearGradient id="ci-box2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#ffe6a6" /><stop offset="100%" stopColor="#c88a2c" /></linearGradient>
+        <linearGradient id="ci-lid2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#fff1c8" /><stop offset="100%" stopColor="#e0a83e" /></linearGradient>
+        <radialGradient id="ci-burst2" cx="50%" cy="38%" r="60%"><stop offset="0%" stopColor="#fff4cf" stopOpacity="0.95" /><stop offset="100%" stopColor="#fff4cf" stopOpacity="0" /></radialGradient>
+        <filter id="ci-g4" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="0" stdDeviation="2.6" floodColor="#ffcf6b" floodOpacity="0.9" /></filter>
       </defs>
-      {/* 迸发光 */}
-      <circle cx="24" cy="20" r="15" fill="url(#ci-burst)" />
-      {/* 盒身 */}
-      <g filter="url(#ci-sh2)">
-        <rect x="12" y="25" width="24" height="15" rx="2.5" fill="url(#ci-box)" />
-        <rect x="21.5" y="25" width="5" height="15" fill="#fff2cc" fillOpacity="0.7" />
+      <OrbitRing color="#ffcf6b" />
+      <circle cx="24" cy="18" r="14" fill="url(#ci-burst2)" />
+      <g filter="url(#ci-g4)">
+        <rect x="13" y="24" width="22" height="14" rx="2.5" fill="url(#ci-box2)" />
+        <rect x="21.5" y="24" width="5" height="14" fill="#fff2cc" fillOpacity="0.7" />
+        <g transform="rotate(-14 13 23)"><rect x="10.5" y="18.5" width="24" height="6.5" rx="2" fill="url(#ci-lid2)" /><rect x="21.5" y="18.5" width="5" height="6.5" fill="#fff6dd" fillOpacity="0.8" /></g>
+        {/* 飞出的小晶 */}
+        <path d="M24 5 L28 10 L24 15 L20 10 Z" fill="#cfeeff" /><path d="M24 5 L28 10 L24 11 Z" fill="#ffffff" fillOpacity="0.7" />
       </g>
-      {/* 掀开的盖子 */}
-      <g transform="rotate(-16 12 24)">
-        <rect x="9.5" y="19" width="26" height="7" rx="2" fill="url(#ci-lid)" />
-        <rect x="21.5" y="19" width="5" height="7" fill="#fff6dd" fillOpacity="0.8" />
-      </g>
-      {/* 飞出的水晶 */}
-      <g filter="url(#ci-sh2)">
-        <path d="M24 4 L29 10 L24 18 L19 10 Z" fill="#bfe6ff" />
-        <path d="M24 4 L29 10 L24 12 Z" fill="#ffffff" fillOpacity="0.7" />
-        <path d="M19 10 L24 12 L24 18 Z" fill="#6aa8d8" fillOpacity="0.5" />
-      </g>
-      {/* 金色粒子 */}
-      <circle cx="12" cy="12" r="1.5" fill="#ffd76a" className="animate-twinkle" />
-      <circle cx="37" cy="14" r="1.6" fill="#ffcf5a" className="animate-twinkle" style={{ animationDelay: '0.9s' }} />
-      <circle cx="34" cy="6" r="1.1" fill="#ffe89a" className="animate-twinkle" style={{ animationDelay: '1.6s' }} />
-      <circle cx="9" cy="20" r="1.1" fill="#ffe89a" className="animate-twinkle" style={{ animationDelay: '0.4s' }} />
+      <Sparks pts={[[11, 12, 2], [37, 13, 1.8], [34, 6, 1.4], [13, 22, 1.3]]} color="#fff0c0" />
     </svg>
   )
 }
