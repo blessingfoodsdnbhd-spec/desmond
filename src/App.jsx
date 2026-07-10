@@ -78,7 +78,7 @@ export default function App() {
 
   return (
     <div className="min-h-full bg-gradient-to-b from-sky-50 via-cyan-50/50 to-blue-50 font-sans text-neutral-900 transition-colors duration-300 dark:bg-none dark:text-[#eaf2ff]">
-      <CrystalBackground />
+      <CrystalBackground tab={tab} />
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 glass dark:border-[rgba(120,170,255,0.18)] dark:bg-[#070c22]/70">
         <div
@@ -301,7 +301,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v30 · 2026.07.10 · 背景显示修复(动态深空)</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v31 · 2026.07.10 · 水晶洞实拍背景(分页)</p>
     </div>
   )
 }
