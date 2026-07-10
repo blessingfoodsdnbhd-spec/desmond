@@ -34,14 +34,15 @@ const TAB_KEYS = [
 
 function useDarkMode() {
   const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem('sl-theme')
+    // 新键：忽略旧的浅色记忆，深空宇宙主题默认生效一次
+    const saved = localStorage.getItem('sl-theme3')
     if (saved) return saved === 'dark'
     return true // 默认深空宇宙主题
   })
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark)
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0b0b0c' : '#ffffff')
-    localStorage.setItem('sl-theme', dark ? 'dark' : 'light')
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#050912' : '#ffffff')
+    localStorage.setItem('sl-theme3', dark ? 'dark' : 'light')
   }, [dark])
   return [dark, setDark]
 }
