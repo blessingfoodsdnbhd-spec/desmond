@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Bead } from './Bead.jsx'
 import { BraceletRing } from './BraceletRing.jsx'
 import { ProductSheet } from './ProductSheet.jsx'
@@ -37,6 +37,16 @@ export function Home({ onStart, onOpenGuide }) {
   const store = useStore()
   const [product, setProduct] = useState(null)
   const [birthday, setBirthday] = useState('1998-08-15')
+  const dateRef = useRef(null)
+  const openDatePicker = () => {
+    const el = dateRef.current
+    if (!el) return
+    try {
+      el.showPicker?.()
+    } catch {
+      el.focus?.()
+    }
+  }
   const featured = [...effectiveDefaultProducts(store), ...store.products]
   const startRipple = useRipple()
 
@@ -131,14 +141,19 @@ export function Home({ onStart, onOpenGuide }) {
 
           {/* 毛玻璃面板 */}
           <div className="rounded-4xl border border-white/60 bg-white/45 p-3 shadow-card glass-card dark:border-white/10 dark:bg-white/10 sm:p-4">
-            {/* 生日输入 */}
-            <div className="mb-3 flex items-center gap-2 rounded-3xl border border-white/70 bg-white/70 p-2 shadow-inner dark:border-white/10 dark:bg-neutral-900/50">
+            {/* 生日输入 —— 点整行即可弹出日期选择器 */}
+            <div
+              onClick={openDatePicker}
+              className="mb-3 flex cursor-pointer items-center gap-2 rounded-3xl border border-white/70 bg-white/70 p-2 shadow-inner dark:border-white/10 dark:bg-neutral-900/50"
+            >
               <span className="grid h-10 w-10 shrink-0 place-items-center text-2xl">🎂</span>
               <input
+                ref={dateRef}
                 type="date"
                 value={birthday}
                 onChange={(e) => setBirthday(e.target.value)}
-                className="min-w-0 flex-1 rounded-2xl border border-black/5 bg-white px-3 py-2.5 text-center text-[15px] font-medium text-neutral-900 outline-none focus:border-violet-300 dark:border-white/10 dark:bg-neutral-800 dark:text-white"
+                onClick={(e) => { e.stopPropagation(); openDatePicker() }}
+                className="min-w-0 flex-1 cursor-pointer rounded-2xl border border-black/5 bg-white px-3 py-2.5 text-center text-[15px] font-medium text-neutral-900 outline-none focus:border-violet-300 dark:border-white/10 dark:bg-neutral-800 dark:text-white"
               />
               <button
                 onClick={generateByBirthday}
