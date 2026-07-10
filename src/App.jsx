@@ -36,7 +36,7 @@ function useDarkMode() {
   const [dark, setDark] = useState(() => {
     const saved = localStorage.getItem('sl-theme')
     if (saved) return saved === 'dark'
-    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false
+    return true // 默认深空宇宙主题
   })
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark)
@@ -76,10 +76,10 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-sky-50 via-cyan-50/50 to-blue-50 font-sans text-neutral-900 transition-colors duration-300 dark:from-[#08141f] dark:via-[#0a1c2b] dark:to-[#06101a] dark:text-neutral-100">
+    <div className="min-h-full bg-gradient-to-b from-sky-50 via-cyan-50/50 to-blue-50 font-sans text-neutral-900 transition-colors duration-300 dark:from-[#050912] dark:via-[#070c22] dark:to-[#050912] dark:text-[#eaf2ff]">
       <CrystalBackground />
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 glass dark:border-white/5 dark:bg-neutral-950/80">
+      <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 glass dark:border-[rgba(120,170,255,0.18)] dark:bg-[#070c22]/70">
         <div
           onClick={() => {
             setTab('home')
@@ -135,7 +135,7 @@ export default function App() {
       <Admin open={showAdmin} onClose={() => setShowAdmin(false)} />
 
       {/* Bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-black/5 bg-white/85 glass dark:border-white/5 dark:bg-neutral-950/85" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-black/5 bg-white/85 glass dark:border-[rgba(120,170,255,0.18)] dark:bg-[#070c22]/80" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <div className="mx-auto flex max-w-6xl items-stretch justify-around px-2">
           {TAB_KEYS.map((tb) => {
             const active = tab === tb.key
@@ -300,7 +300,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v22 · 2026.07.09 · CRM云端后台</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v23 · 2026.07.10 · 深空宇宙主题</p>
     </div>
   )
 }
