@@ -134,3 +134,41 @@ export const FEATURE_ICONS = {
   'feat.energy': EnergyOrbIcon,
   'feat.order': GiftGlowIcon,
 }
+
+// 星座发光星盘（紫色星云圆盘 + 发光环 + 白色星座符号）
+const ZSTARS = [
+  [18, 20, 1], [30, 14, 1.3], [42, 20, 1], [46, 32, 1.1], [40, 44, 1], [30, 48, 1.3],
+  [20, 44, 1], [15, 32, 1.1], [24, 30, 0.8], [37, 30, 0.9], [30, 22, 0.8], [30, 40, 0.9],
+]
+export function ZodiacMedallion({ symbol, size = 56 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 60 60" fill="none" style={{ filter: 'drop-shadow(0 0 6px rgba(150,90,240,0.85))' }}>
+      <defs>
+        <radialGradient id="zd-disc" cx="50%" cy="42%" r="60%">
+          <stop offset="0%" stopColor="#4a2b8f" />
+          <stop offset="55%" stopColor="#2a1560" />
+          <stop offset="100%" stopColor="#160a34" />
+        </radialGradient>
+        <radialGradient id="zd-core" cx="50%" cy="45%" r="45%">
+          <stop offset="0%" stopColor="#c9a8ff" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#c9a8ff" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx="30" cy="30" r="26" fill="url(#zd-disc)" />
+      <circle cx="30" cy="30" r="26" fill="url(#zd-core)" />
+      {/* 星云连线 */}
+      <g stroke="#b98cff" strokeOpacity="0.35" strokeWidth="0.5">
+        <path d="M18 20 L30 14 L42 20 L46 32 L40 44 L30 48 L20 44 L15 32 Z" fill="none" />
+      </g>
+      {/* 闪烁星点 */}
+      {ZSTARS.map(([x, y, r], i) => (
+        <circle key={i} cx={x} cy={y} r={r} fill="#ffffff" className="animate-twinkle" style={{ animationDelay: `${(i % 5) * 0.45}s`, transformOrigin: `${x}px ${y}px` }} opacity="0.9" />
+      ))}
+      {/* 发光外环 */}
+      <circle cx="30" cy="30" r="26" fill="none" stroke="#b98cff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px #a15dff)' }} />
+      <circle cx="30" cy="30" r="26" fill="none" stroke="#ffffff" strokeOpacity="0.4" strokeWidth="0.7" />
+      {/* 星座符号（︎ 强制文字渲染 → 白色线条，而非彩色 emoji） */}
+      <text x="30" y="31" textAnchor="middle" dominantBaseline="central" fill="#ffffff" style={{ fontSize: 22, fontWeight: 700, filter: 'drop-shadow(0 0 3px #d9c2ff)' }}>{symbol + '︎'}</text>
+    </svg>
+  )
+}

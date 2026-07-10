@@ -8,7 +8,7 @@ import { PRESETS, ZODIACS, BIRTH_MONTHS, zodiacByDate, buildPatternFromCrystals 
 import { useStore, effectiveDefaultProducts } from '../data/store.js'
 import { makeBead } from '../utils/bracelet.js'
 import { useLang, localizeCrystal, money, PRESET_I18N, ZODIAC_I18N } from '../i18n.jsx'
-import { GemCrystalIcon, DiamondSparkIcon, EnergyOrbIcon, GiftGlowIcon } from './CrystalIcons.jsx'
+import { GemCrystalIcon, DiamondSparkIcon, EnergyOrbIcon, GiftGlowIcon, ZodiacMedallion } from './CrystalIcons.jsx'
 import { useRipple, HeroAtmosphere, Reveal } from './effects.jsx'
 import { SparkleIcon, ChevronRight } from './icons.jsx'
 
@@ -153,15 +153,11 @@ export function Home({ onStart, onOpenGuide }) {
                 <button
                   key={z.key}
                   onClick={() => onStart(buildPatternFromCrystals(z.crystals, 12))}
-                  className="flex w-[104px] shrink-0 flex-col items-center gap-1.5 rounded-3xl border border-white/70 bg-white/55 p-3 text-center shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-card-lg active:scale-95 dark:border-white/10 dark:bg-white/10"
+                  className="flex w-[108px] shrink-0 flex-col items-center gap-1.5 rounded-3xl border border-white/70 bg-white/55 p-3 text-center shadow-card transition duration-300 hover:-translate-y-1 active:scale-95 dark:border-[rgba(130,110,255,0.35)] dark:bg-[rgba(30,20,60,0.5)]"
+                  style={{ '--glow': 'rgba(150,110,255,0.6)' }}
                 >
-                  {/* 紫色玻璃星座牌 */}
-                  <span
-                    className="grid h-11 w-11 place-items-center rounded-2xl text-[22px] font-semibold text-white"
-                    style={{ background: 'linear-gradient(150deg, #b98bf7, #7b3fe0)', boxShadow: '0 4px 12px -4px rgba(120,60,220,0.7), inset 0 1px 0 rgba(255,255,255,0.5)' }}
-                  >
-                    {z.emoji}
-                  </span>
+                  {/* 发光星座星盘 */}
+                  <ZodiacMedallion symbol={z.emoji} size={56} />
                   <div className="text-[14px] font-semibold text-neutral-900 dark:text-white">{lang === 'zh' ? z.name : ZODIAC_I18N[z.key]?.name}</div>
                   <div className="text-[10px] text-neutral-400">{z.range}</div>
                   <div className="mt-0.5 flex gap-0.5">
@@ -194,7 +190,7 @@ export function Home({ onStart, onOpenGuide }) {
                 <button
                   key={pr.id}
                   onClick={() => setProduct(pr)}
-                  className="group flex flex-col overflow-hidden rounded-4xl border border-white/60 bg-white/50 text-left shadow-card glass-card transition duration-300 hover:-translate-y-1 hover:shadow-card-lg active:scale-[0.99] dark:border-white/10 dark:bg-white/10"
+                  className="group flex flex-col overflow-hidden rounded-4xl border border-white/60 bg-white/50 text-left shadow-card glass-card transition duration-300 hover:-translate-y-1 hover:shadow-card-lg active:scale-[0.99] dark:border-[rgba(100,160,255,0.4)] dark:bg-[rgba(16,26,50,0.55)] dark:shadow-[0_0_22px_-8px_rgba(90,160,255,0.55)]"
                 >
                   <div className="relative aspect-square p-2">
                     <div className="absolute inset-2 rounded-3xl bg-gradient-to-br from-white/70 to-sky-50/40 dark:from-neutral-700/40 dark:to-neutral-900/40" />
