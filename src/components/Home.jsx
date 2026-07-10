@@ -11,6 +11,7 @@ import { useLang, localizeCrystal, money, PRESET_I18N, ZODIAC_I18N } from '../i1
 import { GemCrystalIcon, DiamondSparkIcon, EnergyOrbIcon, GiftGlowIcon, ZodiacMedallion } from './CrystalIcons.jsx'
 import { useRipple, HeroAtmosphere, Reveal } from './effects.jsx'
 import { SparkleIcon, ChevronRight } from './icons.jsx'
+import aiCrystal from '../assets/ai/ai-crystal.webp'
 
 const FEATURE_KEYS = [
   { Icon: GemCrystalIcon, t: 'feat.design', d: 'feat.design.d', from: '#1e7fd4', to: '#0b3f74', glow: 'rgba(56,150,230,0.75)' },
@@ -216,48 +217,88 @@ export function Home({ onStart, onOpenGuide }) {
           </div>
         </Reveal>
 
-        {/* AI banner */}
+        {/* AI banner —— 深空能量卡：发光绿边 + 3D 水晶手链大图 */}
         <Reveal as="section" className="mt-6">
           <button
             onClick={() => onStart('smart')}
-            className="relative flex w-full items-center gap-4 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 to-emerald-600 p-5 text-left text-white shadow-card-lg transition hover:shadow-glow active:scale-[0.99]"
+            className="group relative block w-full overflow-hidden rounded-[26px] p-5 text-left text-white transition active:scale-[0.99]"
+            style={{
+              minHeight: 202,
+              background: 'linear-gradient(135deg, #0c3b32 0%, #0a2740 52%, #071426 100%)',
+              border: '1px solid rgba(74,238,190,0.55)',
+              boxShadow: '0 0 26px -4px rgba(52,224,172,0.55), inset 0 1px 0 rgba(255,255,255,0.12)',
+            }}
           >
-            <div className="relative z-10 flex-1">
-              <div className="text-[17px] font-bold">{t('home.ai.title')}</div>
-              <p className="mt-1 text-[13px] text-white/80">{t('home.ai.sub')}</p>
-              <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-white/20 px-4 py-1.5 text-[13px] font-medium backdrop-blur">
-                {t('home.ai.btn')} <ChevronRight size={15} />
+            {/* 右侧水晶手链大图（向左渐隐融入卡面） */}
+            <img
+              src={aiCrystal}
+              alt=""
+              className="pointer-events-none absolute right-0 top-0 h-full w-[64%] object-cover object-center"
+              style={{
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, #000 28%)',
+                maskImage: 'linear-gradient(to right, transparent 0%, #000 28%)',
+              }}
+            />
+            {/* 绿色能量光晕 */}
+            <span
+              className="pointer-events-none absolute -right-8 top-1/2 h-52 w-52 -translate-y-1/2 rounded-full animate-breath"
+              style={{ background: 'radial-gradient(circle, rgba(52,232,176,0.4), transparent 68%)', mixBlendMode: 'screen' }}
+            />
+
+            <div className="relative z-10 max-w-[62%]">
+              {/* AI 光环标志 */}
+              <div className="relative mb-3.5 h-12 w-12">
+                <span
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    background: 'radial-gradient(circle at 38% 32%, rgba(120,255,214,0.95), rgba(24,150,112,0.55) 58%, transparent 72%)',
+                    boxShadow: '0 0 18px 2px rgba(60,240,180,0.65)',
+                  }}
+                />
+                <span
+                  className="absolute left-1/2 top-1/2 h-[18px] w-[58px] rounded-[50%] border border-emerald-200/70"
+                  style={{ transform: 'translate(-50%,-50%) rotate(-22deg)', boxShadow: '0 0 8px rgba(120,255,214,0.5)' }}
+                />
+                <span className="absolute inset-0 grid place-items-center text-[14px] font-extrabold tracking-tight text-white drop-shadow">AI</span>
+              </div>
+              <div className="text-[19px] font-extrabold leading-tight drop-shadow">{t('home.ai.title')}</div>
+              <p className="mt-2 text-[12.5px] leading-relaxed text-white/72">{t('home.ai.sub')}</p>
+              <span className="mt-4 inline-flex items-center gap-1 text-[14px] font-bold text-emerald-300 drop-shadow">
+                {t('home.ai.btn')} <ChevronRight size={16} />
               </span>
             </div>
-            <div className="relative h-20 w-20 shrink-0 animate-float">
-              <div className="absolute inset-0 rounded-full bg-white/10 animate-breath" />
-              <Bead crystal={CRYSTAL_MAP['green-phantom']} size={80} className="drop-shadow-xl" />
-            </div>
-            <SparkleIcon size={120} className="absolute -right-6 -top-6 text-white/10" />
           </button>
         </Reveal>
 
         {/* Crystal knowledge */}
         <Reveal as="section" className="mt-7">
           <div className="mb-3 flex items-center justify-between px-1">
-            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{t('home.know')}</h2>
+            <h2 className="flex items-center gap-2 text-lg font-bold text-neutral-900 dark:text-white">
+              <KnowGem />
+              {t('home.know')}
+            </h2>
             <button onClick={() => onOpenGuide?.()} className="flex items-center gap-0.5 text-[13px] text-neutral-400 transition hover:text-brand-500">
               {t('home.more')} <ChevronRight size={15} />
             </button>
           </div>
-          <button onClick={() => onOpenGuide?.()} className="block w-full rounded-3xl border border-black/5 bg-white p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-[0.99] dark:border-white/5 dark:bg-neutral-800">
+          <button
+            onClick={() => onOpenGuide?.()}
+            className="block w-full rounded-3xl border border-black/5 bg-white p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-card-lg active:scale-[0.99] dark:border-[rgba(120,180,255,0.18)] dark:bg-[rgba(13,23,44,0.6)] dark:shadow-[0_0_22px_-8px_rgba(90,160,255,0.5)] dark:backdrop-blur-xl"
+          >
             <div className="flex items-center gap-4">
-              <div className="grid h-20 w-20 shrink-0 grid-cols-3 gap-1 rounded-2xl bg-gradient-to-br from-purple-100 to-white p-2 dark:from-purple-900/40 dark:to-neutral-900">
+              <div className="grid h-20 w-20 shrink-0 grid-cols-3 gap-1 rounded-2xl bg-gradient-to-br from-purple-100 to-white p-2 dark:from-[rgba(60,40,110,0.5)] dark:to-[rgba(10,16,34,0.7)]">
                 {['amethyst', 'rose', 'citrine', 'green-phantom', 'lapis', 'obsidian'].map((id) => (
                   <Bead key={id} crystal={CRYSTAL_MAP[id]} size={18} />
                 ))}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[15px] font-semibold text-neutral-900 dark:text-white">{t('home.know.title')}</div>
-                <p className="mt-1 line-clamp-2 text-[13px] text-neutral-500 dark:text-neutral-400">{t('home.know.desc')}</p>
-                <div className="mt-1.5 text-[11px] text-neutral-400">{t('home.know.read')}</div>
+                <p className="mt-1 line-clamp-2 text-[13px] text-neutral-500 dark:text-neutral-300/80">{t('home.know.desc')}</p>
+                <div className="mt-1.5 flex items-center gap-1 text-[11px] text-neutral-400 dark:text-neutral-400">
+                  <EyeGlyph /> {t('home.know.read')}
+                </div>
               </div>
-              <ChevronRight size={18} className="shrink-0 text-neutral-300" />
+              <ChevronRight size={18} className="shrink-0 text-neutral-300 dark:text-white/50" />
             </div>
           </button>
           {/* Quick crystal chips */}
@@ -268,10 +309,10 @@ export function Home({ onStart, onOpenGuide }) {
                 <button
                   key={c.id}
                   onClick={() => onOpenGuide?.()}
-                  className="flex shrink-0 items-center gap-1.5 rounded-full border border-black/5 bg-white py-1.5 pl-1.5 pr-3 shadow-card transition hover:-translate-y-0.5 dark:border-white/5 dark:bg-neutral-800"
+                  className="flex shrink-0 items-center gap-1.5 rounded-full border border-black/5 bg-white py-1.5 pl-1.5 pr-3 shadow-card transition hover:-translate-y-0.5 dark:border-[rgba(120,180,255,0.22)] dark:bg-[rgba(13,23,44,0.6)] dark:shadow-[0_0_16px_-8px_rgba(90,160,255,0.6)] dark:backdrop-blur-xl"
                 >
                   <Bead crystal={c} size={26} />
-                  <span className="text-[12px] font-medium text-neutral-700 dark:text-neutral-200">{c.name}</span>
+                  <span className="text-[12px] font-medium text-neutral-700 dark:text-neutral-100">{c.name}</span>
                 </button>
               )
             })}
@@ -281,6 +322,41 @@ export function Home({ onStart, onOpenGuide }) {
 
       <ProductSheet open={!!product} onClose={() => setProduct(null)} product={product} />
     </div>
+  )
+}
+
+/* 绿色发光水晶簇小图标（水晶知识标题） */
+function KnowGem() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0">
+      <defs>
+        <linearGradient id="kg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#a8ffe4" />
+          <stop offset="0.5" stopColor="#37e0ac" />
+          <stop offset="1" stopColor="#127a5a" />
+        </linearGradient>
+        <filter id="kgGlow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="1.1" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+      <g filter="url(#kgGlow)">
+        <path d="M12 3l3.4 5.2L12 21 8.6 8.2 12 3z" fill="url(#kg)" opacity="0.95" />
+        <path d="M7 7.5l2.2 2.4L7.6 20 4.8 10.4 7 7.5z" fill="url(#kg)" opacity="0.75" />
+        <path d="M17 7.5l-2.2 2.4L16.4 20l2.8-9.6L17 7.5z" fill="url(#kg)" opacity="0.75" />
+        <path d="M12 3l3.4 5.2H8.6L12 3z" fill="#ffffff" opacity="0.5" />
+      </g>
+    </svg>
+  )
+}
+
+/* 阅读量小眼睛 */
+function EyeGlyph() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="shrink-0 opacity-70">
+      <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" stroke="currentColor" strokeWidth="1.7" />
+      <circle cx="12" cy="12" r="2.6" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
   )
 }
 
