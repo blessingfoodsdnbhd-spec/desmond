@@ -223,6 +223,34 @@ input[type='range']::-moz-range-thumb {
   50% { opacity: 0.95; }
 }
 
+/* 四角闪光（星光钻） */
+@keyframes sparkle-pop {
+  0%, 100% { opacity: 0.12; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(45deg); }
+}
+.sparkle-star {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  animation: sparkle-pop 4.6s ease-in-out infinite;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* 斜向光束缓缓扫过 */
+@keyframes ray-sweep {
+  0% { transform: translateX(-45%) rotate(18deg); opacity: 0; }
+  35% { opacity: 0.5; }
+  70% { opacity: 0.18; }
+  100% { transform: translateX(150%) rotate(18deg); opacity: 0; }
+}
+
+/* 冰洞深空缓慢推拉（背景有生命感地移动） */
+@keyframes cosmic-drift {
+  0%, 100% { transform: scale(1.08) translate3d(0, 0, 0); }
+  50% { transform: scale(1.16) translate3d(-1.5%, -1.2%, 0); }
+}
+.animate-cosmic-drift { animation: cosmic-drift 32s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;
