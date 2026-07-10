@@ -153,8 +153,7 @@ export function Home({ onStart, onOpenGuide }) {
                 <button
                   key={z.key}
                   onClick={() => onStart(buildPatternFromCrystals(z.crystals, 12))}
-                  className="flex w-[108px] shrink-0 flex-col items-center gap-1.5 rounded-3xl border border-white/70 bg-white/55 p-3 text-center shadow-card transition duration-300 hover:-translate-y-1 active:scale-95 dark:border-[rgba(130,110,255,0.35)] dark:bg-[rgba(30,20,60,0.5)]"
-                  style={{ '--glow': 'rgba(150,110,255,0.6)' }}
+                  className="flex w-[108px] shrink-0 flex-col items-center gap-1.5 rounded-3xl border border-white/70 bg-white/55 p-3 text-center shadow-card transition duration-300 hover:-translate-y-1 active:scale-95 dark:border-[rgba(90,170,255,0.5)] dark:bg-[rgba(14,24,48,0.55)] dark:shadow-[0_0_20px_-6px_rgba(90,170,255,0.6)]"
                 >
                   {/* 发光星座星盘 */}
                   <ZodiacMedallion symbol={z.emoji} size={56} />
