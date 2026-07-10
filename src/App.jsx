@@ -301,7 +301,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v31 · 2026.07.10 · 水晶洞实拍背景(分页)</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v32 · 2026.07.10 · 发现页透出水晶洞背景</p>
     </div>
   )
 }

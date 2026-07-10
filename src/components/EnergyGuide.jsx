@@ -106,9 +106,9 @@ export function EnergyGuide({ onStart }) {
 
   return (
     <div className="relative min-h-full pb-28">
-      {/* 绸缎质感背景 */}
+      {/* 绸缎质感背景（仅浅色模式；深色模式透出水晶洞背景） */}
       <div
-        className="absolute inset-0 -z-10"
+        className="absolute inset-0 -z-10 dark:hidden"
         style={{
           background:
             'radial-gradient(120% 60% at 20% 0%, #fbf6ec 0%, #f3ecdf 45%, #ece1cf 100%)',
@@ -121,10 +121,10 @@ export function EnergyGuide({ onStart }) {
             'repeating-linear-gradient(115deg, rgba(255,255,255,0.35) 0px, rgba(255,255,255,0) 40px, rgba(180,150,110,0.08) 90px, rgba(255,255,255,0.3) 140px)',
         }}
       />
-      {/* 深色模式绸缎 */}
+      {/* 深色模式：透出水晶洞背景，仅加轻微暗色提高文字可读性 */}
       <div
-        className="absolute inset-0 -z-10 hidden dark:block"
-        style={{ background: 'radial-gradient(120% 60% at 20% 0%, #221b15 0%, #191410 55%, #120e0b 100%)' }}
+        className="pointer-events-none absolute inset-0 -z-10 hidden dark:block"
+        style={{ background: 'radial-gradient(120% 70% at 50% 40%, rgba(6,10,20,0.55) 0%, rgba(6,10,20,0.32) 45%, rgba(6,10,20,0.12) 100%)' }}
       />
 
       <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6">
