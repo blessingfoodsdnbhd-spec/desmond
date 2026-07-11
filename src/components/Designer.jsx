@@ -213,14 +213,14 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   return (
     <div className="mx-auto max-w-3xl px-4 pb-32 pt-3 sm:px-6 lg:pb-10">
       {/* ===== 顶部模式 Tab ===== */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-1">
+      <div className="flex items-center justify-between border-b border-black/10 pb-1 dark:border-white/10">
         {TABS.map((tb) => {
           const active = tb.k === 'free'
           return (
             <button
               key={tb.k}
               onClick={() => onTab(tb.k)}
-              className={`relative px-1.5 py-2 text-[15px] font-semibold transition ${active ? 'text-white' : 'text-neutral-400 dark:text-neutral-400'}`}
+              className={`relative px-1.5 py-2 text-[15px] font-semibold transition ${active ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}`}
             >
               {active && <span className="absolute -left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.8)]" />}
               {tb.label}
@@ -244,7 +244,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
           </div>
           {beads.length === 0 && (
             <div className="pointer-events-none absolute inset-0 grid place-items-center">
-              <p className="text-center text-[14px] leading-relaxed text-neutral-300/80">
+              <p className="text-center text-[14px] leading-relaxed text-neutral-500 dark:text-neutral-300/80">
                 {lang === 'zh' ? '拖拽水晶或' : 'Drag a crystal or'}<br />
                 {lang === 'zh' ? '点击添加到手链' : 'tap to add to bracelet'}
               </p>
@@ -261,10 +261,10 @@ export function Designer({ dark, initialBeads, smartSignal }) {
 
       {/* 选中珠子操作 */}
       {selectedUid && selectedCrystal && (
-        <div className="mt-1 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 animate-fade-in">
+        <div className="mt-1 flex items-center justify-between rounded-2xl border border-black/10 bg-black/[0.03] px-3.5 py-2.5 animate-fade-in dark:border-white/10 dark:bg-white/5">
           <div className="flex items-center gap-2">
             <Bead crystal={selectedCrystal} size={26} />
-            <span className="text-[13px] font-medium text-neutral-200">{t('design.selected')} · {selectedCrystal.name}</span>
+            <span className="text-[13px] font-medium text-neutral-700 dark:text-neutral-200">{t('design.selected')} · {selectedCrystal.name}</span>
           </div>
           <button onClick={removeSelected} className="flex items-center gap-1 rounded-full bg-red-500/90 px-3 py-1.5 text-[12px] font-medium text-white transition active:scale-95">
             <TrashIcon size={14} /> {t('design.delete')}
@@ -274,7 +274,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
 
       {/* 拖拽重排 */}
       {beads.length > 0 && (
-        <div className="mt-3 rounded-2xl border border-white/8 bg-white/5 p-2">
+        <div className="mt-3 rounded-2xl border border-black/8 bg-black/[0.03] p-2 dark:border-white/8 dark:bg-white/5">
           <SortableBeadStrip beads={beads} onReorder={reorder} onSelect={setSelectedUid} selectedUid={selectedUid} emptyHint={t('design.strip')} />
         </div>
       )}
@@ -282,24 +282,24 @@ export function Designer({ dark, initialBeads, smartSignal }) {
       {/* ===== 手链设置 ===== */}
       <div className="mt-5 flex items-end justify-between">
         <div>
-          <h3 className="text-[18px] font-bold text-white">{lang === 'zh' ? '手链设置' : 'Bracelet Setup'}</h3>
-          <p className="text-[12px] text-neutral-400">{lang === 'zh' ? '设置你的手链信息' : 'Configure your bracelet'}</p>
+          <h3 className="text-[18px] font-bold text-neutral-900 dark:text-white">{lang === 'zh' ? '手链设置' : 'Bracelet Setup'}</h3>
+          <p className="text-[12px] text-neutral-500 dark:text-neutral-400">{lang === 'zh' ? '设置你的手链信息' : 'Configure your bracelet'}</p>
         </div>
         <div className="text-right">
-          <div className="text-[11px] font-medium text-neutral-400">
+          <div className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">
             {isEstimate
               ? (lang === 'zh' ? `预估 · ${recommendCount(wrist, size)}颗` : `Est · ${recommendCount(wrist, size)} pcs`)
               : (lang === 'zh' ? `${stats.count} 颗 · ${size}mm` : `${stats.count} pcs · ${size}mm`)}
           </div>
-          <div className="text-2xl font-extrabold text-white">{money(displayPrice)}</div>
+          <div className="text-2xl font-extrabold text-neutral-900 dark:text-white">{money(displayPrice)}</div>
         </div>
       </div>
 
       {/* 手链尺寸 */}
       <div className="mt-4">
-        <div className="mb-2 text-[13px] text-neutral-300">
+        <div className="mb-2 text-[13px] text-neutral-600 dark:text-neutral-300">
           {lang === 'zh' ? '选择手链尺寸' : 'Bracelet size'}
-          <span className="ml-1 text-[11px] text-neutral-500">{lang === 'zh' ? '（适合大多数手腕，可稍后调整尺寸或联系客服）' : '(fits most wrists)'}</span>
+          <span className="ml-1 text-[11px] text-neutral-400 dark:text-neutral-500">{lang === 'zh' ? '（适合大多数手腕，可稍后调整尺寸或联系客服）' : '(fits most wrists)'}</span>
         </div>
         <div className="grid grid-cols-4 gap-2.5">
           {WRISTS.map((w) => {
@@ -308,7 +308,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
               <button
                 key={w.k}
                 onClick={() => changeWrist(w.cm)}
-                className={`rounded-2xl border px-2 py-2.5 text-center transition active:scale-95 ${active ? 'border-violet-400/80 bg-violet-500/15 text-white shadow-[0_0_16px_-4px_rgba(150,90,240,0.7)]' : 'border-white/12 bg-white/5 text-neutral-300'}`}
+                className={`rounded-2xl border px-2 py-2.5 text-center transition active:scale-95 ${active ? 'border-violet-400/80 bg-violet-500/15 text-violet-700 dark:text-white shadow-[0_0_16px_-4px_rgba(150,90,240,0.7)]' : 'border-black/10 bg-black/[0.03] text-neutral-600 dark:border-white/12 dark:bg-white/5 dark:text-neutral-300'}`}
               >
                 <span className="text-[14px] font-bold">{w.k}</span>
                 <span className="ml-1.5 text-[13px]">{w.cm}.0cm</span>
@@ -320,7 +320,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
 
       {/* 珠子大小 */}
       <div className="mt-4">
-        <div className="mb-2 text-[13px] text-neutral-300">{lang === 'zh' ? '选择珠子大小' : 'Bead size'}</div>
+        <div className="mb-2 text-[13px] text-neutral-600 dark:text-neutral-300">{lang === 'zh' ? '选择珠子大小' : 'Bead size'}</div>
         <div className="grid grid-cols-4 gap-2.5">
           {BEAD_SIZES.map((s) => {
             const active = size === s
@@ -328,9 +328,9 @@ export function Designer({ dark, initialBeads, smartSignal }) {
               <button
                 key={s}
                 onClick={() => changeSize(s)}
-                className={`flex items-center justify-center gap-1.5 rounded-2xl border px-2 py-2.5 transition active:scale-95 ${active ? 'border-violet-400/80 bg-violet-500/15 text-white shadow-[0_0_16px_-4px_rgba(150,90,240,0.7)]' : 'border-white/12 bg-white/5 text-neutral-300'}`}
+                className={`flex items-center justify-center gap-1.5 rounded-2xl border px-2 py-2.5 transition active:scale-95 ${active ? 'border-violet-400/80 bg-violet-500/15 text-violet-700 dark:text-white shadow-[0_0_16px_-4px_rgba(150,90,240,0.7)]' : 'border-black/10 bg-black/[0.03] text-neutral-600 dark:border-white/12 dark:bg-white/5 dark:text-neutral-300'}`}
               >
-                <span className="rounded-full bg-white/25" style={{ width: 6 + (s - 6), height: 6 + (s - 6) }} />
+                <span className="rounded-full bg-neutral-400/50 dark:bg-white/25" style={{ width: 6 + (s - 6), height: 6 + (s - 6) }} />
                 <span className="text-[13px] font-medium">{s}.0mm</span>
               </button>
             )
@@ -352,7 +352,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
           <button
             key={c.key}
             onClick={() => setCat(c.key)}
-            className={`shrink-0 rounded-full px-4 py-1.5 text-[13px] font-medium transition ${cat === c.key ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-[0_0_14px_-3px_rgba(70,160,255,0.8)]' : 'border border-white/12 bg-white/5 text-neutral-300'}`}
+            className={`shrink-0 rounded-full px-4 py-1.5 text-[13px] font-medium transition ${cat === c.key ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-[0_0_14px_-3px_rgba(70,160,255,0.8)]' : 'border border-black/10 bg-black/[0.03] text-neutral-600 dark:border-white/12 dark:bg-white/5 dark:text-neutral-300'}`}
           >
             {lang === 'zh' ? c.label : CATEGORY_I18N[c.key]}
           </button>
@@ -365,7 +365,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={lang === 'zh' ? '搜索水晶名称或能量功效' : 'Search crystal name or energy'}
-          className="w-full rounded-2xl border border-white/12 bg-white/5 py-3 pl-10 pr-4 text-[14px] text-white outline-none transition placeholder:text-neutral-500 focus:border-cyan-400/60"
+          className="w-full rounded-2xl border border-black/10 bg-black/[0.03] py-3 pl-10 pr-4 text-[14px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-cyan-400/60 dark:border-white/12 dark:bg-white/5 dark:text-white dark:placeholder:text-neutral-500"
         />
       </div>
 
@@ -379,15 +379,19 @@ export function Designer({ dark, initialBeads, smartSignal }) {
               key={c.id}
               onClick={() => addBead(c)}
               style={{
-                border: '1px solid rgba(150,190,255,0.26)',
-                background: `linear-gradient(180deg, rgba(18,30,60,0.24) 0%, rgba(7,12,28,0.36) 100%)`,
-                boxShadow: `0 0 22px -8px ${glow}aa, inset 0 1px 0 rgba(255,255,255,0.12)`,
+                border: dark ? '1px solid rgba(150,190,255,0.26)' : '1px solid rgba(0,0,0,0.06)',
+                background: dark
+                  ? 'linear-gradient(180deg, rgba(18,30,60,0.24) 0%, rgba(7,12,28,0.36) 100%)'
+                  : 'linear-gradient(180deg, #ffffff 0%, #f4f7fc 100%)',
+                boxShadow: dark
+                  ? `0 0 22px -8px ${glow}aa, inset 0 1px 0 rgba(255,255,255,0.12)`
+                  : '0 2px 10px -4px rgba(16,24,40,0.14)',
               }}
               className="crystal-tile group relative flex flex-col overflow-hidden rounded-2xl p-2 pb-2.5 backdrop-blur-sm transition hover:-translate-y-0.5 active:scale-95"
             >
               <span
                 onClick={(e) => { e.stopPropagation(); setDetail(c) }}
-                className="absolute right-1 top-1 z-20 grid h-5 w-5 place-items-center rounded-full bg-black/40 text-neutral-300 transition hover:text-cyan-300"
+                className="absolute right-1 top-1 z-20 grid h-5 w-5 place-items-center rounded-full bg-black/10 text-neutral-500 transition hover:text-cyan-500 dark:bg-black/40 dark:text-neutral-300 dark:hover:text-cyan-300"
                 aria-label={t('design.energyRead')}
               >
                 <EnergyIcon size={11} />
@@ -397,16 +401,16 @@ export function Designer({ dark, initialBeads, smartSignal }) {
                 <span
                   aria-hidden
                   className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-lg"
-                  style={{ background: `radial-gradient(circle, rgba(255,255,255,0.4), ${glow}99 46%, transparent 72%)`, opacity: 0.9 }}
+                  style={{ background: `radial-gradient(circle, ${dark ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.7)'}, ${glow}${dark ? '99' : '55'} 46%, transparent 72%)`, opacity: dark ? 0.9 : 0.7 }}
                 />
-                <Bead crystal={c} size={72} className="relative drop-shadow-[0_8px_18px_rgba(0,0,0,0.55)] transition group-hover:scale-105" />
+                <Bead crystal={c} size={72} className="relative drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)] transition group-hover:scale-105" />
               </div>
               {/* 名称 + 功效 + 价钱 + 五行 */}
               <div className="relative mt-1 text-center">
-                <div className="w-full truncate text-[12px] font-semibold text-white drop-shadow">{c.name}</div>
-                <div className="w-full truncate text-[10px] text-white/60">{c.keywords.slice(0, 2).join(' · ')}</div>
+                <div className="w-full truncate text-[12px] font-semibold text-neutral-900 dark:text-white dark:drop-shadow">{c.name}</div>
+                <div className="w-full truncate text-[10px] text-neutral-400 dark:text-white/60">{c.keywords.slice(0, 2).join(' · ')}</div>
                 <div className="mt-0.5 flex items-center justify-center gap-1">
-                  <span className="text-[12px] font-bold text-emerald-400 drop-shadow">{money(beadPrice(c, size))}</span>
+                  <span className="text-[12px] font-bold text-emerald-600 dark:text-emerald-400 dark:drop-shadow">{money(beadPrice(c, size))}</span>
                   <span className="rounded px-1 py-[1px] text-[9px] font-medium text-white" style={{ background: ELEMENTS[c.element]?.color }}>
                     {lang === 'zh' ? ELEMENTS[c.element]?.label : ELEMENT_I18N[c.element]}
                   </span>
@@ -498,7 +502,7 @@ function RailBtn({ onClick, icon, label, disabled }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-2xl border border-white/12 bg-white/5 text-neutral-200 backdrop-blur-sm transition hover:border-cyan-400/40 hover:text-white active:scale-95 disabled:opacity-35"
+      className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-2xl border border-black/10 bg-black/[0.03] text-neutral-600 backdrop-blur-sm transition hover:border-cyan-400/40 hover:text-neutral-900 active:scale-95 disabled:opacity-35 dark:border-white/12 dark:bg-white/5 dark:text-neutral-200 dark:hover:text-white"
     >
       {icon}
       <span className="text-[11px] font-medium">{label}</span>

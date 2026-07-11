@@ -34,15 +34,15 @@ const TAB_KEYS = [
 
 function useDarkMode() {
   const [dark, setDark] = useState(() => {
-    // 新键：忽略旧的浅色记忆，深空宇宙主题默认生效一次
-    const saved = localStorage.getItem('sl-theme3')
+    // 新键：默认普通（浅色）模式，尊重用户手动切换
+    const saved = localStorage.getItem('sl-theme4')
     if (saved) return saved === 'dark'
-    return true // 默认深空宇宙主题
+    return false // 默认普通模式
   })
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark)
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#050912' : '#ffffff')
-    localStorage.setItem('sl-theme3', dark ? 'dark' : 'light')
+    localStorage.setItem('sl-theme4', dark ? 'dark' : 'light')
   }, [dark])
   return [dark, setDark]
 }
@@ -301,7 +301,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v44 · 2026.07.10 · 尺寸自动重铺颗数</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v45 · 2026.07.10 · 默认普通模式+浅色可读</p>
     </div>
   )
 }
