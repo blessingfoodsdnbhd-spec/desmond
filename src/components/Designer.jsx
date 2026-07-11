@@ -183,7 +183,18 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   const WRISTS = [
     { k: 'S', cm: 15 }, { k: 'M', cm: 16 }, { k: 'L', cm: 17 }, { k: 'XL', cm: 18 },
   ]
-  const BEAD_SIZES = [6, 8, 10, 12]
+  const BEAD_SIZES = [8, 10, 12]
+
+  // 切换珠子大小：同时把已放入的珠子改成该尺寸，价钱随之更新
+  const changeSize = (s) => {
+    setSize(s)
+    if (beads.length) commit(beads.map((b) => ({ ...b, size: s })))
+  }
+  // 显示价钱：有珠子=实际总价（随大小重算）；空手链=按手围+珠子大小预估满串价
+  const isEstimate = beads.length === 0
+  const displayPrice = isEstimate
+    ? recommendCount(wrist, size) * beadPrice(CRYSTAL_MAP['clear'], size)
+    : stats.price
 
   // 能量分析：五行分布
   const energyEls = useMemo(() => {
@@ -270,7 +281,10 @@ export function Designer({ dark, initialBeads, smartSignal }) {
           <h3 className="text-[18px] font-bold text-white">{lang === 'zh' ? '手链设置' : 'Bracelet Setup'}</h3>
           <p className="text-[12px] text-neutral-400">{lang === 'zh' ? '设置你的手链信息' : 'Configure your bracelet'}</p>
         </div>
-        <div className="text-2xl font-extrabold text-white">{money(stats.price)}</div>
+        <div className="text-right">
+          {isEstimate && <div className="text-[11px] font-medium text-neutral-400">{lang === 'zh' ? `预估 · ${recommendCount(wrist, size)}颗` : `Est · ${recommendCount(wrist, size)} pcs`}</div>}
+          <div className="text-2xl font-extrabold text-white">{money(displayPrice)}</div>
+        </div>
       </div>
 
       {/* 手链尺寸 */}
@@ -305,7 +319,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
             return (
               <button
                 key={s}
-                onClick={() => setSize(s)}
+                onClick={() => changeSize(s)}
                 className={`flex items-center justify-center gap-1.5 rounded-2xl border px-2 py-2.5 transition active:scale-95 ${active ? 'border-violet-400/80 bg-violet-500/15 text-white shadow-[0_0_16px_-4px_rgba(150,90,240,0.7)]' : 'border-white/12 bg-white/5 text-neutral-300'}`}
               >
                 <span className="rounded-full bg-white/25" style={{ width: 6 + (s - 6), height: 6 + (s - 6) }} />
