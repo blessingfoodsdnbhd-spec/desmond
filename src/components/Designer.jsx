@@ -361,7 +361,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
                 background: `linear-gradient(180deg, rgba(18,30,60,0.24) 0%, rgba(7,12,28,0.36) 100%)`,
                 boxShadow: `0 0 22px -8px ${glow}aa, inset 0 1px 0 rgba(255,255,255,0.12)`,
               }}
-              className="crystal-tile group relative flex aspect-[5/6] flex-col overflow-hidden rounded-2xl p-2 backdrop-blur-sm transition hover:-translate-y-0.5 active:scale-95"
+              className="crystal-tile group relative flex flex-col overflow-hidden rounded-2xl p-2 pb-2.5 backdrop-blur-sm transition hover:-translate-y-0.5 active:scale-95"
             >
               <span
                 onClick={(e) => { e.stopPropagation(); setDetail(c) }}
@@ -371,18 +371,24 @@ export function Designer({ dark, initialBeads, smartSignal }) {
                 <EnergyIcon size={11} />
               </span>
               {/* 珠子居中，后方亮光正对珠子 */}
-              <div className="relative flex flex-1 items-center justify-center">
+              <div className="relative flex h-[74px] items-center justify-center">
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute left-1/2 top-1/2 h-[74%] w-[74%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-lg"
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-lg"
                   style={{ background: `radial-gradient(circle, rgba(255,255,255,0.4), ${glow}99 46%, transparent 72%)`, opacity: 0.9 }}
                 />
                 <Bead crystal={c} size={72} className="relative drop-shadow-[0_8px_18px_rgba(0,0,0,0.55)] transition group-hover:scale-105" />
               </div>
-              {/* 名称 + 价钱 */}
-              <div className="relative text-center">
-                <div className="w-full truncate text-[12px] font-medium text-white drop-shadow">{c.name}</div>
-                <div className="text-[12px] font-bold text-emerald-400 drop-shadow">{money(beadPrice(c, size))}</div>
+              {/* 名称 + 功效 + 价钱 + 五行 */}
+              <div className="relative mt-1 text-center">
+                <div className="w-full truncate text-[12px] font-semibold text-white drop-shadow">{c.name}</div>
+                <div className="w-full truncate text-[10px] text-white/60">{c.keywords.slice(0, 2).join(' · ')}</div>
+                <div className="mt-0.5 flex items-center justify-center gap-1">
+                  <span className="text-[12px] font-bold text-emerald-400 drop-shadow">{money(beadPrice(c, size))}</span>
+                  <span className="rounded px-1 py-[1px] text-[9px] font-medium text-white" style={{ background: ELEMENTS[c.element]?.color }}>
+                    {lang === 'zh' ? ELEMENTS[c.element]?.label : ELEMENT_I18N[c.element]}
+                  </span>
+                </div>
               </div>
             </button>
           )
