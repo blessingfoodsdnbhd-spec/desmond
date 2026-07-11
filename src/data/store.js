@@ -37,8 +37,19 @@ function read(key, fallback) {
     return fallback
   }
 }
+// 写入本地缓存；配额满/隐私模式等异常不再中断添加流程（云端 D1 仍会保存）
+let storageWarned = false
 function write(key, val) {
-  localStorage.setItem(key, JSON.stringify(val))
+  try {
+    localStorage.setItem(key, JSON.stringify(val))
+    return true
+  } catch (e) {
+    if (!storageWarned) {
+      storageWarned = true
+      console.warn('本地存储写入失败（可能空间已满），改用云端保存：', e?.name || e)
+    }
+    return false
+  }
 }
 
 // 把自定义珠子注册进 CRYSTAL_MAP，令现有渲染/计算逻辑直接可用

@@ -7,6 +7,10 @@ node_modules
 dist
 dist-single
 dist-ssr
+*.zip
+
+# local render/preview artifacts
+zodiac*.png
 
 # logs
 npm-debug.log*
