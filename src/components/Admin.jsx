@@ -144,14 +144,19 @@ function Overlay({ children, onClose }) {
 }
 
 /* ---------- Photo picker ---------- */
-function PhotoPicker({ value, onChange, round }) {
-  const { t } = useLang()
+function PhotoPicker({ value, onChange, round, onError }) {
+  const { t, lang } = useLang()
   const ref = useRef(null)
   const pick = async (e) => {
     const file = e.target.files?.[0]
+    e.target.value = '' // 允许重复选择同一张
     if (!file) return
-    const data = await compressImage(file, round ? 512 : 720)
-    onChange(data)
+    try {
+      const data = await compressImage(file, round ? 512 : 720)
+      onChange(data)
+    } catch (err) {
+      onError?.(lang === 'zh' ? '这张图打不开，请换一张（建议用 JPG/PNG，或先截图再上传）' : 'Could not read this image — try a JPG/PNG or a screenshot')
+    }
   }
   return (
     <button
@@ -243,7 +248,7 @@ function BeadAdmin({ store, onMsg }) {
           </div>
         )}
         <div className="grid grid-cols-[100px_1fr] gap-3">
-          <div className="w-[100px]"><PhotoPicker value={f.photo} onChange={(d) => set('photo', d)} round /></div>
+          <div className="w-[100px]"><PhotoPicker value={f.photo} onChange={(d) => set('photo', d)} onError={onMsg} round /></div>
           <div className="grid grid-cols-2 gap-2">
             <Field label={t('admin.name.zh')}><input className={inputCls} value={f.name} onChange={(e) => set('name', e.target.value)} /></Field>
             <Field label={t('admin.name.en')}><input className={inputCls} value={f.name_en} onChange={(e) => set('name_en', e.target.value)} /></Field>
@@ -377,7 +382,7 @@ function ProductAdmin({ store, onMsg }) {
           </div>
         )}
         <div className="grid grid-cols-[110px_1fr] gap-3">
-          <div className="w-[110px]"><PhotoPicker value={f.image} onChange={(d) => set('image', d)} /></div>
+          <div className="w-[110px]"><PhotoPicker value={f.image} onChange={(d) => set('image', d)} onError={onMsg} /></div>
           <div className="grid grid-cols-2 gap-2">
             <Field label={t('admin.name.zh')}><input className={inputCls} value={f.name} onChange={(e) => set('name', e.target.value)} /></Field>
             <Field label={t('admin.name.en')}><input className={inputCls} value={f.name_en} onChange={(e) => set('name_en', e.target.value)} /></Field>
