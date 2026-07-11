@@ -185,11 +185,15 @@ export function Designer({ dark, initialBeads, smartSignal }) {
   ]
   const BEAD_SIZES = [8, 10, 12]
 
-  // 切换珠子大小：同时把已放入的珠子改成该尺寸，价钱随之更新
-  const changeSize = (s) => {
-    setSize(s)
-    if (beads.length) commit(beads.map((b) => ({ ...b, size: s })))
+  // 依手围+珠子大小自动算需要几粒，按现有水晶花样重新铺满，颗数与价钱随之更新
+  const refit = (nextWrist, nextSize) => {
+    if (!beads.length) return
+    const n = recommendCount(nextWrist, nextSize)
+    const ids = beads.map((b) => b.crystalId)
+    commit(Array.from({ length: n }, (_, i) => makeBead(ids[i % ids.length], nextSize)))
   }
+  const changeWrist = (cm) => { setWrist(cm); refit(cm, size) }
+  const changeSize = (s) => { setSize(s); refit(wrist, s) }
   // 显示价钱：有珠子=实际总价（随大小重算）；空手链=按手围+珠子大小预估满串价
   const isEstimate = beads.length === 0
   const displayPrice = isEstimate
@@ -282,7 +286,11 @@ export function Designer({ dark, initialBeads, smartSignal }) {
           <p className="text-[12px] text-neutral-400">{lang === 'zh' ? '设置你的手链信息' : 'Configure your bracelet'}</p>
         </div>
         <div className="text-right">
-          {isEstimate && <div className="text-[11px] font-medium text-neutral-400">{lang === 'zh' ? `预估 · ${recommendCount(wrist, size)}颗` : `Est · ${recommendCount(wrist, size)} pcs`}</div>}
+          <div className="text-[11px] font-medium text-neutral-400">
+            {isEstimate
+              ? (lang === 'zh' ? `预估 · ${recommendCount(wrist, size)}颗` : `Est · ${recommendCount(wrist, size)} pcs`)
+              : (lang === 'zh' ? `${stats.count} 颗 · ${size}mm` : `${stats.count} pcs · ${size}mm`)}
+          </div>
           <div className="text-2xl font-extrabold text-white">{money(displayPrice)}</div>
         </div>
       </div>
@@ -299,7 +307,7 @@ export function Designer({ dark, initialBeads, smartSignal }) {
             return (
               <button
                 key={w.k}
-                onClick={() => setWrist(w.cm)}
+                onClick={() => changeWrist(w.cm)}
                 className={`rounded-2xl border px-2 py-2.5 text-center transition active:scale-95 ${active ? 'border-violet-400/80 bg-violet-500/15 text-white shadow-[0_0_16px_-4px_rgba(150,90,240,0.7)]' : 'border-white/12 bg-white/5 text-neutral-300'}`}
               >
                 <span className="text-[14px] font-bold">{w.k}</span>

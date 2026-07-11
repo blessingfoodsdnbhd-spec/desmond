@@ -301,7 +301,7 @@ function Profile({ dark, setDark, onOpenAdmin }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[12px] text-neutral-400">{t('brand.footer')}</p>
-      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v43 · 2026.07.10 · 价钱随尺寸更新(去6mm)</p>
+      <p className="mt-1 text-center text-[11px] text-neutral-300 dark:text-neutral-600">v44 · 2026.07.10 · 尺寸自动重铺颗数</p>
     </div>
   )
 }
