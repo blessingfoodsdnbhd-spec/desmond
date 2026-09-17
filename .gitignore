@@ -31,3 +31,5 @@ pnpm-debug.log*
 *.sw?
 
 .wrangler
+qr-poster.png
+qr-code.png
