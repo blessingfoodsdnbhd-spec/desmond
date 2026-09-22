@@ -1,7 +1,7 @@
 # CLAUDE.md · 阿发水晶阁 AH HUAT CRYSTAL PAVILION
 
 > 给 Claude Code 的项目记忆。每次开新会话先读这里，再动手。
-> 当前版本：**v46**（2026-09-17）。版本号写在 `src/App.jsx` Profile 底部的 `<p>` 里，以及每条 commit message 的结尾 `(vNN)`。**每次改动都要同时把这两处 +1。**
+> 当前版本：**v47**（2026-09-22）。版本号写在 `src/App.jsx` Profile 底部的 `<p>` 里，以及每条 commit message 的结尾 `(vNN)`。**每次改动都要同时把这两处 +1。**
 
 ---
 
@@ -74,7 +74,7 @@ src/
     SortableBeadStrip.jsx  底部可拖拽珠链
     SmartRecommend.jsx     智能搭配面板
     ExportSheet.jsx        ★ 保存/分享/下单弹窗：填姓名电话地址 → 下载 PNG → 云端 createOrder → 跳 WhatsApp
-    ProductSheet.jsx       成品详情 + 选尺寸 + WhatsApp 下单（成品单**不**写云端订单）
+    ProductSheet.jsx       成品详情 + 选尺寸 + 收货信息 → 云端 createOrder（items.type='product'）→ WhatsApp
     EnergyGuide.jsx        「发现」页：水晶能量图鉴
     Admin.jsx              ★ 商家后台：stats/orders/customers/beads/products/settings 六个 tab
     CrystalBackground.jsx  每个 Tab 的宇宙/水晶背景（深色模式）
@@ -95,6 +95,7 @@ src/
 4. 页面要拿「生效后的列表」用 `effectiveDefaultBeads(store)` / `effectiveDefaultProducts(store)` + `store.beads` / `store.products`，**不要直接用 `CRYSTALS`/`PRODUCTS` 渲染商家可编辑的内容**。
 5. 云端：启动时 `syncFromCloud()` 拉 `/api/state` 覆盖本地并缓存；每次写操作 `push()` 到 API（需 token）。云端不可用时一切照常在本地工作。
 6. 登录 token = `sha256(密码 + '::' + AUTH_SECRET)`，存 localStorage `ah_token_v1`。改密码会让旧 token 失效。
+7. 云端 `orders.items` 是自由 JSON：DIY 单是 `{ beads:[crystalId…], wristCm, count }`，成品单是 `{ type:'product', productId, name, size, price, qty }`。后台订单页只显示 `summary` 字符串，不解析 `items`。
 
 localStorage key 全部带 `_v1` 后缀（`ah_beads_v1` 等），主题键是 `sl-theme4`。**改结构要换新 key 而不是原地改，避免老用户数据坏掉。**
 
@@ -128,14 +129,13 @@ localStorage key 全部带 `_v1` 后缀（`ah_beads_v1` 等），主题键是 `s
 
 ## 7. 已知未完成 / 待办（按价值排序）
 
-1. **顾客端「订单」Tab 是空壳**（`App.jsx` `Orders()` 只有空状态）。设计器下单已写云端 `orders` 表，但顾客看不到自己的记录，也没有本地「我的设计」保存。
-2. **成品下单不进 CRM**：`ProductSheet.jsx` 只跳 WhatsApp，不调 `createOrder`；老板后台看不到成品单。
-3. **库存字段没用起来**：`schema.sql` 和 API 有 `stock`，前端不显示也不校验。
-4. **`functions/` 与 `_worker.js` 重复**（见 §5），迟早漂移。建议删 `functions/`，只留 `_worker.js`。
-5. **README 已过时**（还写着 12 种水晶、无后台、无 i18n）。
-6. 没有任何测试/lint；`bracelet.js` 和 `store.js` 是最值得先加单测的两个纯逻辑文件。
-7. Profile 页四行（我的设计 / 收藏 / 资料 / 关于）是静态占位。
-8. 后台密码默认值 `ahhuat888` 硬编码在三处；上线后务必在 Cloudflare 设置 `ADMIN_PASSWORD`。
+1. **顾客端「订单」Tab 是空壳**（`App.jsx` `Orders()` 只有空状态）。DIY 和成品下单都已写云端 `orders` 表，但顾客看不到自己的记录，也没有本地「我的设计」保存。
+2. **库存字段没用起来**：`schema.sql` 和 API 有 `stock`，前端不显示也不校验。
+3. **`functions/` 与 `_worker.js` 重复**（见 §5），迟早漂移。建议删 `functions/`，只留 `_worker.js`。
+4. **README 已过时**（还写着 12 种水晶、无后台、无 i18n）。
+5. 没有任何测试/lint；`bracelet.js` 和 `store.js` 是最值得先加单测的两个纯逻辑文件。
+6. Profile 页四行（我的设计 / 收藏 / 资料 / 关于）是静态占位。
+7. 后台密码默认值 `ahhuat888` 硬编码在三处；上线后务必在 Cloudflare 设置 `ADMIN_PASSWORD`。
 
 ---
 
@@ -143,6 +143,7 @@ localStorage key 全部带 `_v1` 后缀（`ah_beads_v1` 等），主题键是 `s
 
 | 版本 | 内容 |
 |---|---|
+| v47 | 成品下单进 CRM：ProductSheet 加收货信息表单，云端 createOrder（summary 前缀「成品 ·」） |
 | v46 | OG/Twitter 分享预览 + share.jpg |
 | v45 | 默认浅色模式；设计页浅色可读性 |
 | v44 | 改手围/珠径自动重排颗数 |
