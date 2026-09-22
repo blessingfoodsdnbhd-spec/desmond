@@ -1,7 +1,7 @@
 # CLAUDE.md · 阿发水晶阁 AH HUAT CRYSTAL PAVILION
 
 > 给 Claude Code 的项目记忆。每次开新会话先读这里，再动手。
-> 当前版本：**v47**（2026-09-22）。版本号写在 `src/App.jsx` Profile 底部的 `<p>` 里，以及每条 commit message 的结尾 `(vNN)`。**每次改动都要同时把这两处 +1。**
+> 当前版本：**v47**（2026-09-22）。版本号写在 `src/App.jsx` Profile 底部的 `<p>` 里，以及每条 commit message 的结尾 `(vNN)`。**每次代码改动都要同时把这两处 +1；纯文档（CLAUDE.md / README / docs）改动不升版本。**
 
 ---
 
@@ -120,7 +120,7 @@ localStorage key 全部带 `_v1` 后缀（`ah_beads_v1` 等），主题键是 `s
 ## 6. 部署现状
 
 - 仓库 `blessingfoodsdnbhd-spec/desmond`。**GitHub 默认分支 = 生产分支 = `claude/jewelry-diy-app-ec4kjm`**（上线指南和 Cloudflare Pages 都指向它）。
-- 另有一个 `main` 分支停在 v25，比生产分支落后 20 多个版本；Draft PR #2 想把生产分支合进 main，一直没合。不要以为 main 是最新代码。
+- `main` 分支从 v47 起与生产分支同步（每次合并 PR 到生产分支后，把生产分支 head 快进推到 main：`git push origin origin/claude/jewelry-diy-app-ec4kjm:main`）。之前 main 长期停在 v25。
 - 开发分支按会话分配（如 `claude/elegant-mccarthy-t5q3bh`），从生产分支切出，完成后 push 并开 draft PR **合回生产分支**。
 - 线上域名：`ahhuat.pages.dev`（写在 `index.html` 的 og 标签里；如果换域名要一起改）。
 - Cloudflare 侧手工配置：D1 绑定变量名 `DB`、环境变量 `ADMIN_PASSWORD`、`AUTH_SECRET`。
